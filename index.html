@@ -97,6 +97,26 @@ main{padding-top:14px;padding-bottom:60px}
 .ph-h .fold{color:var(--dim);font-size:12px;width:14px}
 .ph.cur{box-shadow:0 0 0 2px var(--pc) inset}
 .ph-b{margin-top:6px}
+.pnote{display:flex;gap:8px;align-items:center;margin:10px 0 8px}
+.pnote .t{width:70px}.pnote #pn_x{flex:1;min-width:0}
+.pt{width:100%;border-collapse:collapse;font-size:14px}
+.pt td{padding:5px 8px;border-top:1px solid var(--raise);vertical-align:top}
+.pt td.tm{white-space:nowrap;font-variant-numeric:tabular-nums;width:52px;font-weight:600}
+.pt td.hh{white-space:nowrap;color:var(--mut);width:44px;font-size:12.5px}
+.pt td:nth-child(3){width:1%;white-space:nowrap}.pt td:last-child{width:24px;text-align:right}
+.pt td small{display:block;color:var(--mut);font-size:12.5px}
+.pt tr.day td{background:var(--raise);font-weight:700;color:var(--navy);font-size:13px}
+.pk{display:inline-block;border-radius:6px;padding:0 7px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--raise2);color:var(--navy)}
+.pk.k-vol,.pk.k-re{background:#e3f0f4;color:#14646d}.pk.k-diu{background:#fff4dc;color:#7a4a00}.pk.k-lab,.pk.k-mon{background:#eef0fb;color:#3d3f8f}
+.pk.k-chk,.pk.k-iv{background:var(--ok-bg);color:var(--ok)}.pk.k-note{background:#fde8ec;color:#a01d3a}.pk.k-chg{background:var(--raise);color:var(--mut)}
+.pp .ptp td{text-align:left;height:auto;vertical-align:top}
+.stand .st-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin-top:6px}
+.stand .st-r{display:grid;grid-template-columns:10px minmax(0,1fr) auto 22px;gap:6px;align-items:start;font-size:14px;padding:5px 0;border-top:1px solid var(--raise)}
+.stand .st-r::before{content:"•";color:var(--navy);font-weight:700}
+.stand .st-w{font-size:12px;color:var(--mut);white-space:nowrap;padding-top:2px}
+.stand .st-x .run{display:inline-block;margin-left:6px;font-size:12px;background:var(--ok-bg);color:var(--ok);border-radius:6px;padding:0 6px}
+.stand .info{margin-left:16px}
+@media (max-width:900px){.stand .st-l{grid-template-columns:1fr}}
 .it{display:grid;grid-template-columns:26px minmax(0,1fr) auto 24px 22px;gap:8px;align-items:start;padding:6px 0;border-top:1px solid var(--raise)}
 .it:first-child{border-top:0}
 .cb{width:22px;height:22px;border:2px solid var(--line2);border-radius:6px;background:#fff;color:#fff;font-size:14px;line-height:18px;text-align:center;margin-top:1px}
@@ -199,7 +219,7 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 .vt .grey{color:var(--dim)}
 .vt .avg{color:var(--mut);font-style:italic}
 .dec{display:inline-block;border-radius:6px;padding:0 6px;font-weight:700;font-size:12.5px}
-.dec.up{background:var(--red-bg);color:var(--red)}.dec.dn{background:var(--ok-bg);color:var(--ok)}.dec.eq{background:var(--raise);color:var(--mut)}
+.dec.up{background:var(--red-bg);color:var(--red)}.dec.dn{background:var(--ok-bg);color:var(--ok)}.dec.eq{background:var(--raise);color:var(--mut)}.dec.al{background:var(--amb-bg);color:#7a4a00}
 .ex{display:inline-flex;align-items:center;gap:2px;background:var(--raise);border-radius:6px;padding:0 5px;margin-right:3px;font-size:12px}
 .ex button{color:var(--dim);font-size:12px;padding:0 2px}
 .dlt{color:var(--dim);font-size:12px;padding:0 3px}
@@ -293,8 +313,9 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 @media print{
   @page{size:A4 portrait;margin:9mm 9mm 10mm}
   html,body{background:#fff;font-size:8.6pt}
-  #app{display:none!important}
-  #print{display:block}
+  body.prt #app{display:none!important}
+  body.prt #print{display:block}
+  body:not(.prt) .top,body:not(.prt) .tabs,body:not(.prt) .dlgbg,body:not(.prt) .toast{display:none!important}
 }
 .pp{color:#000;font-size:8.6pt;line-height:1.3}
 .pp .pg{page-break-after:always;break-after:page}
@@ -353,7 +374,7 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
    (gleiche Domain). Eigener Speicher nur für den Verlaufsspiegel und die
    Bedienung. Hausstandard: SOPs der V1 gehen vor Literatur.
    ===================================================================== */
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.3.0";
 const BKEY = "burnicu_v3";
 const SKEY = "luminate_v1";
 const H = 36e5, MIN = 6e4, EPOCH = "1970-01-01T00:00:00.000Z";
@@ -425,7 +446,7 @@ function readS() { try { const r = localStorage.getItem(SKEY); if (r) return JSO
 function writeS(o) { try { localStorage.setItem(SKEY, JSON.stringify(o)); } catch (e) {} }
 
 const S0 = readS();
-const UI = { sel: S0.sel || null, tab: S0.tab || "check", open: {}, fold: {}, showNA: false, notif: !!S0.notif, dlg: null, menu: false, toast: "", focusNext: null, hist: false, upd: null };
+const UI = { sel: S0.sel || null, tab: S0.tab || "check", open: {}, fold: {}, showNA: false, notif: !!S0.notif, prTab: !!S0.prTab, dlg: null, menu: false, toast: "", focusNext: null, hist: false, upd: null, pf: "all" };
 function saveUI() { const s = readS(); s.sel = UI.sel; s.tab = UI.tab; s.notif = UI.notif; writeS(s); }
 
 /* ---------- Patientendaten (Struktur wie BurnICU) ---------- */
@@ -520,15 +541,63 @@ function mirDrop(pid, key, id) {
 }
 
 /* ---------- Schreiben in den BurnICU-Speicher ---------- */
+/* Protokoll: Änderungen an Stammdaten und Einstellungen werden beim Schreiben mitgeschrieben (bs.log) */
+const SNAP = [
+  ["Unfallzeit", (q) => burnOf(q).unfall ? fWDT(burnOf(q).unfall) : ""],
+  ["VKOF", (q) => burnOf(q).vkof ? burnOf(q).vkof + " %" : ""],
+  ["2b/3", (q) => burnOf(q).tief ? burnOf(q).tief + " %" : ""],
+  ["Grad 3", (q) => burnOf(q).drittgrad ? "ja" : "nein"],
+  ["Gewicht", (q) => q.gewicht ? q.gewicht + " kg" : ""],
+  ["Größe", (q) => q.groesse ? q.groesse + " cm" : ""],
+  ["Alter", (q) => burnOf(q).alter ? burnOf(q).alter + " J" : ""],
+  ["Geschlecht", (q) => q.sex || ""],
+  ["Zimmer", (q) => q.zimmer != null ? String(q.zimmer) : ""],
+  ["Präklinik + SR", (q) => burnOf(q).gegeben ? burnOf(q).gegeben + " ml" + (c48Of(q).gegebenBis ? " bis " + c48Of(q).gegebenBis : "") : ""],
+  ["Inhalationstrauma", (q) => burnOf(q).inhal ? "ja" : "nein"],
+  ["Stromunfall", (q) => burnOf(q).strom || (c48Of(q).mech || []).indexOf("strom") >= 0 ? "ja" : "nein"],
+  ["Myoglobinurie", (q) => burnOf(q).myo ? "ja" : "nein"],
+  ["intubiert", (q) => c48Of(q).intub ? "ja" + (c48Of(q).intubT ? " (" + c48Of(q).intubT + ")" : "") : "nein"],
+  ["AIS", (q) => burnOf(q).ais || ""],
+  ["Escharotomie", (q) => ({ erfolgt: "erfolgt", "nötig": "nötig", nein: "nicht nötig" })[c48Of(q).esch] || ""],
+  ["PiCCO", (q) => piccoAktiv(q) ? "aktiv" : "aus"],
+  ["Kristalloid", (q) => bsOf(q).lsg === "delta" ? "Deltajonin BG (1/3)" : "Ringer-Azetat"],
+  ["HI/ScvO2 bewerten", (q) => ({ auto: "automatisch", ja: "ja", nein: "nein" })[bsOf(q).hd] || ""]
+];
+const snapOf = (q) => SNAP.map(([, g]) => { try { return g(q); } catch (e) { return ""; } });
+function logAdd(q, k, txt, t) {
+  const bs = bsMut(q);
+  bs.log = (bs.log || []).concat([{ id: uid(), t: t != null ? isoOf(t) : nowISO(), k, txt }]).slice(-400);
+}
 function upd(pid, fn) {
   const B = readB();
   const p = B.patients[pid];
   if (!p) { toast("Patient nicht gefunden — in BurnICU entlassen?"); render(); return; }
   const q = clone(p);
+  const s0 = snapOf(q);
   fn(q);
+  const s1 = snapOf(q);
+  s1.forEach((v, i) => {
+    if (v === s0[i]) return;
+    const lbl = SNAP[i][0];
+    const txt = (a, b) => a ? `${lbl}: ${a} → ${b || "gelöscht"}` : `${lbl}: ${b}`;
+    const bs = bsMut(q), lg = (bs.log || []).slice(), pv = last(lg);
+    /* mehrere Eingaben zum selben Feld innerhalb von 2 min = ein Eintrag */
+    if (pv && pv.lbl === lbl && Date.now() - tMs(pv.t) < 2 * MIN) {
+      lg.pop();
+      if (pv.from !== v) lg.push({ ...pv, t: nowISO(), to: v, txt: txt(pv.from, v) });
+      bs.log = lg;
+    } else bs.log = lg.concat([{ id: uid(), t: nowISO(), k: "chg", lbl, from: s0[i], to: v, txt: txt(s0[i], v) }]).slice(-400);
+  });
   B.patients[pid] = q;
   writeB(B);
   refresh();
+}
+/* Klartext zu einem Checklisten-/Intoxikationsschlüssel */
+function kLabel(p, k) {
+  const it = IT_BY[k];
+  if (it) { const t = plainTxt(it.t({ p, c: calc(p) })); return t.length > 110 ? t.slice(0, 108) + "…" : t; }
+  const f = [...C48_EXPO, ...C48_CO_RG, ...C48_CO_RH, ...C48_CN_RG, ...C48_CN_RH, ...C48_IHT].find((x) => x[0] === k);
+  return f ? f[1] : k;
 }
 const setBurn = (q, patch) => { q.burn = { ...burnOf(q), ...patch }; };
 const setC48 = (q, k, v) => { q.c48 = { ...(q.c48 || {}), [k]: v }; };
@@ -537,6 +606,7 @@ function toggleDone(q, k, force) {
   const c = q.c48 = { ...(q.c48 || {}) };
   c.done = { ...(c.done || {}) };
   const on = force != null ? force : !c.done[k];
+  if (!on && c.done[k]) logAdd(q, "chg", "Häkchen entfernt: " + kLabel(q, k));
   c.done[k] = on;
   const bs = bsMut(q);
   bs.doneT = { ...bs.doneT };
@@ -774,6 +844,34 @@ function decisionAt(p, c, T, diuVal, rate) {
   return { k: "eq", ev };
 }
 
+/* Letzte Reevaluation bzw. Laufratenänderung vor < 60 min: deren Ergebnis gilt bis zur nächsten Reevaluation */
+const reevals = (p) => (bsOf(p).reeval || []).slice().sort(byT);
+function holdInfo(p, c, rr) {
+  const now = c.now;
+  const lr = last(reevals(p));
+  const lrT = lr ? tMs(lr.t) : null;
+  const rrT = rr && rr.t !== EPOCH ? tMs(rr.t) : null;
+  const rate = rr ? numDE(rr.v) : null;
+  const rt = rate != null ? " " + r0(rate) + " ml/h" : "";
+  if (lrT != null && lrT <= now + MIN && now - lrT < 60 * MIN && (rrT == null || lrT >= rrT - 2 * MIN)) {
+    const nx = `Nächste Reevaluation ${fT(lrT + H)}, spätestens ${fT(lrT + 2 * H)}.`;
+    const dob = /dys:ja/.test(lr.path || "") ? "Zusätzlich kardiale Dysfunktion: Dobutamin erwägen. " : "";
+    const tag = `Algorithmus ${fT(lrT)}`;
+    const M = {
+      dobu: { lv: "w", h: `Kardiale Dysfunktion: Dobutamin erwägen — Laufrate${rt} halten`, t: `${tag}: nicht volumenreagibel, keine Volumenüberladung — Inotropie statt Volumen. ${nx}` },
+      ne: { lv: "e", h: `Noradrenalin — Laufrate${rt} halten`, t: `${tag}: MAP < 65–70 mmHg, nicht volumenreagibel. Sepsiszeichen? Argipressin 0,01 IE/min erwägen bei Laufrate > 4 ml/kg/h oder Noradrenalin > 0,25 µg/kg/min. Echokardiografie: Dysfunktion → Dobutamin. ${nx}` },
+      hold: { lv: "i", h: `Keine Volumenindikation — Laufrate${rt} halten`, t: `${tag}: nicht volumenreagibel, keine Dysfunktion, keine Überladung — Blutung, abdominelles Kompartmentsyndrom, Sepsis, Katheterlage prüfen. ${nx}` }
+    }[lr.res];
+    if (M) return { ...M, until: lrT + H };
+    if (lr.to != null) return { lv: "i", h: `Laufrate ${r0(lr.to)} ml/h seit ${fT(lrT)} — halten`, t: `${lr.res === "up" ? "STEP UP nach Algorithmus. " : lr.res === "down" ? "STEP DOWN nach Algorithmus. " : "Abweichend vom Algorithmus festgelegt. "}${dob}${nx}`, until: lrT + H };
+    return { lv: "i", h: `Reevaluation ${fT(lrT)} ohne Änderung — Laufrate${rt} halten`, t: `${lr.res === "up" || lr.res === "down" ? `Algorithmus schlug ${RES_TXT[lr.res]} vor, Rate bewusst unverändert. ` : ""}${dob}${nx}`, until: lrT + H };
+  }
+  if (rrT != null && rrT <= now + MIN && now - rrT < 60 * MIN) return { lv: "i", h: `Laufrate${rt} halten — angepasst um ${fT(rrT)}`, t: `Nächste Reevaluation ${fT(rrT + H)} (SOP: stündlich), spätestens ${fT(rrT + 2 * H)}.`, until: rrT + H };
+  return null;
+}
+/* Reevaluation zur Stundenzeile mit Ende E (zwischen E − 10 min und E + 50 min) */
+function reevalFor(p, E) { return last(reevals(p).filter((x) => { const t = tMs(x.t); return t >= E - 10 * MIN && t < E + 50 * MIN; })); }
+
 /* ---------- Jetzt-Anweisung Schockphase (Logik wie BurnICU-Schockphase-Karte) ---------- */
 function plan(p, c) {
   const now = c.now;
@@ -785,7 +883,18 @@ function plan(p, c) {
   out.rate = rate;
   out.di = di;
   const L = di.lastE;
+  /* Ergebnis der letzten Reevaluation (Algorithmus, „ohne Änderung“) bzw. Ratenänderung gilt bis zur nächsten Reevaluation — kein neuer Ratenvorschlag */
+  const hold = rate != null ? holdInfo(p, c, rr) : null;
+  out.hold = hold ? hold.until : null;
   if (rate == null && c.rot != null) out.main = { lv: "w", h: `Laufrate fehlt — Rule of 10: ${r0(c.rot)} ml/h Ringer-Azetat`, t: "Startrate einstellen bzw. bisherige Laufraten in der Tabelle nachtragen (Zeile = Stunde, Rate gilt ab Zeilenbeginn).", neu: c.rot };
+  else if (hold) {
+    out.main = { lv: hold.lv, h: hold.h, t: hold.t, hold: true };
+    if (L) {
+      const alt = (now - tMs(L.t)) / MIN;
+      out.ev = evalAt(p, c, now, di.lastB && !di.lastB.unk ? di.lastB.v : null);
+      if (alt > 150) out.main.t += ` Diurese nachtragen — letzter Wert vor ${Math.floor(alt / 60)} h ${Math.round(alt % 60)} min.`;
+    } else out.main.t += " Stundendiurese eintragen.";
+  }
   else if (!L) out.main = { lv: "w", h: "Stundendiurese eintragen", t: `Sie steuert die Laufrate — Ziel ${zielTxt(c)}.` };
   else {
     const alt = (now - tMs(L.t)) / MIN;
@@ -793,7 +902,6 @@ function plan(p, c) {
     out.ev = evalAt(p, c, now, diuV);
     if (di.lastB && di.lastB.unk) out.main = { lv: "w", h: "Stundendiurese eintragen", t: `Letzter Eintrag (${r0(di.lastB.v)} ml) ist ein Sammelwert über > 12 h — kein Stundenwert, nicht titrierbar.` };
     else if (alt > 150) out.main = { lv: "w", h: `Diurese nachtragen — letzter Wert vor ${Math.floor(alt / 60)} h ${Math.round(alt % 60)} min`, t: "Erst mit aktueller Stundendiurese titrieren." };
-    else if (rr && rr.t !== EPOCH && now - tMs(rr.t) < 60 * MIN) out.main = { lv: "i", h: `Laufrate halten — angepasst um ${fT(rr.t)}`, t: `Nächste Reevaluation ${fT(tMs(rr.t) + H)} (SOP: stündlich).` };
     else if (out.ev.anyFail) {
       const neu = rate != null ? r10(rate * 1.2) : null;
       const esk = neu != null && c.rot && neu > 2 * c.rot;
@@ -830,6 +938,7 @@ function plan(p, c) {
         if (rest <= 250) out.vol = { lv: "ok", h: kopf + " — inzwischen ausgeglichen", t: zahl + ` Seit Übernahme ${tsd(surplus)} ml über der Rule of 10 gegeben. Weiter stündlich nach Diurese.` };
         else if (dl === false) out.vol = { lv: "i", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml — Diurese ist im Ziel: nicht nachschieben, weiter stündlich nach Diurese titrieren.` };
         else if (dl == null) out.vol = { lv: "i", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml — erst aktuelle Stundendiurese eintragen; nachgeschoben wird nur bei Diurese unter Ziel.` };
+        else if (out.hold) out.vol = { lv: "i", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml, Diurese unter Ziel — das Ergebnis der letzten Reevaluation gilt bis ${fT(out.hold)}: dann neu bewerten, vorher nicht nachschieben.` };
         else {
           const n = v.hJ < 6 ? Math.max(2, Math.round(8 - v.hJ)) : 4;
           let neu = r10(base + rest / n);
@@ -841,12 +950,14 @@ function plan(p, c) {
         const kopf = `Übertherapie aus Präklinik/Schockraum: ${tsd(v.d0)} ml über Soll`;
         if (dl === true) out.vol = { lv: "e", h: kopf + " — trotzdem Diurese unter Ziel", t: zahl + " Nicht blind weiter steigern: intraabdominellen Druck (abdominelles Kompartmentsyndrom), HI/PiCCO, Blutung, Myoglobin und Katheterlage prüfen." };
         else if (out.ev && out.ev.anyFail) out.vol = { lv: "w", h: kopf, t: zahl + ` Ziele verfehlt (${out.ev.crit.filter((x) => x.st === false).map((x) => x.l).join(", ")}): Steigern nach SOP möglich, aber vorher intraabdominellen Druck, HI/PiCCO, Blutung und Katheterlage prüfen — Fluid Creep.` };
+        else if (out.ev && out.ev.allOk && out.hold) out.vol = { lv: "w", h: kopf, t: zahl + ` Alle Ziele erfüllt: Fluid Creep vermeiden — bei der nächsten Reevaluation (${fT(out.hold)}) −10 %.` };
         else if (out.ev && out.ev.allOk) {
           const neu = rate != null ? r10(rate * 0.9) : null;
           out.vol = { lv: "w", h: kopf, t: zahl + ` Alle Ziele erfüllt: Fluid Creep vermeiden, −10 % je Stunde${neu ? ` (jetzt ${r0(neu)} ml/h)` : ""}.`, neu };
         } else out.vol = { lv: "w", h: kopf, t: zahl + " Fluid Creep vermeiden: senken (−10 %), sobald alle Ziele erfüllt sind; über die Rule of 10 nur bei verfehlten Zielen steigern." };
       } else out.vol = { lv: "ok", h: "Volumen ab Unfall passt zur Rule of 10", t: `Bis Übernahme ${tsd(v.g)} ml gegeben, Soll ${tsd(v.soll0)} ml (Abweichung < 20 %). Kristalloid seit Unfall ${tsd(v.kris)} ml.` };
     }
+    if (out.hold && out.vol && out.vol.neu) { out.vol.neu = null; out.vol.aufhol = false; out.vol.t += ` Anpassung frühestens bei der nächsten Reevaluation (${fT(out.hold)}).`; }
   }
   /* weitere Hinweise */
   const Hn = out.hints;
@@ -884,7 +995,6 @@ function plan(p, c) {
   }
   if (c.strom && !c.myo) add("i", "Stromunfall: Urinfarbe/Myoglobin prüfen — bei Myoglobinurie Ziel 1,5–2 ml/kg/h bzw. 200–300 ml/h (Häkchen „Myoglobinurie“ oben setzen).");
   if (c.rotNA) add("w", "Unter 40 kg gilt die Rule of 10 nicht — Kinderschema der Klinik, Zieldiurese 1–1,5 ml/kg/h.");
-  if (c.h >= 24) add("i", `h 24–48: Rate schrittweise senken (−10 %-Schritte bei erfüllten Zielen); Schockphase endet ${fRel(atMs(c, 48))}.`);
   return out;
 }
 
@@ -914,16 +1024,12 @@ const ITEMS = [
     info: I("Verbrennungsschock: Hitze und Mediatoren (Histamin, Prostaglandine, Zytokine) öffnen die Kapillaren — lokal sofort, ab etwa 20–30 % VKOF generalisiert, also auch in nicht verbrannter Haut. Das Leck ist in den ersten 8–12 h maximal; Wasser und Eiweiß verlassen das Gefäß, das Plasmavolumen fällt. Deshalb zählt die Uhr ab Unfall, nicht ab Aufnahme. Laktatfreie Lösung, damit Laktat als Perfusionsmarker verwertbar bleibt; NaCl 0,9 % führt zur hyperchlorämischen Azidose.",
       "Rule of 10 (Chung et al., J Trauma 2010, US-Militär): Startrate ohne Gewichtsrechnung, liegt im Mittel zwischen modifizierter Brooke-Formel (2 ml) und Parkland (4 ml/kg/% VKOF). ABA-Leitlinie Burn Shock Resuscitation (Cartotto, J Burn Care Res 2024): eher niedrig starten (2–4, Richtung 2 ml/kg/% VKOF) und nach Antwort titrieren.",
       "Volumentherapie (Dok-ID 1620273): VKOF auf die nächste Zehnerstelle aufrunden × 10 ml/h; 40–80 kg; je angefangene 10 kg darüber + 100 ml/h; IHT + 100 ml/h. Ringer-Azetat.") },
-  { k: "s_diu", ph: "auf", t: (x) => `DK mit Stundendiurese — Ziel <b>${zielTxt(x.c)}</b>`,
-    info: I("Die Niere reagiert früh auf Minderperfusion (RAAS, ADH) — die Stundendiurese ist in der Schockphase der einzige kontinuierlich verfügbare Endorganparameter. Verfälscht durch Diuretika, Glukosurie, Myoglobin, Alkohol und osmotisch wirksame Substanzen.",
-      "Klassisch 0,5 ml/kg/h bzw. 30–50 ml/h (ABA). Mehr Diurese ist kein Qualitätsmerkmal, sondern ein Zeichen von Überinfusion (Fluid Creep). Die V1-SOP setzt die Untergrenze bewusst bei > 0,3 ml/kg/h — es gilt die SOP.",
-      "Volumentherapie; bei Myoglobinurie Crush-Syndrom (Dok-ID 1620035): 200–300 ml/h bzw. 1,5–2 ml/kg/h.") },
   { k: "s_picco", ph: "auf", t: (x) => `ZVK + PiCCO-Arterie bei > 30 % VKOF, > 20 % + IHT oder Komorbidität, Instabilität${x.c.vk > 30 || (x.c.vk >= 20 && x.c.inhal) ? ' <span class="flag a">indiziert</span>' : ""}`,
     run: (x) => piccoAktiv(x.p) ? "PiCCO aktiv" : devAct(x.p, "ZVK") ? "ZVK liegt" : "",
     info: I("In den ersten 24 h fällt das Herzzeitvolumen stärker, als das Plasmavolumen allein erklärt: Myokarddepression durch TNF-α und IL-6 und hohe Nachlast (Katecholamine, Vasopressin). Diurese und Blutdruck können bei Älteren und Herzinsuffizienten über die Perfusion täuschen.",
       "Holm et al. (Burns 2004, randomisiert): ITBVI-gesteuerte Therapie brachte deutlich mehr Volumen ohne Outcome-Vorteil. Die ABA-Leitlinie 2024 rät von transpulmonalen Thermodilutionswerten als Steuergröße ab. Die SOP nutzt HI und ScvO2 als zwei von fünf Reevaluationskriterien — es gilt die SOP.",
       "Volumentherapie (Monitoring): Anlage schon im Schockraum bzw. bei Aufnahme.") },
-  { k: "s_aw", ph: "auf", t: (x) => x.c.intub ? "Tubus gut fixieren und <b>nicht kürzen</b>, Lage und Cuffdruck dokumentieren — das Ödem nimmt bis 24–48 h zu" : "Atemweg beurteilen: Stridor, Heiserkeit, Ruß, Gesichts-/Halsverbrennung → früh sichern",
+  { k: "s_aw", ph: "auf", t: (x) => x.c.intub ? "Tubus sicher fixieren, Lage, Tiefe und Cuffdruck dokumentieren" : "Atemweg beurteilen: Stridor, Heiserkeit, Ruß, Gesichts-/Halsverbrennung → früh sichern",
     info: I("Thermischer Schaden der oberen Atemwege plus generalisiertes Kapillarleck plus Volumengabe ergeben ein supraglottisches Ödem mit Maximum nach 24–48 h. Ein gekürzter Tubus lässt sich dann nicht mehr korrigieren, eine Reintubation kann unmöglich werden.", null,
       "Inhalationstrauma (Dok-ID 1620224): Atemweg früh sichern bei drohender Verlegung, Ödem rückläufig nach 24–120 h; nicht jeder muss intubiert werden.") },
   { k: "s_esch", ph: "auf", t: () => "Zirkulär tief (2b/3)? Escharotomie prüfen — Thorax: Beatmungsdruck; Extremität: Doppler distal, Kompartment",
@@ -932,14 +1038,12 @@ const ITEMS = [
   { k: "s_lab", ph: "auf", t: () => "Aufnahmelabor: BGA (COHb, Laktat, ScvO2, Ca²⁺), BB, Gerinnung, Na/K, Phosphat, Krea, CK, Myoglobin, Albumin, BZ, Blutgruppe",
     inp: [{ lab: "COHb", u: "%" }, { lab: "Laktat", u: "mmol/l" }, { lab: "Na+", u: "mmol/l" }, { lab: "Albumin", u: "g/dl" }, { lab: "CK", u: "U/l" }],
     info: I("COHb und Laktat früh bestimmen — CO und Cyanid sind die häufigste frühe Todesursache bei Bränden in geschlossenen Räumen. CK und Myoglobin als Ausgangswert (Strom, Crush), Albumin und Natrium als Startwerte für die SOP-Schritte ab h 6–8.") },
-  { k: "s_strom", ph: "auf", cond: (x) => x.c.strom, t: () => "Strom: EKG-Monitoring, Kompartment engmaschig — die Hautläsion sagt nichts über die Tiefe",
+  { k: "s_strom", ph: "auf", cond: (x) => x.c.strom, t: () => "Strom: 12-Kanal-EKG, Monitoring etablieren, Kompartimente untersuchen (Ausgangsbefund)",
     info: I("Strom fließt bevorzugt entlang Nerven, Gefäßen und Muskulatur; die Hitze entsteht in der Tiefe am Knochen (hoher Widerstand) → Muskelnekrose unter intakter Haut, Myoglobin, Kompartment, Rhythmusstörungen.",
       "AWMF S2k 044-001 (2025): EKG-Monitoring ≥ 24 h bei initialem Kreislaufstillstand, Bewusstlosigkeit oder pathologischem EKG.",
       "Crush-Syndrom: Myoglobin-Peak < 24 h, CK-Peak 24–36 h.") },
-  { k: "s_dk", ph: "auf", t: () => "DK (Temperatursonde), Magensonde, Lagerung: Oberkörper hoch, Extremitäten hoch",
-    info: I("Hochlagerung senkt den hydrostatischen Druck im Kapillarbett und damit das Ödem an Gesicht/Atemweg und Extremitäten. Magensonde: Gastroparese in der Schockphase, frühe enterale Ernährung.") },
-  { k: "a_temp", ph: "auf", t: () => "Körpertemperatur ≥ 36 °C halten — keine Kühlung bei > 10 % VKOF",
-    info: I("Ohne Hautbarriere hohe Verdunstungs- und Strahlungsverluste. Hypothermie verschlechtert Gerinnung (Enzymkinetik, Thrombozytenfunktion) und erhöht die Letalität.", "AWMF S2k 044-001 (2025): keine Kühlung bei > 10 % VKOF, Normothermie sichern.") },
+  { k: "s_dk", ph: "auf", t: () => "DK mit Temperatursonde (Stundendiurese), Magensonde",
+    info: I("Die Stundendiurese ist in der Schockphase der einzige kontinuierlich verfügbare Endorganparameter; die Temperatursonde im DK misst Kerntemperatur ohne zusätzlichen Zugang. Magensonde: Gastroparese in der Schockphase, frühe enterale Ernährung.") },
   { k: "a_ppi", ph: "auf", to: 8, t: () => "Stressulkusprophylaxe: Pantoprazol 20 mg 1-0-0",
     info: I("Curling-Ulkus: Schleimhautischämie im Verbrennungsschock plus Stressreaktion; frühe enterale Ernährung schützt zusätzlich.", "REVISE (Cook, NEJM 2024): Pantoprazol bei invasiv Beatmeten senkt klinisch relevante obere GI-Blutungen (1,0 vs. 3,5 %), Letalität unverändert. Burn-Protokolle: Prophylaxe ab > 20 % VKOF.") },
   { k: "a_screen", ph: "auf", to: 24, t: () => "MRE-Screening-Abstriche bei Aufnahme (Hausstandard)",
@@ -948,10 +1052,6 @@ const ITEMS = [
   { k: "a_bg", ph: "auf", to: 24, t: () => "Arbeits- oder Wegeunfall? → BG-Verfahren (D-Arzt-Bericht) anstoßen",
     info: I("Berufsgenossenschaftliches Heilverfahren früh melden — relevant für Reha, Kompressionsversorgung und Kostenübernahme.") },
   /* ---- h 0–8 ---- */
-  { k: "o_tit", ph: "h0", at: 1, t: () => "Stündliche Reevaluation läuft: Diurese, HI, ScvO2, Laktat, Rekap → alle erfüllt −10 %, eines nicht +20 % <button class='btn lnk' data-act='tab' data-v='vol'>→ Volumen</button>",
-    info: I("Das Kapillarleck ist dynamisch — eine feste Formelrate über 24 h führt entweder zu Unter- oder, häufiger, zu Überinfusion.",
-      "Fluid Creep (Pruitt, J Trauma 2000; Saffle, J Burn Care Res 2007): Volumina über 6 ml/kg/% VKOF gehen mit abdominellem und Extremitäten-Kompartmentsyndrom, ARDS und höherer Letalität einher. Gegenmittel ist konsequentes Heruntertitrieren.",
-      "Volumentherapie: erstmals nach 60 min, dann stündlich; vor STEP UP ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise).") },
   { k: "o_analgo", ph: "h0", at: 1, t: (x) => x.c.intub ? "Analgosedierung nach SOP: Aufnahmetag Sufentanil + Midazolam; Beatmung > 48 h absehbar → Sufentanil + Propofol (max. 5 Tage)" : "Analgesie nach SOP: Basis (Metamizol 4 g/24 h) + Opioid retard und akut",
     info: I("Verbrennungsschmerz ist nozizeptiv und neuropathisch mit primärer und sekundärer Hyperalgesie; Opioidbedarf und Toleranz steigen schnell, Verbandswechsel sind Spitzen.", null, "Analgesie, Sedierung, Delir (Dok-ID 1620165).") },
   { k: "o_bronch", ph: "h0", at: 1, cond: (x) => x.c.intub, t: () => "Bronchoskopie (intubiert, V. a. IHT): Ausmaß, Sekret/Ruß absaugen, AIS 0–4 dokumentieren", inp: [{ f: "ais", l: "AIS", u: "" }],
@@ -963,71 +1063,45 @@ const ITEMS = [
       "ESPEN-Leitlinie Verbrennung (Rousseau, Clin Nutr 2013): Beginn innerhalb von 12 h. Mosier et al. (J Burn Care Res 2011): frühe enterale Ernährung mit weniger Infektionen assoziiert.", "Ernährung: so früh wie möglich, spätestens 24 h; Tag 1 20 ml/h.") },
   { k: "o_vkof", ph: "h0", at: 4, t: () => "VKOF nachmessen (Lund-Browder; Grad 1 zählt nicht) — ändert die Rule of 10", inp: [{ f: "vkof", l: "VKOF", u: "%" }, { f: "tief", l: "2b/3", u: "%" }],
     info: I("Grad 1 (Erythem) hat kein relevantes Kapillarleck. Präklinische Schätzungen weichen oft ab — überschätzt bei kleinen, unterschätzt bei Adipösen; jede Überschätzung bedeutet Überinfusion.") },
-  { k: "o_iap", ph: "h0", at: 4, cond: (x) => x.c.vk > 20 || x.c.inhal, t: () => "IAP (Blasendruck) alle 4 h — Messung etabliert",
-    info: I("Darmwand- und Mesenterialödem plus Aszites unter hohen Volumina → intraabdominelle Hypertonie (≥ 12 mmHg) bis zum abdominellen Kompartmentsyndrom (> 20 mmHg mit neuer Organdysfunktion: Oligurie, Beatmungsdruck ↑).",
-      "Leitlinie der World Society of the Abdominal Compartment Syndrome (Kirkpatrick, Intensive Care Med 2013): Definitionen und Messung. Ivy et al. (J Trauma 2000): > 250 ml/kg in 24 h → hohes Risiko.", "Volumentherapie: IAP alle 4 h.") },
   { k: "o_alb", ph: "h0", at: 6, t: () => "Ab h 6: Gerinnung prüfen — FFP nur nach Gerinnungssituation · Albumin 20 % nur erwägen (ab h 8 nach SOP)",
     info: I("In den ersten 6–8 h ist das Leck so groß, dass Albumin mit ins Interstitium wandert und dort Wasser bindet; danach bleibt es zunehmend intravasal.",
       "Navickis et al. (J Burn Care Res 2016, Meta-Analyse): Albumin senkte die Gesamtletalität nicht signifikant; nach Ausschluss zweier Studien mit hohem Bias-Risiko geringere Letalität und weniger Kompartmentsyndrome — Evidenz begrenzt. ABA 2024 (bedingte Empfehlung): Albumin in den ersten 24 h erwägen, v. a. bei großen Verbrennungen bzw. steigendem Bedarf; FFP nur im Rahmen von Studien.",
       "Volumentherapie: ab h 6 Albumin 100 ml je 1000 ml und FFP 1 je 1000 ml — auf der V1: h 6–8 Albumin nur erwägen, FFP nur nach Gerinnung.") },
   /* ---- h 8–24 ---- */
-  { k: "y_alb", ph: "h8", at: 8, t: (x) => { const r = valAt(rateHist(x.p), x.c.now); return `Albumin 20 % per Perfusor: 100 ml je 1000 ml Volumen${r ? ` ≈ <b>${r0(numDE(r.v) / 10)} ml/h</b>` : ""} — Ziel-Albumin 2,2–2,7 g/dl`; },
+  { k: "y_alb", ph: "h8", at: 8, t: (x) => { const r = valAt(rateHist(x.p), x.c.now); return `Albumin-20-%-Perfusor starten${r ? ` ≈ <b>${r0(numDE(r.v) / 10)} ml/h</b>` : ""} (100 ml je 1000 ml Volumen)`; },
     run: (x) => { const a = valAt(albHist(x.p), x.c.now); return a && numDE(a.v) ? `läuft ${r0(numDE(a.v))} ml/h` : ""; }, inp: [{ lab: "Albumin", u: "g/dl" }],
     info: I("Hypoalbuminämie senkt den onkotischen Druck und verstärkt das Ödem auch in nicht verbrannter Haut; nach Abklingen des Lecks hält Albumin Volumen im Gefäß und spart Kristalloid.", "Navickis 2016 (Meta-Analyse): Gesamtletalität nicht signifikant gesenkt, nach Ausschluss von Studien mit hohem Bias-Risiko weniger Letalität und Kompartmentsyndrome — Evidenz begrenzt. ABA 2024: Albumin in den ersten 24 h erwägen (bedingte Empfehlung).", "Volumentherapie: Albumin 20 % Perfusor 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl (Labor in g/dl).") },
-  { k: "y_na", ph: "h8", at: 8, t: () => "Natrium > 139 → Ringer-Azetat auf Deltajonin BG (1/3) umstellen (Ziel 135–139)", inp: [{ lab: "Na+", u: "mmol/l" }],
-    info: I("Verdunstung über die Wundfläche (freies Wasser) und Natriumlast der Lösungen treiben das Natrium hoch; Hypernatriämie ist bei Verbrannten mit höherer Letalität assoziiert.", null, "Volumentherapie/Natriumstörungen (Dok-ID 1620146): bei Na⁺ > 139 Eindrittelelektrolytlösung — Deltajonin BG (1/3) (Na 45/K 25), nicht Deltajonin 140/4; im Haus laktatfreie Lösungen.") },
-  { k: "y_ivy", ph: "h8", at: 8, t: (x) => `Ivy-Index im Blick: 250 ml/kg = <b>${x.c.ivy ? tsd(x.c.ivy) + " ml" : "___"}</b> in 24 h → Gefahr abdominelles Kompartmentsyndrom`,
-    run: (x) => { const v = x.c.u != null ? vol(x.p, x.c, Math.min(x.c.now, x.c.u + 24 * H)) : null; return v && x.c.ivy ? `aktuell ${fN(v.ges / x.c.ivy * 100, 0)} %` : ""; },
-    info: I(null, "Ivy et al. (J Trauma 2000): Verbrannte mit > 250 ml/kg in den ersten 24 h hatten ein hohes Risiko für ein abdominelles Kompartmentsyndrom.") },
-  { k: "y_ck", ph: "h8", at: 8, cond: (x) => x.c.strom, t: () => "Strom: CK/Myoglobin seriell alle 6 h bis fallend — CK > 5.000 U/l bzw. Myoglobin > 4.000 ng/ml → SOP Crush", inp: [{ lab: "CK", u: "U/l" }, { lab: "Myoglobin", u: "µg/l" }],
-    info: I("Myoglobin ist klein und renal filtriert, präzipitiert bei saurem Urin in den Tubuli und wirkt direkt nephrotoxisch. CK steigt verzögert und eignet sich zur Verlaufskontrolle.", "McMahon et al. (JAMA Intern Med 2013): Score für Nierenersatz/Tod bei Rhabdomyolyse.", "Crush-Syndrom: CK-Peak 24–36 h, > 5.000 U/l ANV-Risiko; Myoglobin-Peak < 24 h, > 4.000 ng/ml; McMahon ≥ 6 protektive Dialyse erwägen.") },
   { k: "y_auge", ph: "h8", at: 8, cond: (x) => x.c.gesicht, t: () => "Gesichtsbeteiligung: Augen untersuchen (Fluoreszein, Lidschluss), Augenkonsil",
     info: I("Lidödem und spätere Lidretraktion führen zur Expositionskeratopathie; Hitze oder Chemikalien können eine Limbusischämie verursachen — früh erkennen, bevor das Ödem die Untersuchung unmöglich macht.") },
-  { k: "y_bz", ph: "h8", at: 8, t: () => "BZ-Ziel 80–150 mg/dl (max. 180) — Insulin nach Schema",
-    info: I("Stresshyperglykämie durch Katecholamine, Cortisol und Glukagon plus periphere Insulinresistenz; Hyperglykämie verschlechtert Infektabwehr und Transplantateinheilung.", null, "Ernährung und Abführen: BZ-Ziel 80–150 mg/dl, maximal 180.") },
-  { k: "y_lab", ph: "h8", at: 12, t: () => "Laborkontrolle: Hb/Hk, Na/K, Laktat, CK, Albumin" },
+  { k: "y_lab", ph: "h8", at: 12, t: () => "Laborkontrolle: Hb/Hk, Na/K, Laktat, CK, Albumin", inp: [{ lab: "Na+", u: "mmol/l" }, { lab: "Albumin", u: "g/dl" }, { lab: "Hb", u: "g/dl" }] },
   { k: "y_enox", ph: "h8", at: 12, t: () => "Enoxaparin beginnen — Anti-Xa 4 h nach der 3. Gabe",
     info: I("Verbrannte sind hyperkoagulabel (Immobilität, Entzündung, ZVK); gleichzeitig erhöhen Verteilungsvolumen und renale Hyperfiltration den Bedarf.", "Lin et al. (J Trauma 2011): Standarddosen erreichen bei Verbrannten oft keine ausreichenden Anti-Xa-Spiegel — Dosis spiegelgesteuert anpassen.") },
   { k: "y_op", ph: "h8", at: 12, t: () => "OP-Plan: Exzision ≤ 72 h — Fläche, EK-Bereitstellung (1 EK je 2,5 % Fläche), TXA, Aufklärung",
     info: I("Nekrotisches Gewebe ist Quelle von Mediatoren und Keimen und treibt den Hypermetabolismus; frühe Deckung verkürzt die Phase der offenen Wunde.", "Ong et al. (Burns 2006, Meta-Analyse): Frühexzision senkt Letalität (Patienten ohne IHT) und Liegedauer.", "Transfusionsregime (Dok-ID 1619884): Blutverlust ≈ 0,8 ml/cm², 1 EK je 2,5 % Fläche; TXA (Dok-ID 1620256) bei erwartetem Verlust > 7 ml/kg.") },
   /* ---- h 24–48 ---- */
-  { k: "g_rate", ph: "h24", at: 24, t: () => "Rate schrittweise senken (−10 % bei erfüllten Zielen) — Schockphase endet h 48",
-    info: I("Das Kapillarleck schließt sich nach etwa 18–24 h; läuft die Startrate weiter, entsteht Fluid Creep mit Ödem, Kompartment und Lungenversagen.", "Saffle (J Burn Care Res 2007): Volumina liegen heute regelhaft über Parkland — assoziiert mit abdominellem Kompartmentsyndrom und ARDS.") },
-  { k: "g_mb", ph: "h24", at: 24, t: (x) => { const k = x.c.ibw ? 24 * x.c.ibw : null; return `Ernährung Tag 2: 75 % von 24 kcal/kg Idealgewicht${k ? ` = <b>${r0(0.75 * k)} kcal ≈ ${r0(0.75 * k / 1.5 / 24)} ml/h</b> Fresubin HPenergy` : " (Größe/Geschlecht fehlt)"}; Zink, Selen, Vitamin E, Propranolol`; },
+  { k: "g_mb", ph: "h24", at: 24, t: () => "Metabolisches Bündel ansetzen: Zink, Selen, Vitamin E, Propranolol (Dosierung im (i))",
     info: I("Hypermetabolismus ab > 20 % VKOF: Grundumsatz bis 2,5-fach, katecholamingetrieben, anhaltend bis zu Jahren (Jeschke, PLoS One 2011); Muskelabbau ist die Folge, wenn nicht gegengesteuert wird.",
       "Propranolol: Herndon et al. (NEJM 2001, Kinder) senkt Ruheumsatz und Katabolie; Ali et al. (Crit Care 2015, Erwachsene) schnellere Wundheilung. Spurenelemente: Berger et al. (Am J Clin Nutr 2007) weniger Infektionen. Glutamin: RE-ENERGIZE (Heyland, NEJM 2022) ohne Nutzen — nicht routinemäßig.",
       "Ernährung: Zink 2 × 30 mg/d i.v. (Spiegel), Selen 300–500 µg/d i.v. 14 Tage (nicht bei Sepsis), Vitamin E 300 IE/d ab > 10 % VKOF, Propranolol 2–3 mg/kg/d bzw. 2 × 40 mg.") },
   { k: "g_phys", ph: "h24", at: 24, t: () => "Antikontrakturlagerung, Schienen, Physio/Ergo etabliert",
     info: I("Kontrakturen beginnen früh in der Schonhaltung (Beugestellung); Lagerung in Gegenrichtung ab Tag 1 verhindert spätere Rekonstruktionen.") },
-  { k: "g_iht", ph: "h24", at: 24, cond: (x) => x.c.intub && x.c.inhal, t: () => "IHT intubiert: Extubationsbereitschaft täglich prüfen (Cuff-Leak-Test) — Ödem rückläufig nach 24–120 h",
-    info: I(null, null, "Inhalationstrauma: Beatmung VT 6 ml/kg, hoher PEEP; Ödem rückläufig nach 24–120 h.") },
   { k: "g_angeh", ph: "h24", at: 24, t: (x) => `Angehörigengespräch geführt (Ablauf, Prognose, Ansprechpartner)${x.c.vk > 40 && x.c.absi ? ` — ABSI ${x.c.absi}, Überleben ${x.c.absiTxt}` : ""}`,
     info: I(null, "ABSI (Tobiasen 1982) und revidierter Baux-Score schätzen die Prognose, begründen aber allein keine Therapiebegrenzung.") },
   { k: "g_zug", ph: "h24", at: 24, cond: (x) => (x.p.devices || []).some((d) => !d.ende && d.burn), t: () => "Zugänge durch Brandhaut: Wechsel planen",
     info: I("Katheter durch verbrannte Haut sind hochgradig infektionsgefährdet (Besiedlung der Wunde).") },
   { k: "g_vw", ph: "h24", at: 30, t: () => "Verbandswechsel planen, Analgosedierung dafür festlegen" },
-  { k: "g_basis", ph: "h24", at: 40, t: () => "Übergang planen: ab h 48 Volumen bedarfsorientiert, PiCCO 1 × pro Schicht" },
   /* ---- Tag 3 ---- */
-  { k: "t3_bil", ph: "t3", at: 48, t: () => "Schockphase beendet: Volumen bedarfsorientiert, Bilanzziel festlegen (Rückresorption der Ödeme)",
+  { k: "t3_bil", ph: "t3", at: 48, t: () => "Bilanzziel für die Rückresorptionsphase festlegen",
     info: I("Ab Tag 2–3 strömt das Ödem zurück ins Gefäß (Rückresorption): Gefahr von Hypervolämie und Lungenödem (ELWI), zugleich hohe Verdunstungsverluste über die Wunde → Hypernatriämie.") },
-  { k: "t3_ern", ph: "t3", at: 48, t: (x) => { const k = x.c.ibw ? 24 * x.c.ibw : null; return `Ernährung 100 %${k ? `: <b>${r0(k)} kcal/d ≈ ${r0(k / 1.5 / 24)} ml/h</b>` : ""} Fresubin HPenergy (Tag 3–5 nach Toleranz), Protein 1,5 g/kg`; },
-    info: I(null, null, "Ernährung: Tag 3–5 100 % nach Toleranz, sonst maximal enteral + parenteral ergänzen; Reflux > 400 ml → MCP, anhaltend Erythromycin.") },
   { k: "t3_exz", ph: "t3", at: 48, to: 72, t: () => "Erste Exzision bis h 72 erfolgt oder terminiert (Gerinnung: pH ≥ 7,2, Temp ≥ 36 °C, Ca²⁺ ≥ 1,1, Fibrinogen ≥ 1,5–2 g/l)",
     info: I(null, "Ong et al. 2006: Frühexzision senkt Letalität und Liegedauer.", "Ernährung/metabolisches Bündel: Exzision Beginn ≤ 72 h, komplett ≤ 7 Tage; Transfusionsregime: Gerinnungsvoraussetzungen.") },
   { k: "t3_axa", ph: "t3", at: 48, t: () => "Anti-Xa nach der 3. Enoxaparin-Gabe kontrolliert, Dosis angepasst", inp: [{ lab: "Anti-Xa", u: "IE/ml" }] },
-  { k: "t3_elyt", ph: "t3", at: 48, t: () => "Phosphat, Magnesium, Kalium engmaschig; Natrium (Verdunstung → Hypernatriämie)",
-    info: I("Mit Ernährungsaufbau und anaboler Phase verschiebt sich Phosphat nach intrazellulär (Refeeding-Risiko); Verdunstung über die Wunde kostet freies Wasser.") },
-  { k: "t3_sepsis", ph: "t3", at: 48, t: () => "Ab Tag 3 täglich Sepsis-Trigger (ABA): Temp > 39 / < 36,5 °C, HF > 110, AF > 25, Thrombozyten ↓, Insulinbedarf ↑, Nahrungsintoleranz",
-    info: I("Der Hypermetabolismus hebt Temperatur, Herz- und Atemfrequenz dauerhaft an — SIRS-Kriterien erfüllt fast jeder Verbrannte und taugen deshalb nicht.", "Greenhalgh et al. (J Burn Care Res 2007, ABA-Konsensus): eigene Trigger; Sepsis bei ≥ 3 Triggern plus Infektnachweis oder klinischem Ansprechen auf Antibiotika.") },
   { k: "t3_stuhl", ph: "t3", at: 60, to: 72, t: () => "Stuhlgang? Spätestens alle 3 Tage forcieren (Macrogol, Laxoberal; Lactulose nur streng indiziert)", info: I(null, null, "Ernährung und Abführen: unter Opioiden Macrogol 1–3 Btl./d, ggf. Naloxon p.o.; Lactulose nur streng indiziert.") },
-  { k: "t3_picco", ph: "t3", at: 48, cond: (x) => piccoAktiv(x.p), t: () => "PiCCO 1 × pro Schicht (ab h 48), ELWI beachten" },
   /* ---- Tag 4 ---- */
   { k: "t4_prop", ph: "t4", at: 72, to: 120, cond: (x) => x.c.intub, t: () => "Propofol? Maximal 5 Tage (PRIS) — Umstellung bis Tag 5 planen (z. B. Isofluran-Sedierung)",
     info: I("Propofol-Infusionssyndrom: gestörte mitochondriale Fettsäureoxidation → Laktatazidose, Rhabdomyolyse, Hypertriglyzeridämie, Herzversagen; Risiko steigt mit Dosis und Dauer.", null, "Analgesie, Sedierung, Delir: Propofol max. 5 Tage.") },
-  { k: "t4_hb", ph: "t4", at: 72, t: () => "OP- und Verbandswechsel-Serie: Hb-Ziel 7–9 g/dl, EK:FFP 1:1 bis 1:2 bei Blutung, TXA bei erwartetem Verlust",
-    info: I(null, "TRIBE (Palmieri, Ann Surg 2017): restriktive Transfusion (Hb 7–8) bei großen Verbrennungen ohne Nachteil bei Infektionen und Letalität, weniger Blutprodukte.", "Transfusionsregime: Hb-Ziel 7–9 g/dl.") },
   { k: "t4_ern", ph: "t4", at: 72, t: () => "Kalorienziel erreicht? Unter 80 % → Cernevit + Addel Trace, parenteral ergänzen" },
-  { k: "t4_wean", ph: "t4", at: 72, cond: (x) => x.c.intub, t: () => "Weaning: täglich Aufwach- und Spontanatmungsversuch; Tracheotomie bei absehbarer Langzeitbeatmung" },
+  { k: "t4_tra", ph: "t4", at: 72, cond: (x) => x.c.intub, t: () => "Langzeitbeatmung absehbar? Tracheotomie besprechen" },
   /* ---- Tag 5 ---- */
   { k: "t5_stuhl", ph: "t5", at: 96, t: () => "Stuhlgang erneut prüfen (alle 3 Tage)" },
   { k: "t5_dev", ph: "t5", at: 96, t: () => "Devices: Liegedauer und Lage durch Brandhaut prüfen — Evaluation spätestens nach 7 Tagen" },
@@ -1036,6 +1110,76 @@ const ITEMS = [
   { k: "t5_reha", ph: "t5", at: 96, t: () => "Sozialdienst, psychologische Betreuung, BG-/Reha-Verfahren anstoßen" }
 ];
 const IT_BY = Object.fromEntries(ITEMS.map((x) => [x.k, x]));
+/* Daueranweisungen: gelten im Zeitfenster (h ab Unfall), werden angezeigt, aber nicht abgehakt */
+const ernTxt = (c) => {
+  const k = c.ibw ? 24 * c.ibw : null;
+  const ml = (f) => k ? ` = <b>${r0(f * k)} kcal ≈ ${r0(f * k / 1.5 / 24)} ml/h</b>` : " (Größe/Geschlecht fehlt)";
+  if (c.tag == null || c.tag <= 1) return "Ernährung Tag 1: <b>20 ml/h</b> Fresubin HPenergy — Start spätestens 24 h nach Aufnahme";
+  if (c.tag === 2) return `Ernährung Tag 2: 75 % von 24 kcal/kg Idealgewicht${ml(0.75)} Fresubin HPenergy`;
+  return `Ernährung Tag ${c.tag}: 100 %${ml(1)} Fresubin HPenergy nach Toleranz, Protein 1,5 g/kg`;
+};
+const STAND = [
+  { k: "z_diu", from: 0, to: 120, t: (x) => `Zieldiurese <b>${zielTxt(x.c)}</b>${x.c.h != null && x.c.h >= 48 ? " (nach Schockphase)" : ""}`,
+    info: I("Die Niere reagiert früh auf Minderperfusion (RAAS, ADH) — die Stundendiurese ist in der Schockphase der einzige kontinuierlich verfügbare Endorganparameter. Verfälscht durch Diuretika, Glukosurie, Myoglobin, Alkohol und osmotisch wirksame Substanzen.",
+      "Klassisch 0,5 ml/kg/h bzw. 30–50 ml/h (ABA). Mehr Diurese ist kein Qualitätsmerkmal, sondern ein Zeichen von Überinfusion (Fluid Creep). Die V1-SOP setzt die Untergrenze bewusst bei > 0,3 ml/kg/h — es gilt die SOP.",
+      "Volumentherapie: > 0,3 ml/kg/h in der Schockphase; bei Myoglobinurie Crush-Syndrom (Dok-ID 1620035): 200–300 ml/h bzw. 1,5–2 ml/kg/h. Nach h 48 Intensiv-Standard 0,5 ml/kg/h.") },
+  { k: "z_reeval", from: 0, to: 72, t: () => "Reevaluation stündlich nach Algorithmus (Diurese, HI, ScvO2, Laktat, Rekap) — spätestens alle 2 h",
+    info: I("Das Kapillarleck ist dynamisch — eine feste Formelrate über 24 h führt entweder zu Unter- oder, häufiger, zu Überinfusion.",
+      "Fluid Creep (Pruitt, J Trauma 2000; Saffle, J Burn Care Res 2007): Volumina über 6 ml/kg/% VKOF gehen mit abdominellem und Extremitäten-Kompartmentsyndrom, ARDS und höherer Letalität einher. Gegenmittel ist konsequentes Heruntertitrieren.",
+      "Volumentherapie: erstmals nach 60 min, dann stündlich; Algorithmus Volumenmanagement (Abb. 1) Grundlage bis h 72.") },
+  { k: "z_temp", from: 0, to: 120, t: () => "Körpertemperatur ≥ 36 °C — keine Kühlung",
+    info: I("Ohne Hautbarriere hohe Verdunstungs- und Strahlungsverluste. Hypothermie verschlechtert Gerinnung (Enzymkinetik, Thrombozytenfunktion) und erhöht die Letalität.", "AWMF S2k 044-001 (2025): keine Kühlung bei > 10 % VKOF, Normothermie sichern.") },
+  { k: "z_lage", from: 0, to: 120, t: () => "Lagerung: Oberkörper hoch, verbrannte Extremitäten hoch",
+    info: I("Hochlagerung senkt den hydrostatischen Druck im Kapillarbett und damit das Ödem an Gesicht/Atemweg und Extremitäten.") },
+  { k: "z_tubus", from: 0, to: 120, cond: (x) => x.c.intub, t: () => "Tubus <b>nicht kürzen</b> — das Atemwegsödem nimmt bis 24–48 h zu",
+    info: I("Thermischer Schaden der oberen Atemwege plus generalisiertes Kapillarleck plus Volumengabe ergeben ein supraglottisches Ödem mit Maximum nach 24–48 h. Ein gekürzter Tubus lässt sich dann nicht mehr korrigieren, eine Reintubation kann unmöglich werden.", null,
+      "Inhalationstrauma (Dok-ID 1620224): Ödem rückläufig nach 24–120 h.") },
+  { k: "z_aw", from: 0, to: 48, cond: (x) => !x.c.intub && (x.c.russ || x.c.gesicht), t: () => "Atemweg engmaschig: Stridor, Heiserkeit, zunehmendes Gesichtsödem → früh sichern",
+    info: I("Das supraglottische Ödem erreicht sein Maximum nach 24–48 h — eine zunächst sichere Situation kann sich unter Volumengabe verschlechtern.", null, "Inhalationstrauma (Dok-ID 1620224): Atemweg früh sichern bei drohender Verlegung; nicht jeder muss intubiert werden.") },
+  { k: "z_extub", from: 24, to: 120, cond: (x) => x.c.intub && x.c.russ, t: () => "Extubationsbereitschaft täglich prüfen (Cuff-Leak-Test) — Ödem rückläufig nach 24–120 h",
+    info: I(null, null, "Inhalationstrauma: Beatmung VT 6 ml/kg, hoher PEEP; Ödem rückläufig nach 24–120 h.") },
+  { k: "z_wean", from: 72, to: 120, cond: (x) => x.c.intub, t: () => "Weaning: täglich Aufwach- und Spontanatmungsversuch" },
+  { k: "z_strom", from: 0, to: 72, cond: (x) => x.c.strom, t: () => "Strom: EKG-Monitoring, Kompartimente engmaschig — die Hautläsion sagt nichts über die Tiefe; Urinfarbe/Myoglobin",
+    info: I("Strom fließt bevorzugt entlang Nerven, Gefäßen und Muskulatur; die Hitze entsteht in der Tiefe am Knochen (hoher Widerstand) → Muskelnekrose unter intakter Haut, Myoglobin, Kompartment, Rhythmusstörungen.",
+      "AWMF S2k 044-001 (2025): EKG-Monitoring ≥ 24 h bei initialem Kreislaufstillstand, Bewusstlosigkeit oder pathologischem EKG.",
+      "Crush-Syndrom: Myoglobin-Peak < 24 h, CK-Peak 24–36 h.") },
+  { k: "z_ck", from: 0, to: 72, cond: (x) => x.c.strom, t: () => "CK/Myoglobin alle 6 h bis fallend — CK > 5.000 U/l bzw. Myoglobin > 4.000 ng/ml → SOP Crush",
+    info: I("Myoglobin ist klein und renal filtriert, präzipitiert bei saurem Urin in den Tubuli und wirkt direkt nephrotoxisch. CK steigt verzögert und eignet sich zur Verlaufskontrolle.", "McMahon et al. (JAMA Intern Med 2013): Score für Nierenersatz/Tod bei Rhabdomyolyse.", "Crush-Syndrom: CK-Peak 24–36 h, > 5.000 U/l ANV-Risiko; Myoglobin-Peak < 24 h, > 4.000 ng/ml; McMahon ≥ 6 protektive Dialyse erwägen.") },
+  { k: "z_iap", from: 0, to: 48, cond: (x) => x.c.vk > 20 || x.c.inhal, t: () => "IAP (Blasendruck) alle 4 h — ≥ 12 mmHg intraabdominelle Hypertonie, > 20 mmHg mit Organdysfunktion = abdominelles Kompartmentsyndrom",
+    info: I("Darmwand- und Mesenterialödem plus Aszites unter hohen Volumina → intraabdominelle Hypertonie bis zum abdominellen Kompartmentsyndrom (neue Organdysfunktion: Oligurie, Beatmungsdruck ↑).",
+      "Leitlinie der World Society of the Abdominal Compartment Syndrome (Kirkpatrick, Intensive Care Med 2013): Definitionen und Messung.", "Volumentherapie: IAP alle 4 h.") },
+  { k: "z_ivy", from: 0, to: 24, t: (x) => `Ivy-Index: 250 ml/kg = <b>${x.c.ivy ? tsd(x.c.ivy) + " ml" : "___"}</b> in 24 h — darüber hohes Risiko für ein abdominelles Kompartmentsyndrom`,
+    run: (x) => { const v = x.c.u != null ? vol(x.p, x.c, Math.min(x.c.now, x.c.u + 24 * H)) : null; return v && x.c.ivy ? `aktuell ${fN(v.ges / x.c.ivy * 100, 0)} %` : ""; },
+    info: I(null, "Ivy et al. (J Trauma 2000): Verbrannte mit > 250 ml/kg in den ersten 24 h hatten ein hohes Risiko für ein abdominelles Kompartmentsyndrom.") },
+  { k: "z_rate", from: 24, to: 48, t: (x) => `Rate schrittweise senken (−10 % bei erfüllten Zielen) — Schockphase endet ${x.c.u != null ? fRel(atMs(x.c, 48)) : "h 48"}`,
+    info: I("Das Kapillarleck schließt sich nach etwa 18–24 h; läuft die Startrate weiter, entsteht Fluid Creep mit Ödem, Kompartment und Lungenversagen.", "Saffle (J Burn Care Res 2007): Volumina liegen heute regelhaft über Parkland — assoziiert mit abdominellem Kompartmentsyndrom und ARDS.") },
+  { k: "z_bedarf", from: 48, to: 120, t: () => "Volumen bedarfsorientiert — Rückresorption der Ödeme: Hypervolämie und Lungenwasser (ELWI) beachten, Bilanz täglich",
+    info: I("Ab Tag 2–3 strömt das Ödem zurück ins Gefäß (Rückresorption): Gefahr von Hypervolämie und Lungenödem (ELWI), zugleich hohe Verdunstungsverluste über die Wunde → Hypernatriämie.") },
+  { k: "z_picco", from: 48, to: 120, cond: (x) => piccoAktiv(x.p), t: () => "PiCCO 1 × pro Schicht, ELWI beachten" },
+  { k: "z_alb", from: 8, to: 120, t: (x) => x.c.h != null && x.c.h < 48 ? "Albumin 20 %: 100 ml je 1000 ml Volumen — Ziel-Albumin <b>2,2–2,7 g/dl</b>" : "Ziel-Albumin <b>2,2–2,7 g/dl</b>",
+    info: I("Hypoalbuminämie senkt den onkotischen Druck und verstärkt das Ödem auch in nicht verbrannter Haut; nach Abklingen des Lecks hält Albumin Volumen im Gefäß und spart Kristalloid.", "Navickis 2016 (Meta-Analyse): Gesamtletalität nicht signifikant gesenkt, nach Ausschluss von Studien mit hohem Bias-Risiko weniger Letalität und Kompartmentsyndrome — Evidenz begrenzt. ABA 2024: Albumin in den ersten 24 h erwägen (bedingte Empfehlung).", "Volumentherapie: Albumin 20 % Perfusor 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl (Labor in g/dl).") },
+  { k: "z_na", from: 0, to: 120, t: () => "Ziel-Natrium <b>135–139 mmol/l</b> — > 139 → Deltajonin BG (1/3) statt Ringer-Azetat",
+    info: I("Verdunstung über die Wundfläche (freies Wasser) und Natriumlast der Lösungen treiben das Natrium hoch; Hypernatriämie ist bei Verbrannten mit höherer Letalität assoziiert.", null, "Volumentherapie/Natriumstörungen (Dok-ID 1620146): bei Na⁺ > 139 Eindrittelelektrolytlösung — Deltajonin BG (1/3) (Na 45/K 25), nicht Deltajonin 140/4; im Haus laktatfreie Lösungen.") },
+  { k: "z_elyt", from: 48, to: 120, t: () => "Phosphat, Magnesium, Kalium engmaschig (Ernährungsaufbau, Refeeding)",
+    info: I("Mit Ernährungsaufbau und anaboler Phase verschiebt sich Phosphat nach intrazellulär (Refeeding-Risiko); Verdunstung über die Wunde kostet freies Wasser.") },
+  { k: "z_bz", from: 0, to: 120, t: () => "BZ-Ziel <b>80–150 mg/dl</b> (max. 180) — Insulin nach Schema",
+    info: I("Stresshyperglykämie durch Katecholamine, Cortisol und Glukagon plus periphere Insulinresistenz; Hyperglykämie verschlechtert Infektabwehr und Transplantateinheilung.", null, "Ernährung und Abführen: BZ-Ziel 80–150 mg/dl, maximal 180.") },
+  { k: "z_ern", from: 0, to: 120, t: (x) => ernTxt(x.c),
+    info: I("Frühe enterale Ernährung erhält die Mukosabarriere (weniger Translokation), dämpft den Hypermetabolismus und beugt dem Curling-Ulkus vor; der Bedarf steigt ab > 20 % VKOF stark an.",
+      "ESPEN-Leitlinie Verbrennung (Rousseau, Clin Nutr 2013): Beginn innerhalb von 12 h. Mosier et al. (J Burn Care Res 2011): frühe enterale Ernährung mit weniger Infektionen assoziiert.",
+      "Ernährung: Tag 1 20 ml/h, Tag 2 75 %, Tag 3–5 100 % von 24 kcal/kg Idealgewicht nach Toleranz (Fresubin HPenergy 1,5 kcal/ml), Protein 1,5 g/kg; Reflux > 400 ml → MCP, anhaltend Erythromycin.") },
+  { k: "z_hb", from: 48, to: 120, t: () => "Hb-Ziel <b>7–9 g/dl</b> — bei Blutung EK:FFP 1:1 bis 1:2, TXA bei erwartetem Verlust",
+    info: I(null, "TRIBE (Palmieri, Ann Surg 2017): restriktive Transfusion (Hb 7–8) bei großen Verbrennungen ohne Nachteil bei Infektionen und Letalität, weniger Blutprodukte.", "Transfusionsregime: Hb-Ziel 7–9 g/dl.") },
+  { k: "z_sepsis", from: 48, to: 120, t: () => "Täglich Sepsis-Trigger (ABA): Temp > 39 / < 36,5 °C, HF > 110, AF > 25, Thrombozyten ↓, Insulinbedarf ↑, Nahrungsintoleranz",
+    info: I("Der Hypermetabolismus hebt Temperatur, Herz- und Atemfrequenz dauerhaft an — SIRS-Kriterien erfüllt fast jeder Verbrannte und taugen deshalb nicht.", "Greenhalgh et al. (J Burn Care Res 2007, ABA-Konsensus): eigene Trigger; Sepsis bei ≥ 3 Triggern plus Infektnachweis oder klinischem Ansprechen auf Antibiotika.") }
+];
+/* aktuell geltende Daueranweisungen (ohne Unfallzeit: alles, was ab h 0 gilt) */
+const ST_BY = Object.fromEntries(STAND.map((x) => [x.k, x]));
+function standNow(p, c) {
+  const x = { p, c };
+  const h = c.h == null ? 0 : c.h;
+  return STAND.filter((s) => (!s.cond || s.cond(x)) && h >= s.from && h < s.to);
+}
 /* Inhalations-Intoxikation — gleiche Schlüssel wie BurnICU-Checkliste 48 h */
 const C48_EXPO = [["rg_raum", "Brand in geschlossenem Raum, Kunststoffe"], ["rg_russ", "Ruß Mund/Nase/Sputum, Gesichtsverbrennung"], ["rg_bew", "Bewusstseinsstörung, Krampfanfall"]];
 const C48_CO_RG = [["rg_cohb", "COHb ↑ (Nichtraucher > 3 %, Raucher > 10 %)"], ["rg_spo2", "SpO2 normal trotz Klinik (misst COHb mit)"], ["rg_cosy", "Kopfschmerz, Übelkeit, Schwindel, Angina pectoris"]];
@@ -1114,7 +1258,7 @@ function laufend(p, c) {
   const L = [];
   const now = c.now;
   const rd = reevalDue(p, c);
-  if (rd) L.push({ k: "reeval", t: "Reevaluation (Algorithmus)", due: rd.due, over: rd.over, st: now >= rd.over ? "o" : now >= rd.due - 5 * MIN ? "d" : "", info: `${rd.last ? "zuletzt " + fRel(rd.last) + " · " : ""}stündlich, spätestens ${fRel(rd.over)}`, inp: "reeval" });
+  if (rd) L.push({ k: "reeval", t: "Reevaluation", due: rd.due, over: rd.over, st: now >= rd.over ? "o" : now >= rd.due - 5 * MIN ? "d" : "", info: `${rd.last ? "zuletzt " + fRel(rd.last) + " · " : ""}stündlich, spätestens ${fRel(rd.over)}`, inp: "reeval" });
   if (c.schock) {
     const di = diuInfo(p);
     const nx = di.lastE ? hourRound(di.lastE.t) + H : hourFloor(now);
@@ -1339,7 +1483,7 @@ function vHeader(pats, cur) {
   return `<header class="top"><div class="wrap toprow">
     <div class="brand"><img src="icons/icon-192.png" alt=""><div><b>LUminate</b><span>Verbrennung ≥ 20 % · Tag 0–5</span></div></div>
     <nav class="pats">${chips}<button class="btn sm" data-act="dlg" data-v="new">+ Patient</button></nav>
-    <div class="tright"><span class="clock">${fWDT(Date.now())}</span>${cur ? `<button class="btn" data-act="dlg" data-v="print">Drucken</button>` : ""}<button class="iconbtn" data-act="menu" aria-label="Menü">⋯</button></div>
+    <div class="tright"><span class="clock">${fWDT(Date.now())}</span>${cur ? `<button class="btn" data-act="dlg" data-v="print">Drucken / PDF</button>` : ""}<button class="iconbtn" data-act="menu" aria-label="Menü">⋯</button></div>
   </div></header>`;
 }
 function vEmpty(B) {
@@ -1372,8 +1516,8 @@ function vPatient(p) {
   if (c.h != null && c.h > 120) h += `<div class="banner i">Tag ${c.tag} — LUminate deckt Aufnahme bis Tag 5 ab. Weiter in BurnICU.</div>`;
   h += vJetzt(p, c, P, due);
   const nVol = P && P.main && P.main.lv !== "ok" && P.main.lv !== "i";
-  h += `<div class="tabs"><button data-act="tab" data-v="check" class="${UI.tab !== "vol" ? "on" : ""}">Checkliste${due.length ? `<span class="cnt">${due.length}</span>` : ""}</button><button data-act="tab" data-v="vol" class="${UI.tab === "vol" ? "on" : ""}">Volumentherapie${nVol ? '<span class="cnt">!</span>' : ""}</button></div>`;
-  h += UI.tab === "vol" ? vVol(p, c, P) : vCheck(p, c);
+  h += `<div class="tabs"><button data-act="tab" data-v="check" class="${UI.tab !== "vol" && UI.tab !== "proto" ? "on" : ""}">Checkliste${due.length ? `<span class="cnt">${due.length}</span>` : ""}</button><button data-act="tab" data-v="vol" class="${UI.tab === "vol" ? "on" : ""}">Volumentherapie${nVol ? '<span class="cnt">!</span>' : ""}</button><button data-act="tab" data-v="proto" class="${UI.tab === "proto" ? "on" : ""}">Protokoll</button></div>`;
+  h += UI.tab === "vol" ? vVol(p, c, P) : UI.tab === "proto" ? vProto(p, c) : vCheck(p, c);
   return h;
 }
 function vPatLine(p, c) {
@@ -1406,6 +1550,7 @@ function vJetzt(p, c, P, due) {
   if (c.u == null) btn = `<button class="btn pri" data-act="dlg" data-v="stamm">eintragen</button>`;
   else if (m.algo && algoOk) btn = `<div class="jb"><button class="btn pri" data-act="algo">Algorithmus durchgehen</button>${m.neu ? `<button class="btn sm" data-act="setrate" data-v="${m.neu}">direkt ${r0(m.neu)} ml/h</button>` : ""}</div>`;
   else if (m.neu) btn = `<div class="jb"><button class="btn pri" data-act="setrate" data-v="${m.neu}">${r0(m.neu)} ml/h übernehmen</button>${algoOk ? `<button class="btn sm" data-act="algo">Algorithmus</button>` : ""}</div>`;
+  else if (m.hold && algoOk) btn = `<div class="jb"><button class="btn sm" data-act="algo">Algorithmus erneut</button></div>`;
   else if (algoOk) btn = `<div class="jb"><button class="btn pri" data-act="algo">Algorithmus durchgehen</button></div>`;
   const nudge = algoOk && UI.notif !== true && "Notification" in window ? `<div class="nudge">🔔 Browser-Erinnerungen sind aus — Reevaluation spätestens alle 2 h melden lassen <button class="btn sm" data-act="notif">einschalten</button>${Notification.permission === "denied" ? ' <span class="mut small">(im Browser blockiert — in den Website-Einstellungen erlauben)</span>' : ""}</div>` : "";
   const rows = [];
@@ -1433,9 +1578,23 @@ function vJetzt(p, c, P, due) {
 }
 
 /* ---------- Checkliste ---------- */
+const standBis = (c, s) => s.to >= 120 ? "bis Tag 5" : c.u != null ? "bis " + fRel(atMs(c, s.to)) : "bis h " + s.to;
+function vStand(p, c) {
+  const L = standNow(p, c);
+  if (!L.length) return "";
+  const open = UI.fold.gilt != null ? !UI.fold.gilt : true;
+  let h = `<div class="card ph stand" style="--pc:var(--navy)"><div class="ph-h" data-act="fold" data-k="gilt"><span class="fold">${open ? "▾" : "▸"}</span><h3>Gilt jetzt</h3><span class="tm">Ziele und Daueranweisungen</span><span class="cnt">${L.length}</span></div>`;
+  if (!open) return h + "</div>";
+  h += `<div class="st-l">${L.map((s) => {
+    const run = s.run ? s.run({ p, c }) : "";
+    return `<div class="st-r"><span class="st-x">${s.t({ p, c })}${run ? ` <span class="run">${run}</span>` : ""}</span><span class="st-w">${standBis(c, s)}</span>${s.info ? iBtn("z_" + s.k) : "<span></span>"}${s.info ? vInfo("z_" + s.k, s.info) : ""}</div>`;
+  }).join("")}</div>`;
+  return h + "</div>";
+}
 function vCheck(p, c) {
   const rel = intoxRelevant(p, c);
-  let h = rel ? vIntox(p, c) : "";
+  let h = vStand(p, c);
+  h += rel ? vIntox(p, c) : "";
   PHASES.forEach((ph) => { h += vPhase(p, c, ph); });
   if (!rel) h += vIntox(p, c);
   h += vNicht();
@@ -1589,7 +1748,7 @@ function vStatus(p, c, P) {
     ${c.h >= 6 || alb ? `<span>Albumin 20 % <b>${alb ? r0(alb) + " ml/h" : "—"}</b>${iBtn("v_alb")}</span>` : ""}
     <span>seit Unfall <b>${v ? tsd(v.ges) + " ml" : "—"}</b>${iBtn("v_vol")}</span>
     <span class="${ivyP >= 100 || mk > 6 ? "bad" : ivyP >= 80 ? "warn" : ""}">${c.h >= 24 ? "h 0–24: " : ""}<b>${mk != null ? fN(mk, 1) : "—"}</b> ml/kg/% VKOF · Ivy <b>${ivyP != null ? fN(ivyP, 0) + " %" : "—"}</b>${iBtn("v_ivy")}</span>
-  </div>${vInfo("v_rot", IT_BY.s_rot.info)}${vInfo("v_alb", IT_BY.y_alb.info)}${vInfo("v_vol", I("Referenz = Rule of 10 × Stunden ab Unfall ist nur eine Linie zum Vergleich: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: über 6 ml/kg/% VKOF in 24 h häufiger Kompartmentsyndrome und ARDS.", "Volumentherapie: Ivy-Index > 250 ml/kg → hohes Risiko."))}${vInfo("v_ivy", IT_BY.y_ivy.info)}`;
+  </div>${vInfo("v_rot", IT_BY.s_rot.info)}${vInfo("v_alb", IT_BY.y_alb.info)}${vInfo("v_vol", I("Referenz = Rule of 10 × Stunden ab Unfall ist nur eine Linie zum Vergleich: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: über 6 ml/kg/% VKOF in 24 h häufiger Kompartmentsyndrome und ARDS.", "Volumentherapie: Ivy-Index > 250 ml/kg → hohes Risiko."))}${vInfo("v_ivy", ST_BY.z_ivy.info)}`;
   const q = (lbl, val, x, inp, extra) => `<div class="qb${x && x.st === false ? " n" : x && x.st === true ? " y" : ""}"><div class="ql">${lbl} ${mark(x)}</div><div class="qv">${val}</div>${inp}${extra || ""}</div>`;
   const diuV = lb ? `${r0(lb.v)} ml <small>${c.kg ? fN(lb.v / c.kg, 2) + " ml/kg/h" : ""} · ${fHH(lb.h - H)}–${fHH(lb.h)} Uhr</small>` : "—";
   let quick = `<div class="qgrid">
@@ -1698,7 +1857,9 @@ function vTable(p, c) {
       extra2 += `<td><input id="r_i_${S}" data-f="cell" data-kind="iap" data-s="${S}" data-col="i" data-i="${i}" inputmode="decimal" class="w4" value="${iv ? esc(iv.v) : ""}"${iv && numDE(iv.v) >= 12 ? ' style="color:var(--red);font-weight:700"' : ""}></td>`;
     }
     let dec = "";
-    if (bk && !bk.unk && E <= c.now + 10 * MIN && (E - c.u) / H < 48.5) {
+    const RV = reevalFor(p, E);
+    if (RV) dec = `<span class="dec ${RV.res === "up" ? "up" : RV.res === "down" ? "dn" : "al"}" title="Reevaluation ${fT(RV.t)}">${esc(RES_TXT[RV.res] || RV.res)}${RV.to != null ? " → " + r0(RV.to) : ""}</span>`;
+    else if (bk && !bk.unk && E <= c.now + 10 * MIN && (E - c.u) / H < 48.5) {
       const rAtE = valAt(rh, E - 1);
       const D = decisionAt(p, c, E, bk.v, rAtE ? numDE(rAtE.v) : null);
       if (D) {
@@ -1733,6 +1894,98 @@ function vTagesbilanz(p, c) {
   return h + `<div class="ph-b"><table class="tb2"><tr><th>Zeitraum</th><th>Kristalloid ml</th><th>Kolloid/Blut ml</th><th>gesamt ml</th><th>ml/kg/% VKOF</th><th>Diurese ml</th><th>Ø ml/kg/h</th></tr>${rows.join("")}</table></div></div>`;
 }
 
+/* ---------- Verlaufsprotokoll: alles Erfasste chronologisch, plus Notizen und Änderungen ---------- */
+const PK = { st: "Patient", vol: "Volumen", re: "Reevaluation", diu: "Diurese", lab: "Labor", mon: "Monitoring", chk: "Checkliste", iv: "Intoxikation", note: "Notiz", chg: "Änderung" };
+const PF = [["all", "Alles", null], ["vol", "Volumen & Reevaluation", ["vol", "re", "st"]], ["wert", "Diurese & Werte", ["diu", "lab", "mon"]], ["chk", "Checkliste", ["chk", "iv"]], ["note", "Notizen & Änderungen", ["note", "chg"]]];
+const ZL = { diu: "Diurese", hi: "HI", scv: "ScvO2", lak: "Laktat", rek: "Rekap" };
+const QL = { map: "MAP < 65–70", fcm: "Fluid Challenge (MAP-Pfad)", zvd: "ZVD > 5 / VCI < 50 %", fr: "Fluid Responsiveness", fc: "Fluid Challenge", dys: "kardiale Dysfunktion", ov: "Volumenüberladung" };
+function pathTxt(path) {
+  if (!path) return "";
+  if (path === "ohne Algorithmus") return "ohne Algorithmus dokumentiert";
+  const z = [], q = [];
+  path.split(" ").forEach((s) => { const [k, v] = s.split(":"); if (ZL[k]) z.push(ZL[k] + " " + (v === "ja" ? "✓" : v === "nein" ? "✗" : v === "na" ? "–" : "?")); else if (QL[k]) q.push(QL[k] + ": " + (v || "?")); });
+  return (z.length ? "Ziele: " + z.join(", ") : "") + (q.length ? " · " + q.join(" · ") : "");
+}
+function reevalTxt(x) {
+  const ch = x.to != null ? `${x.from != null ? r0(x.from) + " → " : ""}${r0(x.to)} ml/h` : "";
+  if (x.res === "up" || x.res === "down") return `${RES_TXT[x.res]}${ch ? ": " + ch : " vorgeschlagen, Rate unverändert"}`;
+  if (x.res === "dobu") return "Kardiale Dysfunktion: Dobutamin erwägen, Rate gehalten";
+  if (x.res === "ne") return "Nicht volumenreagibel bei MAP < 65–70: Noradrenalin, Rate gehalten";
+  if (x.res === "hold") return "Keine Volumenindikation, Rate gehalten";
+  if (x.res === "manuell") return ch ? "Abweichend vom Algorithmus: " + ch : "Abweichend vom Algorithmus, ohne Änderung";
+  return "Ohne Änderung" + (x.from != null ? ` (${r0(x.from)} ml/h)` : "");
+}
+function protoEvents(p, c) {
+  const E = [];
+  const add = (t, k, txt, o) => { const ms = tMs(t); if (ms != null && Number.isFinite(ms) && ms > 0) E.push({ t: ms, k, txt, ...(o || {}) }); };
+  const b = c.b, d = c.d;
+  if (c.u != null) add(c.u, "st", `Unfall${(d.mech || []).length ? " — " + MECH.filter((m) => d.mech.indexOf(m[0]) >= 0).map((m) => m[2]).join(", ") : ""}${c.vk != null ? " · " + fN(c.vk, 1) + " % VKOF" : ""}${c.inhal ? " · IHT" : ""}`);
+  if (b.gegeben && b.gegebenT) add(volT0(c).t0 || b.gegebenT, "vol", `Präklinik + Schockraum: ${tsd(numDE(b.gegeben))} ml`);
+  if (p.created) add(p.created, "st", "Patient angelegt");
+  let prev = null;
+  rateHist(p).forEach((x) => { const v = numDE(x.v); if (x.t !== EPOCH) add(x.t, "vol", `Laufrate ${v != null ? r0(v) + " ml/h" : "?"}${prev != null ? ` (vorher ${r0(prev)})` : " (Start)"}`); prev = v; });
+  let pa = null;
+  albHist(p).forEach((x) => { const v = numDE(x.v); add(x.t, "vol", `Albumin 20 % ${v ? r0(v) + " ml/h" : "gestoppt"}${pa ? ` (vorher ${r0(pa)})` : ""}`); pa = v; });
+  extrasOf(p).forEach((e) => add(e.t, "vol", "Zusatzgabe: " + e.lbl));
+  reevals(p).forEach((x) => add(x.t, "re", "Reevaluation — " + reevalTxt(x), { sub: pathTxt(x.path) }));
+  const di = diuInfo(p);
+  di.list.forEach((e) => {
+    const v = numDE(e.v) || 0, tr = hourRound(e.t), bk = di.map.get(tr);
+    let txt = `Diurese ${r0(v)} ml`;
+    if (bk && bk.unk) txt += " (Sammelwert > 12 h)";
+    else if (bk && bk.n > 1) txt += ` über ${bk.n} h (Ø ${r0(bk.v)} ml/h${c.kg ? ", " + fN(bk.v / c.kg, 2) + " ml/kg/h" : ""})`;
+    else txt += ` (${fHH(tr - H)}–${fHH(tr)} Uhr${c.kg ? ", " + fN(v / c.kg, 2) + " ml/kg/h" : ""})`;
+    add(e.t, "diu", txt);
+  });
+  const LG = new Map();
+  VLABS.forEach((n) => serOf(p, "lab:" + n).forEach((x) => { const ms = tMs(x.t); const key = Math.round(ms / MIN); if (!LG.has(key)) LG.set(key, { t: ms, a: [] }); LG.get(key).a.push(`${n === "Na+" ? "Na⁺" : n === "K+" ? "K⁺" : n} ${x.v}${(LABMETA[n] || [])[1] ? " " + LABMETA[n][1] : ""}`); }));
+  LG.forEach((g) => add(g.t, "lab", g.a.join(" · ")));
+  serOf(p, "iap").forEach((x) => add(x.t, "mon", `IAP ${x.v} mmHg`));
+  serOf(p, "picco").forEach((x) => { const a = [x.hi != null && "HI " + (numDE(x.hi) != null ? numDE(x.hi).toFixed(1).replace(".", ",") : x.hi), x.elwi != null && "ELWI " + x.elwi, x.gedi != null && "GEDI " + x.gedi, x.svri != null && "SVRI " + x.svri].filter(Boolean); if (a.length) add(x.t, "mon", "PiCCO " + a.join(" · ")); });
+  rekapSer(p).forEach((x) => add(x.t, "mon", `Rekap ${x.v === "ok" ? "< 3 s" : x.v === "fail" ? "≥ 3 s" : x.v}`));
+  const dT = bsOf(p).doneT || {};
+  Object.keys(dT).forEach((k) => { if (isDone(p, k)) add(dT[k], /^r[gh]_/.test(k) ? "iv" : "chk", "✓ " + kLabel(p, k)); });
+  (bsOf(p).log || []).forEach((x) => add(x.t, x.k === "note" ? "note" : "chg", x.txt, { id: x.k === "note" ? x.id : null }));
+  return E.sort((a, b) => a.t - b.t);
+}
+function protoFilter(E) { const f = PF.find((x) => x[0] === UI.pf); return f && f[2] ? E.filter((e) => f[2].indexOf(e.k) >= 0) : E; }
+function vProto(p, c) {
+  const all = protoEvents(p, c);
+  const E = protoFilter(all).slice().reverse();
+  let h = `<div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Verlaufsprotokoll</h2><span class="seg">${PF.map(([k, t]) => `<button data-act="pf" data-v="${k}" class="${UI.pf === k ? "on" : ""}">${t}</button>`).join("")}</span></div>
+    <div class="pnote"><input id="pn_t" class="t" placeholder="${fT(Date.now())}" title="Uhrzeit (leer = jetzt)"><input id="pn_x" placeholder="Notiz eintragen (z. B. Escharotomie Thorax, Angehörigengespräch, Arztinformation) — Enter speichert"><button class="btn sm pri" data-act="pnote">eintragen</button></div>`;
+  if (!E.length) return h + `<p class="mut">Noch keine Einträge${UI.pf !== "all" ? " in dieser Auswahl" : ""}.</p></div>`;
+  h += `<table class="pt"><tbody>`;
+  let day = null;
+  E.forEach((e) => {
+    const dd = new Date(e.t).toDateString();
+    if (dd !== day) { day = dd; h += `<tr class="day"><td colspan="5">${WD[new Date(e.t).getDay()]} ${fD(e.t)}</td></tr>`; }
+    const hh = c.u != null && e.t >= c.u ? "h " + Math.floor((e.t - c.u + 30000) / H) : "";
+    h += `<tr><td class="tm">${fT(e.t)}</td><td class="hh">${hh}</td><td><span class="pk k-${e.k}">${PK[e.k]}</span></td><td>${esc(e.txt)}${e.sub ? `<small>${esc(e.sub)}</small>` : ""}</td><td>${e.id ? `<button class="dlt" data-act="pnotedel" data-id="${e.id}" title="Notiz löschen">×</button>` : ""}</td></tr>`;
+  });
+  return h + `</tbody></table></div>`;
+}
+function prLegP() {
+  const seen = new Set(), out = [];
+  [PR_LEG_V, PR_LEG_C].forEach((L) => L.replace(/^Abkürzungen: /, "").split(" · ").forEach((x) => { const k = x.split(" ")[0]; if (!seen.has(k)) { seen.add(k); out.push(x); } }));
+  ["GEDI global enddiastolischer Volumenindex", "SVRI systemischer Gefäßwiderstandsindex", "h Stunden nach Unfall"].forEach((x) => { const k = x.split(" ")[0]; if (!seen.has(k)) { seen.add(k); out.push(x); } });
+  return "Abkürzungen: " + out.join(" · ");
+}
+function printProto(p) {
+  const c = calc(p);
+  const E = protoEvents(p, c);
+  let h = `<div class="pg">${prHead(p, c, "Verbrennung · Verlaufsprotokoll")}${prTimeline(c)}<table class="ptp"><thead><tr><th style="width:62pt">Zeit</th><th style="width:26pt">h</th><th style="width:62pt">Bereich</th><th>Ereignis</th></tr></thead><tbody>`;
+  let day = null;
+  E.forEach((e) => {
+    const dd = new Date(e.t).toDateString();
+    const hh = c.u != null && e.t >= c.u ? Math.floor((e.t - c.u + 30000) / H) : "";
+    h += `<tr${dd !== day ? ' class="bl"' : ""}><td>${dd !== day ? WD[new Date(e.t).getDay()] + " " + fD(e.t) + " " : ""}${fT(e.t)}</td><td>${hh}</td><td class="l">${PK[e.k]}</td><td class="l">${esc(e.txt)}${e.sub ? `<br><span style="color:#444">${esc(e.sub)}</span>` : ""}</td></tr>`;
+    day = dd;
+  });
+  if (!E.length) h += `<tr><td colspan="4">keine Einträge</td></tr>`;
+  return h + `</tbody></table><div class="ft">${E.length} Einträge · Stand ${fWDT(Date.now())} · erfasst in LUminate/BurnICU auf diesem Gerät; Änderungen in BurnICU erscheinen als Werte, nicht als Änderungsvermerk.</div><div class="leg">${prLegP()}</div></div>`;
+}
+
 /* ---------- Dialoge ---------- */
 function vDialog(B, cur) {
   const d = UI.dlg;
@@ -1758,14 +2011,16 @@ function vDialog(B, cur) {
   }
   if (d === "print" && cur) {
     const c = calc(cur);
-    return `<div class="dlgbg"><div class="dlg"><h2>Drucken — ${esc(cur.name || "Zi " + cur.zimmer)}</h2>
+    return `<div class="dlgbg"><div class="dlg"><h2>Drucken oder PDF — ${esc(cur.name || "Zi " + cur.zimmer)}</h2>
+      <div class="row" style="margin-bottom:10px"><span class="seg"><button data-act="prmode" data-v="" class="${UI.prTab ? "" : "on"}">Druckdialog</button><button data-act="prmode" data-v="1" class="${UI.prTab ? "on" : ""}">Druckansicht im neuen Tab</button></span></div>
       <div class="row" style="flex-direction:column;align-items:stretch;gap:8px">
         <button class="btn" data-act="print" data-v="check">Checkliste Tag 0–5 <span class="mut small">(Übergabe SR, Phasen, Intoxikation, Laufend · 2 Seiten)</span></button>
         <button class="btn" data-act="print" data-v="vol0" ${c.u == null ? "disabled" : ""}>Volumenprotokoll h 0–24 <span class="mut small">(Kopf, Stufen, 24 Stunden-Zeilen, vorbefüllt)</span></button>
         <button class="btn" data-act="print" data-v="vol24" ${c.u == null ? "disabled" : ""}>Volumenprotokoll h 24–48</button>
         <button class="btn" data-act="print" data-v="volnow" ${c.u == null ? "disabled" : ""}>Volumenprotokoll ab jetzt (24 h)</button>
         <button class="btn pri" data-act="print" data-v="all" ${c.u == null ? "disabled" : ""}>Checkliste + Volumenprotokoll ab jetzt</button>
-      </div><div class="acts"><button class="btn" data-act="close">Schließen</button></div></div></div>`;
+        <button class="btn" data-act="print" data-v="proto">Verlaufsprotokoll <span class="mut small">(alle Einträge chronologisch)</span></button>
+      </div><p class="small" style="margin:10px 0 0">PDF: im Druckdialog als Ziel <b>„Als PDF speichern“</b> wählen.</p><div class="acts"><button class="btn" data-act="close">Schließen</button></div></div></div>`;
   }
   if (d === "algo" && cur) return vAlgo(cur, calc(cur));
   if (d === "stamm" && cur) {
@@ -1782,7 +2037,9 @@ function vDialog(B, cur) {
   if (d === "help") {
     return `<div class="dlgbg"><div class="dlg"><h2>So funktioniert LUminate</h2>
       <p><b>Kopplung mit BurnICU:</b> Beide Apps liegen auf derselben Domain (ftigiser-collab.github.io) und nutzen denselben Browserspeicher. Patienten, Unfallzeit, Gewicht, VKOF, Häkchen der Checkliste 48 h, Diurese, Laufraten, Laborwerte (Laktat, ScvO2, Na, Albumin, COHb, CK …), IAP, PiCCO-HI und Transfusionen gelten in beiden Apps — Änderungen erscheinen sofort, auch wenn beide gleichzeitig offen sind (BurnICU ab Version 3.27.1). Voraussetzung: gleicher Browser auf demselben Gerät.</p>
-      <p><b>Checkliste:</b> Phasen ab Unfallzeit (h 0 = Unfall). Offen ist nur die aktuelle Phase; die anderen klappen per Klick auf. Fällig = gelb, überfällig = rot. Das (i) am Punkt zeigt Pathophysiologie, Studien und SOP, dazu Werte-Eingaben und „entfällt bei diesem Patienten“. Oben unter „Als Nächstes“ stehen die fälligen Punkte zum direkten Abhaken. Wo SOP und Literatur abweichen, gilt die SOP.</p>
+      <p><b>Checkliste:</b> Phasen ab Unfallzeit (h 0 = Unfall). Offen ist nur die aktuelle Phase; die anderen klappen per Klick auf. Fällig = gelb, überfällig = rot. Das (i) am Punkt zeigt Pathophysiologie, Studien und SOP, dazu Werte-Eingaben und „entfällt bei diesem Patienten“. Oben unter „Als Nächstes“ stehen die fälligen Punkte zum direkten Abhaken. Ziele und Daueranweisungen (Zieldiurese, Temperatur, Lagerung, Tubus, Natrium-, Albumin-, BZ- und Hb-Ziel, Ernährungsziel des Tages …) stehen unter „Gilt jetzt“ — sie werden nicht abgehakt und verschwinden erst, wenn ihr Zeitfenster vorbei ist. Wo SOP und Literatur abweichen, gilt die SOP.</p>
+      <p><b>Protokoll:</b> Läuft automatisch mit — Laufraten, Reevaluationen mit Algorithmus-Pfad und Ergebnis, Diurese, Labor, IAP, PiCCO, Zusatzgaben, abgehakte Punkte mit Uhrzeit, Änderungen an Stammdaten, Korrekturen und Löschungen. Eigene Notizen mit Uhrzeit ergänzen; druckbar.</p>
+      <p><b>Drucken / PDF:</b> Druckdialog der App oder Strg/Cmd+P (druckt passend zum offenen Reiter). Als PDF: im Druckdialog „Als PDF speichern“ wählen. Erscheint kein Druckdialog, im Drucken-Fenster „Druckansicht im neuen Tab“ wählen.</p>
       <p><b>Volumen:</b> Oben die aktuelle Anweisung nach SOP (stündliche Reevaluation, ±), darunter Defizit/Übertherapie aus Präklinik und Schockraum. Wer später dazukommt, trägt Präklinik/SR ein und füllt die Stundentabelle von oben nach unten.</p>
       <p><b>Algorithmus:</b> Bis h 72 ist der Algorithmus Volumenmanagement der SOP die Grundlage. „Algorithmus durchgehen“ führt Schritt für Schritt (Ziele → MAP → ZVD/VCI → Fluid Responsiveness → Fluid Challenge → Echo) zum Vorschlag. Umgehen geht immer: direkt übernehmen, eigene Rate eintragen oder „ohne Änderung“.</p><p><b>Erinnerungen:</b> Reevaluation stündlich fällig, spätestens nach 2 h überfällig (rot, Titelzeile, Browser-Meldung; überfällig alle 2 h erneut). Jede Laufratenänderung zählt als Reevaluation. Browser-Meldungen im Menü einschalten — sie kommen, solange die App offen ist (auch im Hintergrund).</p>
       <p><b>Daten:</b> nur auf diesem Gerät. Sicherung über BurnICU (Menü → Sicherung exportieren) enthält auch alles aus LUminate.</p>
@@ -1793,7 +2050,7 @@ function vDialog(B, cur) {
 
 /* ---------- Druck ---------- */
 const PR_LEG_C = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · AIS Abbreviated Injury Score (Bronchoskopie) · BGA Blutgasanalyse · COHb Carboxyhämoglobin · ScvO2 zentralvenöse O2-Sättigung · SpO2 pulsoxymetrische Sättigung · HBO hyperbare Oxygenierung · 4-DMAP 4-Dimethylaminophenol · DK Dauerkatheter · ZVK zentraler Venenkatheter · PiCCO Pulse Contour Cardiac Output · HI Herzindex · ELWI extravaskulärer Lungenwasserindex · IAP intraabdomineller Druck · Rekap Rekapillarisierungszeit · BB Blutbild · CK Kreatinkinase · BZ Blutzucker · Hb Hämoglobin · Hk Hämatokrit · EK Erythrozytenkonzentrat · FFP Fresh Frozen Plasma · TXA Tranexamsäure · PPI Protonenpumpenhemmer · MRE multiresistente Erreger · BG Berufsgenossenschaft · D-Arzt Durchgangsarzt · PRIS Propofol-Infusionssyndrom · HF Herzfrequenz · AF Atemfrequenz · ABA American Burn Association · ABSI Abbreviated Burn Severity Index · HES Hydroxyethylstärke · O2 Sauerstoff · Ca²⁺ ionisiertes Kalzium · Na/K Natrium/Kalium · CO Kohlenmonoxid · EKG Elektrokardiogramm · Anti-Xa Anti-Faktor-Xa-Aktivität · OP Operation · IE Internationale Einheiten · p.i. per inhalationem · i.v. intravenös · FiO2 inspiratorische O2-Fraktion · CT Computertomografie · Tox Toxikologie · Zi Zimmer · J Jahre · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
-const PR_LEG_V = "Abkürzungen: PPV Pulse Pressure Variation · SVV Schlagvolumenvariation · PLR Passive Leg Raise · RV rechtsventrikulär · RAP rechtsatrialer Druck · VEL Vollelektrolytlösung · Echo Echokardiografie · VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · HI Herzindex (l/min/m²) · ScvO2 zentralvenöse O2-Sättigung · Rekap Rekapillarisierungszeit · IAP intraabdomineller Druck (mmHg) · kum. kumulativ ab Unfall · Ref. Referenz Rule of 10 × Stunden ab Unfall · ZVD zentraler Venendruck · VCI Vena cava inferior · MAP mittlerer arterieller Druck · NA Noradrenalin · FFP Fresh Frozen Plasma · EK Erythrozytenkonzentrat · ABSI Abbreviated Burn Severity Index · PiCCO Pulse Contour Cardiac Output · Na Natrium · Zi Zimmer · J Jahre · E Einheiten · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
+const PR_LEG_V = "Abkürzungen: PPV Pulse Pressure Variation · SVV Schlagvolumenvariation · PLR Passive Leg Raise · RV rechtsventrikulär · RAP rechtsatrialer Druck · VEL Vollelektrolytlösung · Echo Echokardiografie · VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · HI Herzindex (l/min/m²) · ScvO2 zentralvenöse O2-Sättigung · Rekap Rekapillarisierungszeit · IAP intraabdomineller Druck (mmHg) · kum. kumulativ ab Unfall · Ref. Referenz Rule of 10 × Stunden ab Unfall · ZVD zentraler Venendruck · VCI Vena cava inferior · MAP mittlerer arterieller Druck · NA Noradrenalin · Dobu Dobutamin · FFP Fresh Frozen Plasma · EK Erythrozytenkonzentrat · ABSI Abbreviated Burn Severity Index · PiCCO Pulse Contour Cardiac Output · Na Natrium · Zi Zimmer · J Jahre · E Einheiten · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
 function prHead(p, c, title) {
   return `<div class="ph1"><div><h1>${title}</h1><div class="meta">Zi ${esc(p.zimmer)} · <b>${esc(p.name || "________________")}</b> · ${c.age != null ? fN(c.age, 0) + " J" : "__ J"} · ${c.sex || "_"} · ${c.kg ? fN(c.kg, 0) + " kg" : "___ kg"} · ${c.cm ? fN(c.cm, 0) + " cm" : "___ cm"} · VKOF ${c.vk != null ? fN(c.vk, 1) + " %" : "___ %"}${c.tief != null ? ` (2b/3 ${fN(c.tief, 0)} %)` : ""}${c.inhal ? " · IHT" : ""}${c.strom ? " · Strom" : ""}${c.myo ? " · Myoglobinurie" : ""}${c.vk > 40 && c.absi ? ` · ABSI ${c.absi} (${c.absiTxt})` : ""}</div></div><div class="meta" style="text-align:right">Gedruckt ${fWDT(Date.now())}<br>LUminate · nach den SOPs der V1</div></div>`;
 }
@@ -1834,7 +2091,14 @@ function printCheck(p) {
     <div>SR-Medikamente ${V(d.srMed, 120)}</div><div>Begleitverletzungen/CT ${V(d.begleit, 110)} · Tox ${V(d.tox, 40)}</div><div>Vorerkrankungen/Allergien ${V(d.ve, 150)}</div>
     <div>${box(d.foto)} Fotodoku ${box(d.lb)} Lund-Browder-Bogen ${box(d.angeh)} Angehörige bekannt</div></div>
     <div>${sec(PH_BY.auf)}</div></div>`;
-  const laufSec = `<div class="sec" style="--pc:#555"><h3>Laufend</h3>${lf.length ? lf.map((x) => `<div class="ci"><span class="cbx">○</span><span>${x.t} — ${x.info}</span><span class="w">nächste ${fRel(x.due)}</span></div>`).join("") : ""}<div class="ci"><span class="cbx">○</span><span>Ziel-Diurese ${zielTxt(c)} · Rule of 10 ${c.rot != null ? r0(c.rot) + " ml/h" : "___"} · Ivy-Index ${c.ivy ? tsd(c.ivy) + " ml/24 h" : "___"}</span><span></span></div></div>`;
+  const laufSec = `<div class="sec" style="--pc:#555"><h3>Laufend</h3>${lf.length ? lf.map((x) => `<div class="ci"><span class="cbx">○</span><span>${x.t} — ${x.info}</span><span class="w">nächste ${fRel(x.due)}</span></div>`).join("") : ""}<div class="ci"><span class="cbx">○</span><span>Rule of 10 ${c.rot != null ? r0(c.rot) + " ml/h" : "___"}</span><span></span></div></div>`;
+  const hNow = c.h == null ? 0 : c.h;
+  const stAll = STAND.filter((s) => !s.cond || s.cond({ p, c }));
+  const standSec = `<div class="sec" style="--pc:var(--navy)"><h3>Gilt — Ziele und Daueranweisungen</h3>${stAll.map((s) => {
+    const cur = hNow >= s.from && hNow < s.to;
+    const win = c.u != null ? `${s.from ? fRel(atMs(c, s.from)) : "ab Unfall"}–${s.to >= 120 ? "Tag 5" : fRel(atMs(c, s.to))}` : `h ${s.from}–${s.to}`;
+    return `<div class="ci${hNow >= s.to ? " dn" : ""}"><span class="cbx">${cur ? "▸" : "•"}</span><span>${s.t({ p, c })}</span><span class="w">${win}</span></div>`;
+  }).join("")}</div>`;
   if (intoxRelevant(p, c)) {
     h += `<div class="sec" style="--pc:var(--p-iv)"><h3>Inhalations-Intoxikation <span>${coVerdacht(p) ? "CO-Verdacht " : ""}${cyanVerdacht(p) ? "Cyanid-Verdacht" : ""}</span></h3><div class="three">
       <div><b>Exposition</b>${C48_EXPO.map(ivCk).join("")}<b>CO erkennen</b>${C48_CO_RG.map(ivCk).join("")}</div>
@@ -1843,10 +2107,10 @@ function printCheck(p) {
   }
   h += `<div class="two"><div>${sec(PH_BY.h0)}</div><div>${sec(PH_BY.h8)}</div></div></div>`;
   h += `<div class="pg pc">${prHead(p, c, "Verbrennung · Aufnahme bis Tag 5 — Checkliste (2)")}${prTimeline(c)}
-    <div class="two"><div>${laufSec}${sec(PH_BY.h24)}${sec(PH_BY.t3)}</div><div>${sec(PH_BY.t4)}${sec(PH_BY.t5)}
+    <div class="two"><div>${standSec}${laufSec}</div><div>${sec(PH_BY.h24)}${sec(PH_BY.t3)}${sec(PH_BY.t4)}${sec(PH_BY.t5)}
     <div class="sec" style="--pc:var(--red)"><h3>Nicht tun</h3>${NICHT.map(([t]) => `<div class="ci"><span class="cbx">✕</span><span>${t}</span><span></span></div>`).join("")}</div></div></div>
     <div class="sec" style="--pc:#555"><h3>Notizen</h3><div style="height:60pt"></div></div>
-    <div class="leg">☒ = in der App erledigt (mit Zeit) · Zeitfenster ab Unfallzeit · Bei Konflikt zwischen Literatur und SOP gilt die SOP der V1. ${PR_LEG_C}</div></div>`;
+    <div class="leg">☒ = in der App erledigt (mit Zeit) · ▸ = gilt jetzt · Zeitfenster ab Unfallzeit · Bei Konflikt zwischen Literatur und SOP gilt die SOP der V1. ${PR_LEG_C}</div></div>`;
   return h;
 }
 function printVol(p, startMs, label) {
@@ -1889,7 +2153,9 @@ function printVol(p, startMs, label) {
     const aIn = inRow(ah, S);
     const xIn = ex.filter((e) => { const t = tMs(e.t); return t >= S && t < E; }).map((e) => e.lbl).join(", ");
     let dec = "", neu = "";
-    if (bk && !bk.unk && past) {
+    const RV = reevalFor(p, E);
+    if (RV) { dec = RV.res === "up" ? "↑" : RV.res === "down" ? "↓" : RV.res === "dobu" ? "Dobu" : RV.res === "ne" ? "NA" : "="; neu = RV.to != null ? r0(RV.to) : ""; }
+    else if (bk && !bk.unk && past) {
       const rAtE = valAt(rh, E - 1);
       const D = decisionAt(p, c, E, bk.v, rAtE ? numDE(rAtE.v) : null);
       if (D) { dec = D.k === "up" ? "↑" : D.k === "dn" ? "↓" : "="; neu = D.neu ? r0(D.neu) : ""; }
@@ -1905,20 +2171,42 @@ function printVol(p, startMs, label) {
   h += `</tbody></table><div class="ft">Grau = bereits erfasst (Stand ${fT(c.now)}). Rate fett = Änderung in dieser Stunde. IAP-Feld hinterlegt = alle 4 h fällig. Ø = Sammelwert gemittelt. Ist = Präklinik/SR + Laufraten + Albumin + Zusatzgaben.</div><div class="leg">${PR_LEG_V}</div></div>`;
   return h;
 }
-function doPrint(kind) {
-  const B = readB();
-  const p = B.patients[UI.sel];
-  if (!p) return;
+function printHTML(kind) {
+  const p = readB().patients[UI.sel];
+  if (!p) return "";
   const c = calc(p);
   let html = "";
   if (kind === "check" || kind === "all") html += printCheck(p);
-  if (kind === "vol0") html += printVol(p, c.u, "h 0–24");
-  if (kind === "vol24") html += printVol(p, c.u + 24 * H, "h 24–48");
-  if (kind === "volnow" || kind === "all") html += printVol(p, Date.now(), "ab " + fT(hourFloor(Date.now())));
+  if (c.u != null) {
+    if (kind === "vol0") html += printVol(p, c.u, "h 0–24");
+    if (kind === "vol24") html += printVol(p, c.u + 24 * H, "h 24–48");
+    if (kind === "volnow" || kind === "all") html += printVol(p, Date.now(), "ab " + fT(hourFloor(Date.now())));
+  }
+  if (kind === "proto") html += printProto(p);
+  return html;
+}
+function setPrint(html) {
   document.getElementById("print").innerHTML = html;
+  document.body.classList.toggle("prt", !!html);
+}
+/* Druck direkt im Klick (kein Timeout — sonst blockieren manche Browser den Dialog) */
+function doPrint(kind) {
+  const html = printHTML(kind);
+  if (!html) return toast("Nichts zu drucken");
   UI.dlg = null;
   render();
-  setTimeout(() => window.print(), 60);
+  if (UI.prTab) return openPrintTab(html);
+  setPrint(html);
+  try { window.print(); } catch (e) { openPrintTab(html); }
+}
+/* Ausweg: Druckansicht als eigene Seite im neuen Tab — dort mit dem Browser drucken oder als PDF speichern */
+function openPrintTab(html) {
+  const css = Array.from(document.querySelectorAll("style")).map((s) => s.textContent).join("\n");
+  const doc = `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LUminate · Druckansicht</title><style>${css}</style><style>body{background:#e9edf2;margin:0}#print{display:block!important}.pp .pg{background:#fff;width:192mm;margin:8mm auto;padding:9mm;box-shadow:0 1px 6px rgba(0,0,0,.18)}.prbar{position:sticky;top:0;z-index:5;background:#1d4268;color:#fff;padding:8px 16px;font:14px system-ui,sans-serif;display:flex;gap:12px;align-items:center}.prbar button{font:600 14px system-ui,sans-serif;padding:6px 14px;border-radius:8px;border:0;background:#fff;color:#1d4268;cursor:pointer}@media print{body{background:#fff}.prbar{display:none}.pp .pg{width:auto;margin:0;padding:0;box-shadow:none}}</style></head><body><div class="prbar"><b>LUminate · Druckansicht</b><button onclick="window.print()">Drucken / als PDF speichern</button></div><div id="print" class="pp">${html}</div></body></html>`;
+  const url = URL.createObjectURL(new Blob([doc], { type: "text/html" }));
+  const w = window.open(url, "_blank");
+  if (!w) toast("Neuer Tab blockiert — Pop-ups für diese Seite erlauben");
+  setTimeout(() => URL.revokeObjectURL(url), 120000);
 }
 
 /* ---------- Eingaben ---------- */
@@ -1996,9 +2284,11 @@ function commitCell(el) {
     const di = diuInfo(p0);
     const ids = di.list.filter((e) => hourRound(e.t) === E).map((e) => e.id);
     if (n == null && !ids.length) return;
+    const old = di.list.filter((e) => ids.indexOf(e.id) >= 0).reduce((s, e) => s + (numDE(e.v) || 0), 0);
     upd(pid, (q) => {
       q.diurese = (q.diurese || []).filter((e) => ids.indexOf(e.id) < 0);
       if (n != null) q.diurese = insSorted(q.diurese, { id: uid(), t: isoOf(E), v: String(Math.round(n)) });
+      if (ids.length && (n == null || Math.round(n) !== old)) logAdd(q, "chg", `Diurese ${fHH(S)}–${fHH(E)} Uhr ${n == null ? `gelöscht (${old} ml)` : `korrigiert: ${old} → ${Math.round(n)} ml`}`);
     });
     ids.forEach((id) => mirDrop(pid, "diurese", id));
     if (n != null) {
@@ -2015,6 +2305,7 @@ function commitCell(el) {
     if (n != null && (n < 0 || n > 5000)) return toast("Rate unplausibel");
     if (n == null && !lx) return;
     upd(pid, (q) => {
+      if (lx && (n == null || Math.round(n) !== numDE(lx.v))) logAdd(q, "chg", `${kind === "rate" ? "Laufrate" : "Albumin 20 %"} ab ${fT(lx.t)} ${n == null ? `gelöscht (${numDE(lx.v)} ml/h)` : `korrigiert: ${numDE(lx.v)} → ${Math.round(n)} ml/h`}`);
       if (kind === "rate") {
         let h = (q.infRate || []).slice();
         if (lx) h = h.filter((x) => x.id !== lx.id);
@@ -2037,7 +2328,7 @@ function commitCell(el) {
     const name = kind === "lak" ? "Laktat" : "ScvO2";
     const ex = last(serOf(p0, "lab:" + name).filter((x) => { const t = tMs(x.t); return t >= S && t < E; }));
     if (raw === "" && !ex) return;
-    upd(pid, (q) => labSet(q, name, ex ? tMs(ex.t) : tLab, raw, ex ? ex.id : null));
+    upd(pid, (q) => { labSet(q, name, ex ? tMs(ex.t) : tLab, raw, ex ? ex.id : null); if (ex && raw !== ex.v) logAdd(q, "chg", `${name} ${fT(ex.t)} ${raw === "" ? `gelöscht (${ex.v})` : `korrigiert: ${ex.v} → ${raw}`}`); });
     if (ex && raw === "") mirDrop(pid, "lab:" + name, skey(ex));
     return;
   }
@@ -2080,6 +2371,17 @@ function commitCell(el) {
     });
   }
 }
+function addNote() {
+  const x = document.getElementById("pn_x");
+  const txt = x ? x.value.trim() : "";
+  if (!txt || !UI.sel) return toast("Notiz eintragen");
+  const tv = (document.getElementById("pn_t") || {}).value;
+  const t = tv && tv.trim() ? hhmmVor(tv, Date.now()) : Date.now();
+  if (t == null) return toast("Uhrzeit als hh:mm");
+  x.value = "";
+  upd(UI.sel, (q) => logAdd(q, "note", txt.slice(0, 500), t));
+  toast("Notiz " + fT(t) + " eingetragen");
+}
 function tFromInput(id) { const v = document.getElementById(id); return v ? hhmmVor(v.value, Date.now()) : null; }
 
 /* ---------- Aktionen ---------- */
@@ -2100,7 +2402,7 @@ function act(a, el) {
     case "fold": { const k = ds.k; const cur = document.querySelector(`[data-act="fold"][data-k="${k}"] .fold`); const isOpen = cur && cur.textContent === "▾"; UI.fold[k] = isOpen; break; }
     case "hist": UI.hist = !UI.hist; break;
     case "tick": if (pid) upd(pid, (q) => toggleDone(q, ds.k)); return;
-    case "na": if (pid) upd(pid, (q) => { const bs = bsMut(q); bs.na = { ...bs.na }; if (bs.na[ds.k]) delete bs.na[ds.k]; else bs.na[ds.k] = true; }); return;
+    case "na": if (pid) upd(pid, (q) => { const bs = bsMut(q); bs.na = { ...bs.na }; const was = !!bs.na[ds.k]; if (was) delete bs.na[ds.k]; else bs.na[ds.k] = true; logAdd(q, "chg", (was ? "wieder aufgenommen: " : "entfällt: ") + kLabel(q, ds.k)); }); return;
     case "set": if (pid) upd(pid, (q) => { const k = ds.f.slice(2); setC48(q, k, c48Of(q)[k] === ds.v ? "" : ds.v); }); return;
     case "setrate": if (pid) { setRate(pid, "ra", Date.now(), Number(ds.v)); toast(`Laufrate ${ds.v} ml/h ab ${fT(Date.now())}`); } return;
     case "albset": if (pid) { setRate(pid, "alb", Date.now(), Number(ds.v)); toast(`Albumin ${ds.v} ml/h ab ${fT(Date.now())}`); } return;
@@ -2144,12 +2446,16 @@ function act(a, el) {
       toast("Zusatzgabe eingetragen");
       return;
     }
-    case "delextra": if (pid) upd(pid, (q) => { if (ds.src === "tf") q.transf = (q.transf || []).filter((e) => e.id !== ds.id); else { const bs = bsMut(q); bs.extra = bs.extra.filter((e) => e.id !== ds.id); } }); return;
-    case "deldiu": { const ids = ds.ids.split(","); upd(pid, (q) => { q.diurese = (q.diurese || []).filter((e) => ids.indexOf(e.id) < 0); }); ids.forEach((id) => mirDrop(pid, "diurese", id)); return; }
+    case "delextra": if (pid) upd(pid, (q) => { const x = extrasOf(q).find((e) => e.id === ds.id); if (ds.src === "tf") q.transf = (q.transf || []).filter((e) => e.id !== ds.id); else { const bs = bsMut(q); bs.extra = bs.extra.filter((e) => e.id !== ds.id); } if (x) logAdd(q, "chg", `Zusatzgabe gelöscht: ${x.lbl} (${fRel(tMs(x.t))})`); }); return;
+    case "deldiu": { const ids = ds.ids.split(","); upd(pid, (q) => { const g = (q.diurese || []).filter((e) => ids.indexOf(e.id) >= 0); q.diurese = (q.diurese || []).filter((e) => ids.indexOf(e.id) < 0); g.forEach((e) => logAdd(q, "chg", `Diurese gelöscht: ${e.v} ml (Eintrag ${fRel(tMs(e.t))})`)); }); ids.forEach((id) => mirDrop(pid, "diurese", id)); return; }
     case "menu": UI.menu = !UI.menu; break;
     case "dlg": UI.dlg = ds.v; UI.menu = false; break;
     case "close": UI.dlg = null; UI.algo = null; break;
     case "print": doPrint(ds.v); return;
+    case "pf": UI.pf = ds.v; break;
+    case "pnote": addNote(); return;
+    case "pnotedel": if (pid) upd(pid, (q) => { const bs = bsMut(q); bs.log = (bs.log || []).filter((x) => x.id !== ds.id); }); return;
+    case "prmode": UI.prTab = !!ds.v; { const s = readS(); s.prTab = UI.prTab; writeS(s); } break;
     case "reload": location.reload(); return;
     case "updcheck": UI.menu = false; checkUpdate(true); break;
     case "notif": UI.menu = false; toggleNotif(); break;
@@ -2294,6 +2600,7 @@ APP.addEventListener("change", (e) => {
 });
 APP.addEventListener("keydown", (e) => {
   const el = e.target;
+  if (e.key === "Enter" && (el.id === "pn_x" || el.id === "pn_t")) { e.preventDefault(); addNote(); return; }
   if (e.key !== "Enter" || !el.dataset || !el.dataset.f || el.tagName === "TEXTAREA") return;
   e.preventDefault();
   if (el.dataset.f === "cell") {
@@ -2320,7 +2627,15 @@ setInterval(() => {
   refresh();
 }, 60 * 1e3);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { refresh(); checkUpdate(false); } });
-window.addEventListener("afterprint", () => { document.getElementById("print").innerHTML = ""; });
+/* Strg/Cmd+P oder Browser-Menü ohne Druckdialog der App: passenden Ausdruck zum aktuellen Reiter erzeugen */
+window.addEventListener("beforeprint", () => {
+  if (document.getElementById("print").innerHTML.trim()) return;
+  const p = readB().patients[UI.sel];
+  if (!p) return;
+  const c = calc(p);
+  setPrint(printHTML(UI.tab === "proto" ? "proto" : UI.tab === "vol" && c.u != null ? "volnow" : "check"));
+});
+window.addEventListener("afterprint", () => setPrint(""));
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && (UI.dlg || UI.menu)) { UI.dlg = null; UI.algo = null; UI.menu = false; render(); } });
 
 /* ---------- Erinnerungen (Browser-Benachrichtigung, solange die App offen ist) ---------- */

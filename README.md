@@ -4,6 +4,13 @@ Adresse: https://ftigiser-collab.github.io/LUminate/
 
 Eigene App (eigenes Symbol, eigener Offline-Speicher, eigenes Update) für die ersten fünf Tage eines großen Verbrennungspatienten auf der V1. Primär für den PC, druckbar auf A4. Arbeitsdokument, keine Patientenakte — Aliasnamen verwenden.
 
+## Neu in 1.3.0 — Algorithmus-Ergebnis gilt, „Gilt jetzt“, Protokoll, Druck/PDF
+
+- **Algorithmus-Ergebnis wird respektiert:** Nach Dobutamin, Noradrenalin, „keine Volumenindikation“ oder „ohne Änderung“ zeigt die Jetzt-Karte bis zur nächsten Reevaluation genau dieses Ergebnis („Laufrate halten“) — kein +20 %/−10 % und keine Aufholrate mehr dazwischen. Die SOP-Spalte der Stundentabelle und das gedruckte Volumenprotokoll zeigen in der Stunde das Algorithmus-Ergebnis.
+- **„Gilt jetzt“ statt To-do:** Ziele und Daueranweisungen (Zieldiurese, Reevaluation stündlich, Temperatur ≥ 36 °C, Lagerung, Tubus nicht kürzen, Atemweg, IAP alle 4 h, Ivy-Index, Ziel-Natrium/-Albumin/-BZ/-Hb, Ernährungsziel des Tages, Rate senken h 24–48, bedarfsorientiert ab h 48, Elektrolyte, Sepsis-Trigger, Extubation/Weaning, Strom/CK) stehen als nicht abhakbare Liste oben in der Checkliste — sichtbar, solange sie gelten. Gemischte Punkte sind getrennt (z. B. „Albumin-Perfusor starten“ als To-do, „Ziel-Albumin 2,2–2,7“ als Daueranweisung). Im Ausdruck eigener Abschnitt mit Zeitfenstern.
+- **Protokoll (dritter Reiter):** läuft automatisch mit — Laufraten, Albumin, Zusatzgaben, Reevaluationen mit Pfad und Ergebnis, Diurese, Labor, IAP, PiCCO, Rekap, abgehakte Punkte mit Uhrzeit, Änderungen an Stammdaten, entfernte Häkchen, Korrekturen und Löschungen; eigene Notizen mit Uhrzeit. Filter, druckbar (chronologisch, mit Legende).
+- **Druck/PDF repariert:** Druckdialog öffnet direkt im Klick; Strg/Cmd+P druckt passend zum offenen Reiter statt einer leeren Seite; Ausweg „Druckansicht im neuen Tab“. PDF über „Als PDF speichern“ im Druckdialog.
+
 ## Neu in 1.2.0 — Algorithmus Volumenmanagement und Reevaluations-Erinnerung
 
 - **Klickbarer Algorithmus** (SOP Volumentherapie, Abbildung 1) als Grundlage bis h 72: Ziele (Diurese, HI, ScvO2, Laktat, Rekap; aus den Werten vorbelegt, änderbar) → MAP < 65–70 → ZVD/VCI → Fluid Responsiveness → Fluid Challenge → Echokardiografie (Dysfunktion → Dobutamin; Volumenüberladung → −10 %) bzw. Noradrenalin/Argipressin im MAP-Pfad. Ergebnis als Vorschlag mit Übernehmen-Knopf; Fußnoten und Quellen hinter (i).
