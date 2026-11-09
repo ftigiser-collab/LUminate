@@ -4,6 +4,14 @@ Adresse: https://ftigiser-collab.github.io/LUminate/
 
 Eigene App (eigenes Symbol, eigener Offline-Speicher, eigenes Update) für die ersten fünf Tage eines großen Verbrennungspatienten auf der V1. Primär für den PC, druckbar auf A4. Arbeitsdokument, keine Patientenakte — Aliasnamen verwenden.
 
+## Neu in 1.1.0 — ruhigeres Layout (Inhalte unverändert)
+
+- Eine Spalte statt zwei, schmaler.
+- Oben **Jetzt**: die eine Anweisung mit Übernehmen-Knopf, darunter **Als Nächstes** (max. 6 Zeilen) — Stundendiurese und IAP direkt eintragen, fällige Punkte direkt abhaken.
+- **Checkliste:** nur die aktuelle Phase ist offen, die anderen eingeklappt mit Zähler; je Punkt nur Häkchen, Text, Frist und (i). Werte-Eingaben, Zeitfenster und „entfällt“ liegen im (i).
+- **Stammdaten & Übergabe Schockraum** als eigenes Fenster (Knopf in der Patientenzeile), dort auch Entlassen/Löschen und „HI/ScvO2 bewerten“.
+- **Volumen:** eine Kennzahlenzeile und eine Eingabezeile mit den fünf Zielen (✓/✗ farbig) statt Kachelwand; Stundentabelle mit 8 Spalten, Rest hinter „alle Spalten“; Nachtragen und Tagesbilanz eingeklappt.
+
 ## Neu in 1.0.2 (nach Faktencheck gegen die SOPs)
 
 - **Kein stündliches +20 % auf alte Werte mehr:** Ein verfehltes Ziel (HI, ScvO2, Laktat, Rekap) zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde — sonst „neu messen“.

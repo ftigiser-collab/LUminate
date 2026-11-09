@@ -28,7 +28,7 @@ input,select,textarea{background:#fff;border:1px solid var(--line2);border-radiu
 input:focus,select:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:0;border-color:var(--teal)}
 textarea{width:100%;min-height:60px;resize:vertical}
 b{font-weight:650}
-.wrap{max-width:1500px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 .top{position:sticky;top:0;z-index:30;background:rgba(243,246,249,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .toprow{display:flex;align-items:center;gap:14px;min-height:58px;padding-top:6px;padding-bottom:6px}
 .brand{display:flex;align-items:center;gap:10px;flex:none}
@@ -221,6 +221,53 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 .leg{font-size:12px;color:var(--mut);margin-top:6px}
 .mut{color:var(--mut)}
 .small{font-size:12.5px}
+/* 1.1.0: ruhigeres Layout */
+.pline{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:4px 2px 10px;font-size:14.5px}
+.pline .nm{font-size:19px;font-weight:700;color:var(--navy)}
+.pline .miss,.miss{color:var(--red)}
+.jetzt{border-left:5px solid var(--ok);padding:14px 18px}
+.jetzt.w{border-left-color:#d99a1c}.jetzt.e{border-left-color:var(--red)}.jetzt.i{border-left-color:var(--navy)}
+.j-h{display:flex;gap:16px;align-items:center;justify-content:space-between}
+.j-m{font-size:19px;font-weight:700;line-height:1.25}
+.j-t{color:var(--mut);font-size:14px;margin-top:2px}
+.nx{margin-top:12px;border-top:1px solid var(--raise);padding-top:8px}
+.nx-l{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin-bottom:2px}
+.nx-r{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--raise);font-size:14px}
+.nx-r:first-of-type{border-top:0}
+.nx-t{font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums}
+.nx-r.o .nx-t{color:var(--red);font-weight:700}.nx-r.d .nx-t{color:var(--amb);font-weight:600}
+.nx-x small{display:block;color:var(--mut);font-size:12.5px}
+.nx-a input{width:96px;min-height:30px}
+.ph{padding:8px 16px}
+.ph-h h3{font-size:15px}
+.now-b{font-size:11.5px;font-weight:700;color:#fff;background:var(--pc);border-radius:6px;padding:1px 7px}
+.ph-h .cnt .ok{color:var(--ok)}
+.it{grid-template-columns:26px minmax(0,1fr) auto 24px;padding:7px 0}
+.it .x{color:var(--red);font-weight:700;text-align:center}
+.dd{font-size:12.5px;white-space:nowrap;color:var(--amb);font-weight:600;margin-top:2px}
+.dd.o{color:var(--red)}.dd.n{color:var(--dim);font-weight:400}
+.det{margin:0 0 8px 34px;padding:8px 12px;background:#f6fafb;border:1px solid var(--ok-bd);border-radius:8px}
+.info.flat{margin:0 0 6px;padding:0;border:0;background:none}
+.det .row{margin-top:6px}
+.grp{font-size:12.5px;font-weight:700;color:var(--p-iv);margin:8px 0 2px;text-transform:uppercase;letter-spacing:.3px}
+.sub-h{font-size:13px;color:var(--mut);cursor:pointer;margin:10px 0 4px;user-select:none}
+.kcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 18px;font-size:13.5px}
+.kcols label{display:flex;gap:6px;align-items:flex-start;padding:2px 0;cursor:pointer}
+.kcols input{min-height:0;width:16px;height:16px;margin-top:2px;accent-color:var(--teal)}
+.facts{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;font-size:14px;margin:8px 0 10px}
+.facts b{color:var(--navy)}
+.facts .bad b{color:var(--red)}.facts .warn b{color:var(--amb)}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-bottom:10px}
+.qb{border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:#fff}
+.qb.n{border-color:var(--red-bd);background:var(--red-bg)}.qb.y{border-color:var(--ok-bd);background:var(--ok-bg)}
+.ql{font-size:12px;color:var(--mut);display:flex;gap:6px;align-items:center}
+.qv{font-weight:700;font-size:16px;margin:1px 0 4px}
+.qv small{display:block;font-weight:400;font-size:12px;color:var(--mut)}
+.qb input{width:100%;min-height:30px}
+.mk{font-weight:800}.mk.y{color:var(--ok)}.mk.n{color:var(--red)}.mk.u{color:var(--dim)}
+.dlg.wide{width:min(980px,100%)}
+.sth{font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin:14px 0 6px}
+.dlg .cks{margin-top:8px}
 #print{display:none}
 @media print{
   @page{size:A4 portrait;margin:9mm 9mm 10mm}
@@ -285,7 +332,7 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
    (gleiche Domain). Eigener Speicher nur für den Verlaufsspiegel und die
    Bedienung. Hausstandard: SOPs der V1 gehen vor Literatur.
    ===================================================================== */
-const APP_VERSION = "1.0.2";
+const APP_VERSION = "1.1.0";
 const BKEY = "burnicu_v3";
 const SKEY = "luminate_v1";
 const H = 36e5, MIN = 6e4, EPOCH = "1970-01-01T00:00:00.000Z";
@@ -1149,82 +1196,87 @@ function vMenu() {
 
 function vPatient(p) {
   const c = calc(p);
+  const small = c.vk != null && c.vk < 20;
   const P = c.schock ? plan(p, c) : null;
-  const due = c.vk != null && c.vk < 20 ? [] : dueList(p, c);
-  let h = vBar(p, c);
-  if (c.vk != null && c.vk < 20) h += `<div class="banner w">VKOF ${fN(c.vk, 0)} % — unter 20 % keine Verbrennungs-Specials (wie in BurnICU): keine Schockphase nach SOP, keine Checkliste. Behandlung wie ein normaler Intensiv- bzw. IMC-Patient.${c.inhal ? " Achtung: Die SOP Volumentherapie gilt bei Inhalationstrauma auch unter 20 % VKOF (> 20 % und/oder IHT)." : ""}</div>`;
-  if (c.h != null && c.h > 120) h += `<div class="banner i">Tag ${c.tag} — die App deckt Aufnahme bis Tag 5 ab. Weiter in BurnICU.</div>`;
-  h += vNow(p, c, P, due);
-  const nVol = P && P.main && P.main.lv !== "ok" ? 1 : 0;
+  const due = small ? [] : dueList(p, c);
+  let h = vPatLine(p, c);
+  const miss = [c.u == null && "Unfallzeit", !c.kg && "Gewicht", c.vk == null && "VKOF"].filter(Boolean);
+  if (miss.length) h += `<div class="banner e">Fehlt: <b>${miss.join(", ")}</b> — ohne diese Angaben keine Rule of 10 und keine Fälligkeiten. <button class="btn sm pri" data-act="dlg" data-v="stamm">eintragen</button></div>`;
+  if (small) return h + `<div class="banner w">VKOF ${fN(c.vk, 0)} % — unter 20 % keine Verbrennungs-Specials (wie in BurnICU): keine Schockphase nach SOP, keine Checkliste. Behandlung wie ein normaler Intensiv- bzw. IMC-Patient.${c.inhal ? " Achtung: Die SOP Volumentherapie gilt bei Inhalationstrauma auch unter 20 % VKOF (> 20 % und/oder IHT)." : ""}</div>`;
+  if (c.h != null && c.h > 120) h += `<div class="banner i">Tag ${c.tag} — LUminate deckt Aufnahme bis Tag 5 ab. Weiter in BurnICU.</div>`;
+  h += vJetzt(p, c, P, due);
+  const nVol = P && P.main && P.main.lv !== "ok" && P.main.lv !== "i";
   h += `<div class="tabs"><button data-act="tab" data-v="check" class="${UI.tab !== "vol" ? "on" : ""}">Checkliste${due.length ? `<span class="cnt">${due.length}</span>` : ""}</button><button data-act="tab" data-v="vol" class="${UI.tab === "vol" ? "on" : ""}">Volumentherapie${nVol ? '<span class="cnt">!</span>' : ""}</button></div>`;
-  h += UI.tab === "vol" ? vVol(p, c, P) : vCheck(p, c, due);
+  h += UI.tab === "vol" ? vVol(p, c, P) : vCheck(p, c);
   return h;
 }
-function kv(l, v, miss, big) { return `<div class="kv${big ? " big" : ""}"><small>${l}</small><b class="${miss ? "miss" : ""}">${v}</b></div>`; }
-function vBar(p, c) {
-  const b = c.b;
-  const t = [];
-  t.push(`<span class="nm">Zi ${esc(p.zimmer)} · ${esc(p.name || "ohne Namen")}</span>`);
-  t.push(kv("Alter / Geschl.", `${c.age != null ? fN(c.age, 0) + " J" : "?"} · ${c.sex || "?"}`, c.age == null || !c.sex));
-  t.push(kv("Gewicht / Größe", `${c.kg ? fN(c.kg, 0) + " kg" : "fehlt"} · ${c.cm ? fN(c.cm, 0) + " cm" : "?"}`, !c.kg));
-  t.push(kv("VKOF", c.vk != null ? `${fN(c.vk, 1)} %${c.tief != null ? ` (2b/3: ${fN(c.tief, 0)} %)` : ""}` : "fehlt", c.vk == null, true));
-  t.push(kv("Unfall", c.u != null ? fWDT(c.u) : "fehlt", c.u == null));
-  t.push(kv("seit Unfall", c.h == null ? "—" : c.h < 0 ? "in der Zukunft?" : c.h < 48 ? `h ${Math.floor(c.h)} · Schockphase` : `Tag ${c.tag}`, c.h != null && c.h < 0, true));
-  if (c.rot != null) t.push(kv("Rule of 10", `${r0(c.rot)} ml/h`, false, true));
-  t.push(kv("Ziel-Diurese", zielTxt(c)));
-  if (c.vk > 40) t.push(kv("ABSI", c.absi != null ? `${c.absi} · Überleben ${c.absiTxt}${c.absiG3Ann ? " (Grad 3 angenommen)" : ""}` : "Alter/Geschlecht fehlt", c.absi == null));
+function vPatLine(p, c) {
   const fl = [];
-  if (b.inhal) fl.push('<span class="flag a">IHT</span>');
+  if (c.inhal) fl.push('<span class="flag a">IHT</span>');
   if (c.strom) fl.push('<span class="flag a">Strom</span>');
   if (c.myo) fl.push('<span class="flag r">Myoglobinurie</span>');
   if (c.intub) fl.push('<span class="flag">intubiert</span>');
   if (coVerdacht(p)) fl.push('<span class="flag r">CO-Verdacht</span>');
   if (cyanVerdacht(p)) fl.push('<span class="flag r">Cyanid-Verdacht</span>');
-  return `<div class="card pbar">${t.join('<span class="sep"></span>')}${fl.length ? '<span class="sep"></span>' + fl.join(" ") : ""}<span style="margin-left:auto"></span><button class="btn sm" data-act="tab" data-v="check" data-auf="1">Stammdaten</button></div>`;
+  const ab = c.vk > 40 ? (c.absi != null ? `ABSI ${c.absi} · Überleben ${c.absiTxt}` : "ABSI: Alter/Geschlecht fehlt") : "";
+  return `<div class="pline"><span class="nm">Zi ${esc(p.zimmer)} · ${esc(p.name || "ohne Namen")}</span>
+    <span>${c.age != null ? fN(c.age, 0) + " J" : "? J"} · ${c.sex || "?"} · ${c.kg ? fN(c.kg, 0) + " kg" : '<b class="miss">kg?</b>'}</span>
+    <span><b>${c.vk != null ? fN(c.vk, 1) + " % VKOF" : '<span class="miss">VKOF?</span>'}</b></span>
+    ${c.u != null ? `<span>Unfall ${fRel(c.u)} · <b>${c.h < 0 ? "?" : c.h < 48 ? "Stunde " + Math.floor(c.h) : "Tag " + c.tag}</b></span>` : ""}
+    ${ab ? `<span class="mut">${ab}</span>` : ""}${fl.join("")}
+    <button class="btn sm" data-act="dlg" data-v="stamm" style="margin-left:auto">Stammdaten & Übergabe</button></div>`;
 }
-function vNow(p, c, P, due) {
-  const lf = laufend(p, c);
-  const nx = [];
-  lf.forEach((x) => nx.push(`<span class="nxc${x.st === "o" ? " o" : x.st === "d" ? " d" : ""}">${x.t}: ${x.st === "o" ? "fällig seit " : ""}${fRel(x.due)}</span>`));
-  const nOver = due.filter((x) => x.st === "over").length;
-  if (due.length) nx.push(`<span class="nxc${nOver ? " o" : " d"}">Checkliste: ${due.length} fällig${nOver ? `, ${nOver} überfällig` : ""}</span>`);
-  if (c.u != null && c.h >= 0 && c.h < 48) [6, 8, 24, 48].filter((x) => x > c.h).slice(0, 2).forEach((x) => nx.push(`<span class="nxc">h ${x}: ${fRel(atMs(c, x))}${x === 48 ? " (Ende Schockphase)" : ""}</span>`));
-  let main;
-  if (c.u == null) main = { lv: "w", h: "Unfallzeit fehlt", t: "Ohne Unfallzeit keine Rechnung ab Stunde 0 (Rule of 10, Defizit, Fälligkeiten)." };
-  else if (P && P.main) main = P.main;
-  else if (c.schock && c.rot == null) main = { lv: "w", h: "Gewicht und VKOF fehlen", t: "Ohne beides keine Rule of 10." };
-  else if (c.h >= 48) main = { lv: "i", h: `Tag ${c.tag}: Volumen bedarfsorientiert`, t: `Diurese-Ziel ${zielTxt(c)} · PiCCO 1 × pro Schicht · Bilanz und Natrium im Blick.` };
-  else main = { lv: "i", h: "—", t: "" };
-  if (c.vk != null && c.vk < 20) return "";
-  const btn = main.neu ? `<button class="btn pri" data-act="setrate" data-v="${main.neu}">${r0(main.neu)} ml/h übernehmen</button>` : "";
-  const unf = c.u == null ? `<input type="datetime-local" id="now_unf" data-f="unfall" value="">` : "";
-  return `<div class="card now ${main.lv}"><div><div class="nh">${main.h}</div>${main.t ? `<div class="ntx">${main.t}</div>` : ""}${nx.length ? `<div class="nx">${nx.join("")}</div>` : ""}</div><div class="row">${btn}${unf}</div></div>`;
+const plainTxt = (html) => String(html).replace(/<button[^>]*>.*?<\/button>/g, "").replace(/<span class="sub">.*?<\/span>/g, "").replace(/<[^>]+>/g, "");
+function vJetzt(p, c, P, due) {
+  let m;
+  if (c.u == null) m = { lv: "w", h: "Unfallzeit eintragen", t: "Alle Zeiten rechnen ab Unfall (h 0)." };
+  else if (P && P.main) m = P.main;
+  else if (c.schock && c.rot == null) m = { lv: "w", h: "Gewicht und VKOF fehlen", t: "Ohne beides keine Rule of 10." };
+  else if (c.h >= 48) m = { lv: "i", h: `Tag ${c.tag}: Volumen bedarfsorientiert`, t: `Ziel-Diurese ${zielTxt(c)} · PiCCO 1 × pro Schicht · Bilanz und Natrium im Blick.` };
+  else m = { lv: "i", h: "Unfallzeit prüfen", t: "Sie liegt in der Zukunft." };
+  const btn = m.neu ? `<button class="btn pri" data-act="setrate" data-v="${m.neu}">${r0(m.neu)} ml/h übernehmen</button>` : c.u == null ? `<button class="btn pri" data-act="dlg" data-v="stamm">eintragen</button>` : "";
+  const rows = [];
+  laufend(p, c).forEach((x) => rows.push({ t: x.due, st: x.st, txt: x.t, sub: x.info, inp: x.k === "diu" ? "diu" : x.inp, k: x.k, lf: true }));
+  due.forEach(({ it, st }) => {
+    const w = it.ph !== "iv" && c.u != null ? itemWin(c, it) : null;
+    rows.push({ t: w ? atMs(c, w.to) : null, st: st === "over" ? "o" : "d", txt: plainTxt(it.t({ p, c })), tick: it.k });
+  });
+  /* Reihenfolge: überfällig, laufende Aufgaben (Diurese, IAP …), dann fällige Punkte ohne Frist (Intoxikation), dann nach Frist */
+  const rk = (r) => (r.st === "o" ? 0 : r.lf ? 1 : r.t == null ? 2 : 3);
+  rows.sort((a, b) => rk(a) - rk(b) || (a.t || 0) - (b.t || 0));
+  const show = rows.slice(0, 6);
+  const act = (r) => {
+    if (r.tick) return `<button class="btn sm" data-act="tick" data-k="${r.tick}">✓ erledigt</button>`;
+    if (r.inp === "diu") return `<input id="nx_diu" data-f="diunow" inputmode="numeric" placeholder="ml">`;
+    if (r.inp === "iap") return `<input id="nx_iap" data-f="iap" inputmode="decimal" placeholder="mmHg">`;
+    if (r.inp === "ck") return `<input id="nx_ck" data-f="lab:CK" inputmode="numeric" placeholder="CK U/l">`;
+    if (r.inp === "cohb") return `<input id="nx_cohb" data-f="lab:COHb" inputmode="decimal" placeholder="COHb %">`;
+    return "";
+  };
+  const list = show.map((r) => `<div class="nx-r ${r.st}"><span class="nx-t">${r.st === "o" ? "überfällig" : r.t == null ? "jetzt" : r.lf ? fRel(r.t) : "bis " + fRel(r.t)}</span><span class="nx-x">${esc(r.txt.length > 120 ? r.txt.slice(0, 118) + "…" : r.txt)}${r.sub ? `<small>${esc(r.sub)}</small>` : ""}</span><span class="nx-a">${act(r)}</span></div>`).join("");
+  const more = rows.length > show.length ? `<button class="btn lnk" data-act="tab" data-v="check">+ ${rows.length - show.length} weitere in der Checkliste</button>` : "";
+  return `<div class="card jetzt ${m.lv}"><div class="j-h"><div><div class="j-m">${m.h}</div>${m.t ? `<div class="j-t">${m.t}</div>` : ""}</div>${btn}</div>${list ? `<div class="nx"><div class="nx-l">Als Nächstes</div>${list}${more}</div>` : ""}</div>`;
 }
 
 /* ---------- Checkliste ---------- */
-function vCheck(p, c, due) {
-  let left = vAufnahme(p, c);
-  if (!(c.vk != null && c.vk < 20)) {
-    left += vIntox(p, c);
-    PHASES.forEach((ph) => { left += vPhase(p, c, ph); });
-  }
-  const side = vSide(p, c, due);
-  return `<div class="cols"><div>${left}</div><aside class="side">${side}</aside></div>`;
+function vCheck(p, c) {
+  const rel = intoxRelevant(p, c);
+  let h = rel ? vIntox(p, c) : "";
+  PHASES.forEach((ph) => { h += vPhase(p, c, ph); });
+  if (!rel) h += vIntox(p, c);
+  h += vNicht();
+  return h;
 }
 function fld(lbl, f, val, o) {
   o = o || {};
   return `<label class="fl${o.w2 ? " w2" : ""}${o.miss ? " miss" : ""}">${lbl}${o.sel ? `<select id="f_${f}" data-f="${f}">${o.sel.map(([v, t]) => `<option value="${esc(v)}"${String(val) === String(v) ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>` : `<input id="f_${f}" data-f="${f}" type="${o.type || "text"}" ${o.num ? 'inputmode="decimal"' : ""} value="${esc(val == null ? "" : val)}" placeholder="${esc(o.ph || "")}">`}</label>`;
 }
 const cbx = (f, on, t) => `<label><input type="checkbox" id="f_${f}" data-f="${f}"${on ? " checked" : ""}> ${t}</label>`;
-function vAufnahme(p, c) {
+function vStamm(p, c) {
   const d = c.d, b = c.b;
-  const miss = [!c.kg && "Gewicht", c.vk == null && "VKOF", c.u == null && "Unfallzeit", !c.cm && "Größe", !c.sex && "Geschlecht", c.age == null && "Alter"].filter(Boolean);
-  const open = UI.fold.sr != null ? !UI.fold.sr : (miss.length > 0 || (c.h != null && c.h < 8));
   const occ = Object.values((lastB || readB()).patients || {}).filter((x) => x.id !== p.id).map((x) => Number(x.zimmer));
   const rooms = [1, 2, 3, 4, 5, 6, 7, 8].map((z) => [z, z + (occ.indexOf(z) >= 0 ? " (belegt)" : "")]);
-  let h = `<div class="card ph" style="--pc:var(--p-sr)"><div class="ph-h" data-act="fold" data-k="sr"><span class="fold">${open ? "▾" : "▸"}</span><h3>Stammdaten & Übergabe Schockraum</h3><span class="tm">${miss.length ? `<b class="miss" style="color:var(--red)">fehlt: ${miss.join(", ")}</b>` : "vollständig"}</span><span class="cnt">${c.bmi ? `BMI ${fN(c.bmi, 0)} · KOF ${fN(c.kof, 2)} m²` : ""}${c.ibw ? ` · Idealgewicht ${fN(c.ibw, 0)} kg` : ""}</span></div>`;
-  if (!open) return h + "</div>";
-  h += `<div class="ph-b"><div class="grid-f">
+  return `<h3 class="sth">Patient</h3><div class="grid-f">
     ${fld("Name / Alias", "name", p.name)}
     ${fld("Zimmer", "zimmer", p.zimmer, { sel: rooms })}
     ${fld("Alter (J)", "alter", b.alter, { num: true, miss: c.age == null })}
@@ -1232,14 +1284,18 @@ function vAufnahme(p, c) {
     ${fld("Größe (cm)", "groesse", p.groesse, { num: true, miss: !c.cm })}
     ${fld("Gewicht (kg)", "gewicht", p.gewicht, { num: true, miss: !c.kg })}
     ${fld("Gewicht ist", "c:gew", d.gew || "", { sel: [["", "—"], ["gemessen", "gemessen"], ["geschätzt", "geschätzt"]] })}
+  </div>
+  <h3 class="sth">Verbrennung</h3><div class="grid-f">
     ${fld("Unfallzeit", "unfall", c.u != null ? dtLocal(c.u) : "", { type: "datetime-local", w2: true, miss: c.u == null })}
     ${fld("VKOF (%)", "vkof", b.vkof, { num: true, miss: c.vk == null })}
     ${fld("davon 2b/3 (%)", "tief", b.tief, { num: true })}
   </div>
-  <div class="cks" style="margin-top:8px"><span class="lbl">Mechanismus</span>${MECH.map((m) => cbx("m:" + m[0], (d.mech || []).indexOf(m[0]) >= 0, m[1])).join("")}${cbx("c:geschl", d.geschl, "geschlossener Raum")}</div>
-  <div class="cks" style="margin-top:6px"><span class="lbl">Lokalisation</span>${LOK.map((l) => cbx("l:" + l[0], (d.lok || []).indexOf(l[0]) >= 0, l[1])).join("")}<span class="sep"></span>${cbx("drittgrad", b.drittgrad, "Grad 3 vorhanden")}${cbx("inhal", b.inhal, "V. a. Inhalationstrauma")}${cbx("strom", c.strom, "Strom")}${cbx("myo", b.myo, "Myoglobinurie")}</div>
-  <div class="cks" style="margin-top:6px"><span class="lbl">Atemweg</span>${cbx("c:intub", d.intub, "intubiert")}</div>
-  <div class="grid-f" style="margin-top:6px">
+  <div class="cks"><span class="lbl">Mechanismus</span>${MECH.map((m) => cbx("m:" + m[0], (d.mech || []).indexOf(m[0]) >= 0, m[1])).join("")}${cbx("c:geschl", d.geschl, "geschlossener Raum")}</div>
+  <div class="cks"><span class="lbl">Lokalisation</span>${LOK.map((l) => cbx("l:" + l[0], (d.lok || []).indexOf(l[0]) >= 0, l[1])).join("")}</div>
+  <div class="cks"><span class="lbl">Besonderheiten</span>${cbx("drittgrad", b.drittgrad, "Grad 3 vorhanden")}${cbx("inhal", b.inhal, "V. a. Inhalationstrauma")}${cbx("myo", b.myo, "Myoglobinurie")}</div>
+  <h3 class="sth">Übergabe Schockraum</h3>
+  <div class="cks">${cbx("c:intub", d.intub, "intubiert")}</div>
+  <div class="grid-f">
     ${d.intub ? fld("intubiert um", "c:intubT", d.intubT, { ph: "hh:mm" }) + fld("Tubus", "c:tubus", d.tubus) + fld("Tiefe (cm)", "c:tiefe", d.tiefe) : ""}
     ${fld("AIS (Bronchoskopie)", "ais", b.ais)}
     ${fld("Ruß bis", "russ", b.russ)}
@@ -1248,50 +1304,39 @@ function vAufnahme(p, c) {
     ${fld("Diurese seit DK (ml)", "c:diuDK", d.diuDK, { num: true })}
     ${fld("ZVK (Lage)", "dev:ZVK", (devAct(p, "ZVK") || {}).lage)}
     ${fld("Arterie (Lage)", "dev:Arterie", (devAct(p, "Arterie") || {}).lage)}
-  </div>
-  <div class="cks" style="margin-top:6px">${cbx("picco", piccoAktiv(p), "PiCCO liegt (in BurnICU aktiviert)")}${cbx("devburn", (devAct(p, "ZVK") || {}).burn || (devAct(p, "Arterie") || {}).burn, "Zugang durch Brandhaut")}
-    <span class="lbl" style="margin-left:10px">Escharotomie</span><span class="seg">${[["erfolgt", "erfolgt"], ["nötig", "nötig"], ["nein", "nicht nötig"]].map(([v, t]) => `<button data-act="set" data-f="c:esch" data-v="${v}" class="${d.esch === v ? "on" : ""}">${t}</button>`).join("")}</span>
-    <span class="lbl" style="margin-left:10px">Tetanus</span><span class="seg">${[["aktuell", "aktuell"], ["gegeben", "gegeben"]].map(([v, t]) => `<button data-act="set" data-f="c:tet" data-v="${v}" class="${d.tet === v ? "on" : ""}">${t}</button>`).join("")}</span></div>
-  <div class="grid-f" style="margin-top:6px">
-    ${d.esch === "erfolgt" ? fld("Escharotomie wo", "c:eschOrt", d.eschOrt, { w2: true }) : ""}
     ${fld("SR-Medikamente", "c:srMed", d.srMed, { w2: true })}
     ${fld("Begleitverletzungen / CT", "c:begleit", d.begleit, { w2: true })}
     ${fld("Tox", "c:tox", d.tox)}
     ${fld("Vorerkrankungen / Allergien", "c:ve", d.ve, { w2: true })}
+    ${d.esch === "erfolgt" ? fld("Escharotomie wo", "c:eschOrt", d.eschOrt, { w2: true }) : ""}
   </div>
-  <div class="row" style="margin-top:10px;justify-content:flex-end"><button class="btn sm danger" data-act="dlg" data-v="del">Patient entlassen / löschen …</button></div>
-  <div class="cks" style="margin-top:6px">${cbx("c:foto", d.foto, "Fotodoku")}${cbx("c:lb", d.lb, "Lund-Browder-Bogen")}${cbx("c:angeh", d.angeh, "Angehörige/Betreuer bekannt")}</div>
-  </div></div>`;
-  return h;
+  <div class="cks">${cbx("picco", piccoAktiv(p), "PiCCO liegt")}${cbx("devburn", (devAct(p, "ZVK") || {}).burn || (devAct(p, "Arterie") || {}).burn, "Zugang durch Brandhaut")}${cbx("c:foto", d.foto, "Fotodoku")}${cbx("c:lb", d.lb, "Lund-Browder-Bogen")}${cbx("c:angeh", d.angeh, "Angehörige bekannt")}</div>
+  <div class="cks"><span class="lbl">Escharotomie</span><span class="seg">${[["erfolgt", "erfolgt"], ["nötig", "nötig"], ["nein", "nicht nötig"]].map(([v, t]) => `<button data-act="set" data-f="c:esch" data-v="${v}" class="${d.esch === v ? "on" : ""}">${t}</button>`).join("")}</span>
+    <span class="lbl">Tetanus</span><span class="seg">${[["aktuell", "aktuell"], ["gegeben", "gegeben"]].map(([v, t]) => `<button data-act="set" data-f="c:tet" data-v="${v}" class="${d.tet === v ? "on" : ""}">${t}</button>`).join("")}</span>
+    <span class="lbl">HI/ScvO2 bewerten</span><span class="seg">${[["auto", "automatisch"], ["ja", "ja"], ["nein", "nein"]].map(([v, t]) => `<button data-act="hd" data-v="${v}" class="${c.bs.hd === v ? "on" : ""}">${t}</button>`).join("")}</span>${iBtn("st_hd")}</div>
+  ${vInfo("st_hd", I(null, null, null, "Automatisch: HI zählt, wenn PiCCO aktiv ist; ScvO2, wenn ein ZVK liegt oder Werte erfasst sind. Ohne Monitoring entscheidet die Reevaluation nach Diurese, Laktat und Rekap."))}
+  <div class="mut small" style="margin-top:8px">${c.bmi ? `BMI ${fN(c.bmi, 0)} · KOF ${fN(c.kof, 2)} m²` : ""}${c.ibw ? ` · Idealgewicht ${fN(c.ibw, 0)} kg` : ""}${c.rot != null ? ` · Rule of 10 ${r0(c.rot)} ml/h` : ""}</div>`;
 }
 function vItem(p, c, it) {
-  const x = { p, c };
   const st = itemState(p, c, it);
   const w = itemWin(c, it);
+  const ik = "i_" + it.k;
   let due = "";
-  if (st === "done") due = "erledigt";
-  else if (st === "na") due = "entfällt";
-  else if (c.u == null) due = it.ph === "auf" ? "sofort" : "Unfallzeit?";
-  else if (st === "wait") due = "ab " + fRel(atMs(c, w.at));
-  else if (st === "due") due = "bis " + fRel(atMs(c, w.to));
-  else due = "überfällig seit " + fRel(atMs(c, w.to));
-  const dT = bsOf(p).doneT[it.k];
-  const run = it.run ? it.run(x) : "";
-  let inp = "";
-  if (it.inp && st !== "na") {
-    inp = `<div class="inl">${it.inp.map((q) => {
-      if (q.lab) {
-        const lv = last(serOf(p, "lab:" + q.lab));
-        return `<label>${q.lab === "Na+" ? "Na⁺" : q.lab} <input id="ci_${it.k}_${q.lab}" data-f="lab:${q.lab}" inputmode="decimal" placeholder="${esc(q.u)}"><span class="lv">${lv ? `${esc(lv.v)} · ${fRel(tMs(lv.t))}` : ""}</span></label>`;
-      }
+  if (st === "due") due = `<span class="dd">${c.u == null ? "sofort" : "bis " + fRel(atMs(c, w.to))}</span>`;
+  else if (st === "over") due = `<span class="dd o">überfällig</span>`;
+  else if (st === "na") due = `<span class="dd n">entfällt</span>`;
+  const run = it.run ? it.run({ p, c }) : "";
+  let det = "";
+  if (UI.open[ik]) {
+    const dT = bsOf(p).doneT[it.k];
+    const inp = it.inp ? `<div class="inl">${it.inp.map((q) => {
+      if (q.lab) { const lv = last(serOf(p, "lab:" + q.lab)); return `<label>${q.lab === "Na+" ? "Na⁺" : q.lab} <input id="ci_${it.k}_${q.lab}" data-f="lab:${q.lab}" inputmode="decimal" placeholder="${esc(q.u)}"><span class="lv">${lv ? `${esc(lv.v)} · ${fRel(tMs(lv.t))}` : ""}</span></label>`; }
       const bv = q.f === "vkof" ? c.b.vkof : q.f === "tief" ? c.b.tief : q.f === "ais" ? c.b.ais : "";
       return `<label>${q.l} <input id="ci_${it.k}_${q.f}" data-f="${q.f}" inputmode="decimal" value="${esc(bv || "")}" placeholder="${esc(q.u)}"></label>`;
-    }).join("")}</div>`;
+    }).join("")}</div>` : "";
+    det = `<div class="det">${it.info ? vInfo(ik, it.info, "flat") : ""}${inp}<div class="row small">${c.u != null && st !== "done" && st !== "na" ? `<span class="mut">Zeitfenster ${fRel(atMs(c, w.at))} – ${fRel(atMs(c, w.to))}</span>` : ""}${dT && st === "done" ? `<span class="mut">erledigt ${fDT(dT)}</span>` : ""}<button class="btn sm" data-act="na" data-k="${it.k}">${st === "na" ? "wieder aufnehmen" : "entfällt bei diesem Patienten"}</button></div></div>`;
   }
-  const ik = "i_" + it.k;
-  return `<div class="it st-${st}"><button class="cb${st === "done" ? " on" : ""}" data-act="tick" data-k="${it.k}" aria-label="erledigt">${st === "done" ? "✓" : ""}</button>
-    <div class="itx">${it.t(x)}${run ? `<span class="run">${run}</span>` : ""}${st === "done" && dT ? `<span class="dt">✓ ${fDT(dT)}</span>` : ""}${inp}</div>
-    <span class="due d-${st}">${due}</span>${it.info ? iBtn(ik) : "<span></span>"}<button class="na" data-act="na" data-k="${it.k}" title="${st === "na" ? "wieder aufnehmen" : "entfällt"}">${st === "na" ? "↺" : "–"}</button></div>${it.info ? vInfo(ik, it.info) : ""}`;
+  return `<div class="it st-${st}"><button class="cb${st === "done" ? " on" : ""}" data-act="tick" data-k="${it.k}" aria-label="erledigt">${st === "done" ? "✓" : ""}</button><div class="itx">${it.t({ p, c })}${run ? ` <span class="run">${run}</span>` : ""}</div>${due}${iBtn(ik)}</div>${det}`;
 }
 function vPhase(p, c, ph) {
   const items = visItems(p, c, ph.k);
@@ -1300,126 +1345,92 @@ function vPhase(p, c, ph) {
   const done = sts.filter((s) => s === "done" || s === "na").length;
   const over = sts.filter((s) => s === "over").length;
   const cur = c.h != null && c.h >= ph.at && c.h < ph.to;
-  const future = c.h != null && c.h < ph.at;
-  const defOpen = !(done === items.length) && !(future && ph.at - c.h > 24);
+  const defOpen = cur || (c.u == null && ph.k === "auf");
   const open = UI.fold[ph.k] != null ? !UI.fold[ph.k] : defOpen;
   const pto = ph.k === "auf" ? Math.max(ph.to, c.aufH + 2) : ph.to;
   const tm = c.u != null ? `${fRel(atMs(c, ph.at))} – ${fRel(atMs(c, pto))}` : "";
-  let h = `<div class="card ph${cur ? " cur" : ""}" style="--pc:var(${ph.c})"><div class="ph-h" data-act="fold" data-k="${ph.k}"><span class="fold">${open ? "▾" : "▸"}</span><h3>${ph.t}</h3><span class="tm">${tm}</span><span class="cnt">${over ? `<b class="o">${over} überfällig</b> · ` : ""}${done}/${items.length}</span></div>`;
+  const right = over ? `<b class="o">${over} überfällig</b>` : done === items.length ? `<span class="ok">✓ alles erledigt</span>` : `${done}/${items.length}`;
+  let h = `<div class="card ph${cur ? " cur" : ""}" style="--pc:var(${ph.c})"><div class="ph-h" data-act="fold" data-k="${ph.k}"><span class="fold">${open ? "▾" : "▸"}</span><h3>${ph.t}</h3>${cur ? '<span class="now-b">jetzt</span>' : ""}<span class="tm">${tm}</span><span class="cnt">${right}</span></div>`;
   if (open) h += `<div class="ph-b">${items.map((it) => vItem(p, c, it)).join("")}</div>`;
   return h + "</div>";
 }
 function vIntox(p, c) {
   const rel = intoxRelevant(p, c);
-  const open = UI.fold.iv != null ? !UI.fold.iv : rel;
   const co = coVerdacht(p), cn = cyanVerdacht(p);
   const iht = burnOf(p).inhal || isDone(p, "rg_russ");
+  const open = UI.fold.iv != null ? !UI.fold.iv : rel;
   const flags = [co ? '<span class="flag r">CO-Verdacht</span>' : "", cn ? '<span class="flag r">Cyanid-Verdacht</span>' : ""].join(" ");
-  let h = `<div class="card ph" style="--pc:var(--p-iv)"><div class="ph-h" data-act="fold" data-k="iv"><span class="fold">${open ? "▾" : "▸"}</span><h3>Inhalations-Intoxikation</h3><span class="tm">${rel ? "" : "keine Exposition angegeben"}</span> ${flags}<span class="cnt">CO · Cyanid · Inhalationstrauma</span></div>`;
+  const sub = rel ? (co || cn ? "" : "kein Verdacht") : "keine Exposition angegeben";
+  let h = `<div class="card ph" style="--pc:var(--p-iv)"><div class="ph-h" data-act="fold" data-k="iv"><span class="fold">${open ? "▾" : "▸"}</span><h3>Inhalations-Intoxikation</h3>${flags}<span class="tm">${sub}</span></div>`;
   if (!open) return h + "</div>";
-  const ck = ([k, t], act) => {
+  const row = ([k, t], info) => {
     const on = isDone(p, k);
     const dT = bsOf(p).doneT[k];
-    return `<div class="it ${on ? "st-done" : act ? "st-due" : ""}"><button class="cb${on ? " on" : ""}" data-act="tick" data-k="${k}">${on ? "✓" : ""}</button><div class="itx">${t}${on && dT && act ? `<span class="dt">✓ ${fDT(dT)}</span>` : ""}</div><span></span><span></span><span></span></div>`;
+    return `<div class="it ${on ? "st-done" : "st-due"}"><button class="cb${on ? " on" : ""}" data-act="tick" data-k="${k}">${on ? "✓" : ""}</button><div class="itx">${t}${on && dT ? ` <span class="run">✓ ${fT(dT)}</span>` : ""}</div><span></span>${info ? iBtn(info) : "<span></span>"}</div>${info ? vInfo(info, info === "iv_co" ? INFO_CO : info === "iv_cn" ? INFO_CN : INFO_IHT, "flat") : ""}`;
   };
-  h += `<div class="ph-b"><div class="two" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
-    <div><div class="lbl" style="margin:4px 0">Exposition — trifft zu</div>${C48_EXPO.map((x) => ck(x)).join("")}
-      <div class="lbl" style="margin:8px 0 4px;display:flex;gap:6px;align-items:center">CO erkennen ${iBtn("iv_co")}</div>${C48_CO_RG.map((x) => ck(x)).join("")}
-      <div class="lbl" style="margin:8px 0 4px;display:flex;gap:6px;align-items:center">Cyanid erkennen ${iBtn("iv_cn")}</div>${C48_CN_RG.map((x) => ck(x)).join("")}
-      <div class="inl" style="margin-top:6px"><label>COHb <input id="iv_cohb" data-f="lab:COHb" inputmode="decimal" placeholder="%"><span class="lv">${(() => { const l = last(serOf(p, "lab:COHb")); return l ? esc(l.v) + " % · " + fRel(tMs(l.t)) : ""; })()}</span></label><label>Laktat <input id="iv_lak" data-f="lab:Laktat" inputmode="decimal" placeholder="mmol/l"><span class="lv">${(() => { const l = last(serOf(p, "lab:Laktat")); return l ? esc(l.v) + " · " + fRel(tMs(l.t)) : ""; })()}</span></label></div>
-    </div>
-    <div><div class="lbl" style="margin:4px 0">Handeln</div>
-      ${co ? `<div class="lbl" style="margin:4px 0;color:var(--red);font-weight:600">CO-Verdacht</div>${C48_CO_RH.map((x) => ck(x, true)).join("")}` : `<div class="mut small" style="margin:4px 0">CO: kein Verdacht (COHb < 10 %, keine Zeichen angekreuzt).</div>`}
-      ${cn ? `<div class="lbl" style="margin:8px 0 4px;color:var(--red);font-weight:600">Cyanid-Verdacht</div>${C48_CN_RH.map((x) => ck(x, true)).join("")}` : `<div class="mut small" style="margin:6px 0">Cyanid: kein Verdacht (Exposition plus Bewusstseinsstörung, Kreislaufinstabilität oder Laktat > 10).</div>`}
-      ${iht ? `<div class="lbl" style="margin:8px 0 4px;display:flex;gap:6px;align-items:center">Inhalationstrauma ${iBtn("iv_iht")}</div>${C48_IHT.map((x) => ck(x, true)).join("")}` : ""}
-    </div></div>${vInfo("iv_co", INFO_CO)}${vInfo("iv_cn", INFO_CN)}${vInfo("iv_iht", INFO_IHT)}</div>`;
-  return h + "</div>";
+  h += `<div class="ph-b">`;
+  if (co) h += `<div class="grp">CO — handeln</div>` + C48_CO_RH.map((x, i) => row(x, i === 0 ? "iv_co" : null)).join("");
+  if (cn) h += `<div class="grp">Cyanid — handeln</div>` + C48_CN_RH.map((x, i) => row(x, i === 0 ? "iv_cn" : null)).join("");
+  if (iht) h += `<div class="grp">Inhalationstrauma</div>` + C48_IHT.map((x) => row(x, "iv_iht")).join("");
+  const kOpen = UI.fold.ivk != null ? !UI.fold.ivk : !(co || cn);
+  const ck = ([k, t]) => `<label><input type="checkbox" data-act="tick" data-k="${k}"${isDone(p, k) ? " checked" : ""}> ${t}</label>`;
+  const lv = (n) => { const l = last(serOf(p, "lab:" + n)); return l ? `${esc(l.v)} · ${fRel(tMs(l.t))}` : ""; };
+  h += `<div class="sub-h" data-act="fold" data-k="ivk"><span class="fold">${kOpen ? "▾" : "▸"}</span> Kriterien und Werte</div>`;
+  if (kOpen) h += `<div class="kcols"><div><b>Exposition</b>${C48_EXPO.map(ck).join("")}</div><div><b>CO</b>${C48_CO_RG.map(ck).join("")}</div><div><b>Cyanid</b>${C48_CN_RG.map(ck).join("")}</div></div>
+    <div class="inl"><label>COHb <input id="iv_cohb" data-f="lab:COHb" inputmode="decimal" placeholder="%"><span class="lv">${lv("COHb")}</span></label><label>Laktat <input id="iv_lak" data-f="lab:Laktat" inputmode="decimal" placeholder="mmol/l"><span class="lv">${lv("Laktat")}</span></label></div>`;
+  return h + "</div></div>";
 }
-function vSide(p, c, due) {
-  let h = "";
-  if (!(c.vk != null && c.vk < 20)) {
-    h += `<div class="card"><h3>Jetzt fällig ${iBtn("s_help")}</h3>${vInfo("s_help", I(null, null, null, "Häkchen gelten auch in BurnICU (Checkliste 48 h). „–“ am Zeilenende = entfällt für diesen Patienten, ↺ holt den Punkt zurück. Fälligkeit rechnet ab Unfallzeit (h 0); Aufnahmepunkte bis 2 h nach Anlage des Patienten. Das (i) an jedem Punkt zeigt Pathophysiologie, Studien und die zugehörige SOP — bei Abweichung gilt die SOP."))}`;
-    if (!due.length) h += `<div class="mut small">Nichts offen in den aktuellen Zeitfenstern.</div>`;
-    due.slice(0, 14).forEach(({ it, st }) => {
-      const tx = it.t({ p, c }).replace(/<button[^>]*>.*?<\/button>/g, "").replace(/<span class="sub">.*?<\/span>/g, "").replace(/<[^>]+>/g, "");
-      h += `<div class="sl ${st === "over" ? "o" : "d"}"><span class="t1">${esc(tx.length > 90 ? tx.slice(0, 88) + "…" : tx)}</span><button class="btn sm" data-act="tick" data-k="${it.k}">✓</button></div>`;
-    });
-    if (due.length > 14) h += `<div class="mut small">… und ${due.length - 14} weitere</div>`;
-    h += `</div>`;
-  }
-  const lf = laufend(p, c);
-  if (lf.length) {
-    h += `<div class="card"><h3>Laufend</h3>`;
-    lf.forEach((x) => {
-      let inp = "";
-      if (x.inp === "iap") inp = `<input id="lf_iap" data-f="iap" inputmode="decimal" placeholder="mmHg" style="width:72px;min-height:28px">`;
-      if (x.inp === "ck") inp = `<input id="lf_ck" data-f="lab:CK" inputmode="decimal" placeholder="CK U/l" style="width:84px;min-height:28px">`;
-      if (x.inp === "cohb") inp = `<input id="lf_cohb" data-f="lab:COHb" inputmode="decimal" placeholder="COHb %" style="width:84px;min-height:28px">`;
-      h += `<div class="sl ${x.st}"><span class="t1">${x.t}<br><span class="t2">${x.info} · ${x.st === "o" ? "fällig seit" : "nächste"} ${fRel(x.due)}</span></span>${inp}</div>`;
-    });
-    h += `</div>`;
-  }
-  h += `<div class="card"><h3>Nicht tun</h3>${NICHT.map(([t, inf], i) => `<div class="nt"><span class="x">✕</span><span>${t}</span>${iBtn("nt" + i)}</div>${vInfo("nt" + i, inf)}`).join("")}</div>`;
-  return h;
+function vNicht() {
+  const open = UI.fold.nt === false;
+  let h = `<div class="card ph" style="--pc:var(--red)"><div class="ph-h" data-act="fold" data-k="nt"><span class="fold">${open ? "▾" : "▸"}</span><h3>Nicht tun</h3><span class="tm">${NICHT.length} Punkte</span></div>`;
+  if (open) h += `<div class="ph-b">${NICHT.map(([t, inf], i) => `<div class="it"><span class="x">✕</span><div class="itx">${t}</div><span></span>${iBtn("nt" + i)}</div>${vInfo("nt" + i, inf, "flat")}`).join("")}</div>`;
+  return h + "</div>";
 }
 
 /* ---------- Volumentherapie ---------- */
 function vVol(p, c, P) {
-  if (c.vk != null && c.vk < 20) return `<div class="card">Volumen nach SOP erst ab 20 % VKOF.</div>`;
-  if (c.u == null) return `<div class="card"><h2>Unfallzeit fehlt</h2><p class="mut">Die Volumentherapie rechnet ab Stunde 0 nach Unfall.</p><div class="row">${fld("Unfallzeit", "unfall", "", { type: "datetime-local" })}</div></div>`;
-  let h = vTiles(p, c, P);
-  h += `<div class="vgrid"><div>`;
-  if (c.schock) h += vJetztBox(p, c, P);
-  else if (c.h >= 48) h += vPostShock(p, c);
-  h += `</div><div>${vNachtrag(p, c)}</div></div>`;
+  if (c.u == null) return `<div class="card">Die Volumentherapie rechnet ab Unfall — <button class="btn sm pri" data-act="dlg" data-v="stamm">Unfallzeit eintragen</button></div>`;
+  let h = c.schock ? vStatus(p, c, P) : c.h >= 48 ? vPostShock(p, c) : "";
   h += vTable(p, c);
+  h += vNachtrag(p, c);
   if (c.h >= 20) h += vTagesbilanz(p, c);
   return h;
 }
-function vTiles(p, c, P) {
-  const di = diuInfo(p);
-  const rr = valAt(rateHist(p), c.now), rate = rr ? numDE(rr.v) : null;
-  const ar = valAt(albHist(p), c.now), alb = ar ? numDE(ar.v) : null;
-  const v = vol(p, c, c.now);
+function vStatus(p, c, P) {
+  const di = P.di || diuInfo(p);
   const lb = di.lastB && !di.lastB.unk ? di.lastB : null;
-  const lbKg = lb && c.kg ? lb.v / c.kg : null;
-  const st = lbKg == null ? "" : lbKg < c.uoLo ? "low" : c.uoHi && lbKg > c.uoHi ? "hi" : "okk";
+  const rate = P.rate;
+  const ar = valAt(albHist(p), c.now), alb = ar ? numDE(ar.v) : null;
+  const v = P.v || vol(p, c, c.now);
   const v24 = v ? (c.h >= 24 ? vol(p, c, c.u + 24 * H) : v) : null;
   const mk = v24 && c.kg && c.vk ? v24.ges / (c.kg * c.vk) : null;
   const ivyP = v24 && c.ivy ? v24.ges / c.ivy * 100 : null;
+  const ev = P.ev || evalAt(p, c, c.now, lb ? lb.v : null);
+  const cr = Object.fromEntries(ev.crit.map((x) => [x.k, x]));
+  const mark = (x) => !x || x.st === "na" ? "" : x.st === true ? '<span class="mk y">✓</span>' : x.st === false ? '<span class="mk n">✗</span>' : '<span class="mk u">?</span>';
   const lsg = c.bs.lsg === "delta" ? "Deltajonin BG (1/3)" : "Ringer-Azetat";
-  return `<div class="tiles">
-    <div class="tile"><span class="tl">Rule of 10 ${iBtn("v_rot")}</span><span class="tv">${c.rot != null ? r0(c.rot) : "—"} <small>ml/h</small></span><span class="tk">${c.rot != null ? `${c.vk10} % × 10${c.rotKg ? " + " + c.rotKg : ""}${c.rotIht ? " + 100 IHT" : ""}` : c.rotNA ? "< 40 kg: Kinderschema" : "Gewicht/VKOF fehlt"}</span><span class="seg" style="margin-top:4px"><button data-act="lsg" data-v="ra" class="${c.bs.lsg !== "delta" ? "on" : ""}">Ringer-Azetat</button><button data-act="lsg" data-v="delta" class="${c.bs.lsg === "delta" ? "on" : ""}">Deltajonin BG (1/3)</button></span></div>
-    <div class="tile"><span class="tl">${lsg} jetzt</span><span class="tv">${rate != null ? r0(rate) : "—"} <small>ml/h</small></span><span class="tk">${rr && rr.t !== EPOCH ? "seit " + fRel(tMs(rr.t)) : "keine Rate"}${rate && c.rot ? ` · ${fN(rate / c.rot, 1)} × Rule of 10` : ""}</span><input id="t_rate" data-f="ratenow" inputmode="numeric" placeholder="neue Rate ab jetzt"></div>
-    <div class="tile"><span class="tl">Albumin 20 % ${iBtn("v_alb")}</span><span class="tv">${alb ? r0(alb) : "—"} <small>ml/h</small></span><span class="tk">${c.h < 6 ? "erst ab h 6" : c.h < 8 ? "h 6–8: nur erwägen" : c.h >= 48 ? "nach Bedarf · Ziel 2,2–2,7 g/dl" : rate ? `SOP ≈ ${r0(rate / 10)} ml/h` : ""}</span><input id="t_alb" data-f="albnow" inputmode="numeric" placeholder="Albumin ml/h ab jetzt"></div>
-    <div class="tile ${st}"><span class="tl">Diurese letzte Std. ${iBtn("v_diu")}</span><span class="tv">${lb ? r0(lb.v) : "—"} <small>ml/h</small></span><span class="tk">${lbKg != null ? fN(lbKg, 2) + " ml/kg/h · " : ""}${lb ? fHH(lb.h - H) + "–" + fHH(lb.h) + " Uhr" : ""} · Ziel ${zielTxt(c)}</span><input id="t_diu" data-f="diunow" inputmode="numeric" placeholder="ml seit letztem Eintrag"></div>
-    <div class="tile"><span class="tl">Volumen seit Unfall ${iBtn("v_vol")}</span><span class="tv">${v ? tsd(v.ges) : "—"} <small>ml</small></span><span class="tk">${v ? `Kristalloid ${tsd(v.kris)} · Kolloid/Blut ${tsd(v.kol)}` : ""}${v && v.soll != null && c.h < 48 ? `<br>Referenz Rule of 10 × ${fN(v.hJ, 1)} h: ${tsd(v.soll)}` : ""}${v && v.g == null ? "<br>ohne Präklinik/SR" : ""}</span></div>
-    <div class="tile ${mk > 6 || ivyP >= 100 ? "low" : ivyP >= 80 ? "hi" : ""}"><span class="tl">Grenzen ${c.h >= 24 ? "h 0–24" : ""} ${iBtn("v_ivy")}</span><span class="tv">${mk != null ? fN(mk, 1) : "—"} <small>ml/kg/% VKOF</small></span><span class="tk">${ivyP != null ? `Ivy-Index ${fN(ivyP, 0)} % von 250 ml/kg (${tsd(c.ivy)} ml)` : ""}${mk > 6 ? " · > 6: Kolloid-Rescue erwägen" : ""}</span></div>
-  </div>${vInfo("v_rot", IT_BY.s_rot.info)}${vInfo("v_alb", IT_BY.y_alb.info)}${vInfo("v_diu", IT_BY.s_diu.info)}${vInfo("v_vol", I("Soll = Rule of 10 × Stunden ab Unfall ist nur eine Referenzlinie: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall, nicht mit der Aufnahme.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: Gesamtvolumen über 6 ml/kg/% VKOF in 24 h ist mit Kompartmentsyndromen und ARDS assoziiert.", "Volumentherapie: Kristalloid nach Rule of 10, Albumin/FFP ab h 6; Ivy-Index > 250 ml/kg → hohes Risiko."))}${vInfo("v_ivy", IT_BY.y_ivy.info)}`;
-}
-function vJetztBox(p, c, P) {
-  const m = P.main;
-  const box = (b) => b ? `<div class="box ${b.lv === "ok" ? "ok" : b.lv}"><div class="bh">${b.h}${b.neu ? `<button class="btn sm ${b.aufhol ? "" : "pri"}" data-act="setrate" data-v="${b.neu}">${b.aufhol ? "Aufholrate " : ""}${r0(b.neu)} ml/h übernehmen</button>` : ""}</div>${b.t ? `<div class="bt">${b.t}</div>` : ""}</div>` : "";
-  const ev = P.ev || evalAt(p, c, c.now, P.di && P.di.lastB ? P.di.lastB.v : null);
-  const chip = (x) => {
-    const cls = x.st === "na" ? "x" : x.st === true ? "y" : x.st === false ? "n" : "u";
-    const mark = x.st === "na" ? "–" : x.st === true ? "✓" : x.st === false ? "✗" : "?";
-    let inp = "";
-    if (x.k === "lak") inp = `<input id="cc_lak" data-f="lab:Laktat" inputmode="decimal" placeholder="neu">`;
-    if (x.k === "scv" && x.st !== "na") inp = `<input id="cc_scv" data-f="lab:ScvO2" inputmode="decimal" placeholder="neu">`;
-    if (x.k === "hi" && x.st !== "na") inp = `<input id="cc_hi" data-f="hinow" inputmode="decimal" placeholder="neu">`;
-    if (x.k === "rek") inp = `<button class="btn sm" data-act="rekap" data-v="ok">< 3 s</button><button class="btn sm" data-act="rekap" data-v="fail">≥ 3 s</button>`;
-    return `<span class="cc ${cls}">${mark} ${x.l}${x.v != null ? ` (${esc(x.v)})` : ""}${x.st === "na" ? " · kein Monitoring" : ""}${inp}</span>`;
-  };
-  let h = `<div class="card"><h2>Jetzt — Stunde ${Math.floor(c.h)} nach Unfall ${iBtn("v_reeval")}</h2>${box(m)}
-    <div class="crit"><span class="lbl">Ziele (stündlich):</span>${ev.crit.map(chip).join("")}</div>
-    <div class="row small" style="margin:4px 0 8px"><span class="lbl">HI/ScvO2 bewerten:</span><span class="seg">${[["auto", "automatisch"], ["ja", "ja"], ["nein", "nein (kein ZVK/PiCCO)"]].map(([v, t]) => `<button data-act="hd" data-v="${v}" class="${c.bs.hd === v ? "on" : ""}">${t}</button>`).join("")}</span></div>
-    ${vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab. Ohne ZVK/PiCCO fehlen HI und ScvO2 — dann entscheidet die App nach Diurese, Laktat und Rekap.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → STEP DOWN −10 %; eines oder mehrere nicht erfüllt → STEP UP +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge."))}
-    ${box(P.vol)}`;
-  if (P.vol && P.vol.miss) h += `<div class="row" style="margin-bottom:8px"><span class="lbl">präklinisch + SR</span><input id="jb_g" data-f="gegeben" inputmode="numeric" placeholder="ml" style="width:100px"><span class="lbl">bis</span><input id="jb_gb" data-f="gegebenBis" placeholder="hh:mm" style="width:80px"></div>`;
-  if (P.hints.length) h += `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin BG (1/3)" : "auf Ringer-Azetat"}</button>` : ""}</li>`).join("")}</ul>`;
-  h += `<div class="small" style="margin-top:6px"><b>Schritte von der aktuellen Rate:</b> ${(() => { const r = P.rate; if (!r) return "—"; return `+20 % → ${r0(r10(r * 1.2))} · −10 % → ${r0(r10(r * 0.9))} ml/h${c.rot ? ` · 2 × Rule of 10 = ${r0(2 * c.rot)} ml/h (Eskalationsgrenze)` : ""}`; })()}</div>`;
-  return h + "</div>";
+  const facts = `<div class="facts">
+    <span>Rule of 10 <b>${c.rot != null ? r0(c.rot) + " ml/h" : "—"}</b>${iBtn("v_rot")}</span>
+    <span>${lsg} <b>${rate != null ? r0(rate) + " ml/h" : "—"}</b> <button class="btn lnk" data-act="lsg" data-v="${c.bs.lsg === "delta" ? "ra" : "delta"}" title="Lösung wechseln">⇄</button></span>
+    ${c.h >= 6 || alb ? `<span>Albumin 20 % <b>${alb ? r0(alb) + " ml/h" : "—"}</b>${iBtn("v_alb")}</span>` : ""}
+    <span>seit Unfall <b>${v ? tsd(v.ges) + " ml" : "—"}</b>${iBtn("v_vol")}</span>
+    <span class="${ivyP >= 100 || mk > 6 ? "bad" : ivyP >= 80 ? "warn" : ""}">${c.h >= 24 ? "h 0–24: " : ""}<b>${mk != null ? fN(mk, 1) : "—"}</b> ml/kg/% VKOF · Ivy <b>${ivyP != null ? fN(ivyP, 0) + " %" : "—"}</b>${iBtn("v_ivy")}</span>
+  </div>${vInfo("v_rot", IT_BY.s_rot.info)}${vInfo("v_alb", IT_BY.y_alb.info)}${vInfo("v_vol", I("Referenz = Rule of 10 × Stunden ab Unfall ist nur eine Linie zum Vergleich: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: über 6 ml/kg/% VKOF in 24 h häufiger Kompartmentsyndrome und ARDS.", "Volumentherapie: Ivy-Index > 250 ml/kg → hohes Risiko."))}${vInfo("v_ivy", IT_BY.y_ivy.info)}`;
+  const q = (lbl, val, x, inp, extra) => `<div class="qb${x && x.st === false ? " n" : x && x.st === true ? " y" : ""}"><div class="ql">${lbl} ${mark(x)}</div><div class="qv">${val}</div>${inp}${extra || ""}</div>`;
+  const diuV = lb ? `${r0(lb.v)} ml <small>${c.kg ? fN(lb.v / c.kg, 2) + " ml/kg/h" : ""} · ${fHH(lb.h - H)}–${fHH(lb.h)} Uhr</small>` : "—";
+  let quick = `<div class="qgrid">
+    ${q(`Diurese (Ziel ${zielTxt(c)})`, diuV, cr.diu, `<input id="q_diu" data-f="diunow" inputmode="numeric" placeholder="ml seit letztem Eintrag">`)}
+    ${q("Laufrate neu", rate != null ? `${r0(rate)} ml/h <small>+20 % → ${r0(r10(rate * 1.2))} · −10 % → ${r0(r10(rate * 0.9))}</small>` : "—", null, `<input id="q_rate" data-f="ratenow" inputmode="numeric" placeholder="ml/h ab jetzt">`)}
+    ${c.hiAvail ? q("HI > 2,2", cr.hi.v || "—", cr.hi, `<input id="q_hi" data-f="hinow" inputmode="decimal" placeholder="neu">`) : ""}
+    ${c.scvAvail ? q("ScvO2 > 70 %", cr.scv.v || "—", cr.scv, `<input id="q_scv" data-f="lab:ScvO2" inputmode="decimal" placeholder="neu">`) : ""}
+    ${q("Laktat fällt", cr.lak.v || "—", cr.lak, `<input id="q_lak" data-f="lab:Laktat" inputmode="decimal" placeholder="neu">`)}
+    ${q("Rekap < 3 s", cr.rek.v || "—", cr.rek, `<div class="row" style="gap:4px"><button class="btn sm" data-act="rekap" data-v="ok">< 3 s</button><button class="btn sm" data-act="rekap" data-v="fail">≥ 3 s</button></div>`)}
+    ${c.h >= 6 ? q("Albumin 20 % neu", alb ? r0(alb) + " ml/h" : "—", null, `<input id="q_alb" data-f="albnow" inputmode="numeric" placeholder="ml/h ab jetzt">`) : ""}
+  </div>`;
+  const vb = P.vol && !(P.vol.lv === "ok" && !P.vol.miss) ? `<div class="box ${P.vol.lv === "ok" ? "ok" : P.vol.lv}"><div class="bh">${P.vol.h}${P.vol.neu ? `<button class="btn sm ${P.vol.aufhol ? "" : "pri"}" data-act="setrate" data-v="${P.vol.neu}">${P.vol.aufhol ? "Aufholrate " : ""}${r0(P.vol.neu)} ml/h übernehmen</button>` : ""}</div><div class="bt">${P.vol.t}</div>${P.vol.miss ? `<div class="row" style="margin-top:6px"><input id="jb_g" data-f="gegeben" inputmode="numeric" placeholder="ml präklin. + SR" style="width:150px"><span class="lbl">bis</span><input id="jb_gb" data-f="gegebenBis" placeholder="hh:mm" style="width:80px"></div>` : ""}</div>` : P.vol ? `<div class="small mut" style="margin:2px 0 6px">${P.vol.h}.</div>` : "";
+  const hints = P.hints.length ? `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin BG (1/3)" : "auf Ringer-Azetat"}</button>` : ""}</li>`).join("")}</ul>` : "";
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Schockphase · Stunde ${Math.floor(c.h)}</h2>${iBtn("v_reeval")}</div>${vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → −10 %; eines oder mehrere nicht erfüllt → +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge.", "Ein verfehltes Ziel zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde. HI/ScvO2 ohne Monitoring werden nicht bewertet (umstellbar in den Stammdaten)."))}
+    ${facts}${quick}${vb}${hints}</div>`;
 }
 function vPostShock(p, c) {
   const di = diuInfo(p);
@@ -1427,28 +1438,25 @@ function vPostShock(p, c) {
   const s6 = diuSum(di, c.now - 6 * H, c.now);
   const na = last(serOf(p, "lab:Na+"));
   const alb = last(serOf(p, "lab:Albumin"));
-  return `<div class="card"><h2>Tag ${c.tag} — Volumen bedarfsorientiert ${iBtn("v_post")}</h2>
-    <div class="box i"><div class="bh">Schockphase beendet (${fWDT(atMs(c, 48))})</div><div class="bt">Ziel-Diurese ${zielTxt(c)} · PiCCO 1 × pro Schicht (ELWI) · Rückresorption der Ödeme: Bilanzziel festlegen · Natrium (Verdunstung) und Albumin im Blick.</div></div>
-    <table class="tb2"><tr><th></th><th>Wert</th><th>Hinweis</th></tr>
-    <tr><td>Diurese letzte 6 h</td><td>${s6.n ? r0(s6.s) + " ml" : "—"}</td><td>${s6.n && c.kg ? fN(s6.s / s6.n / c.kg, 2) + " ml/kg/h" : ""}</td></tr>
-    <tr><td>Diurese letzte 24 h</td><td>${s24.n ? tsd(s24.s) + " ml" : "—"}</td><td>${s24.n < 20 ? `nur ${s24.n} Stundenwerte` : ""}</td></tr>
-    <tr><td>Natrium</td><td>${na ? esc(na.v) : "—"}</td><td>${na && numDE(na.v) > 145 ? "Hypernatriämie — freies Wasser/Verdunstung bedenken" : na ? fRel(tMs(na.t)) : ""}</td></tr>
-    <tr><td>Albumin</td><td>${alb ? esc(alb.v) : "—"}</td><td>${alb ? fRel(tMs(alb.t)) : ""}</td></tr></table>
-    ${vInfo("v_post", IT_BY.t3_bil.info)}</div>`;
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Tag ${c.tag} · bedarfsorientiert</h2>${iBtn("v_post")}</div>${vInfo("v_post", IT_BY.t3_bil.info)}
+    <div class="facts"><span>Diurese 6 h <b>${s6.n ? r0(s6.s) + " ml" : "—"}</b>${s6.n && c.kg ? ` (${fN(s6.s / s6.n / c.kg, 2)} ml/kg/h)` : ""}</span><span>24 h <b>${s24.n ? tsd(s24.s) + " ml" : "—"}</b></span><span>Na <b>${na ? esc(na.v) : "—"}</b></span><span>Albumin <b>${alb ? esc(alb.v) : "—"}</b></span><span>Ziel ${zielTxt(c)}</span></div>
+    <div class="qgrid"><div class="qb"><div class="ql">Diurese</div><input id="q_diu" data-f="diunow" inputmode="numeric" placeholder="ml seit letztem Eintrag"></div><div class="qb"><div class="ql">Natrium</div><input id="q_na" data-f="lab:Na+" inputmode="decimal" placeholder="mmol/l"></div><div class="qb"><div class="ql">Albumin</div><input id="q_alb2" data-f="lab:Albumin" inputmode="decimal" placeholder="g/dl"></div></div></div>`;
 }
 function vNachtrag(p, c) {
   const di = diuInfo(p);
   const lastE = di.lastE;
-  return `<div class="card"><h2>Nachtragen — was bisher geschah ${iBtn("v_nach")}</h2>
-    ${vInfo("v_nach", I("Das Kapillarleck beginnt mit dem Unfall — was Präklinik und Schockraum gegeben haben, entscheidet, ob ein Defizit nachzuholen oder eine Übertherapie abzubremsen ist.", null, null, "Später dazugekommen (z. B. h 13): Präklinik/Schockraum eintragen, dann die Stundentabelle von oben nach unten aus der Kurve füllen — Laufrate ab Zeilenbeginn, Diurese pro Stunde. Danach stehen Defizit/Übertherapie, Ivy-Index und die nächste Anweisung oben. Diurese-Sammelwert: von–bis über mehrere Stunden; ohne früheren Eintrag wird er gleichmäßig auf die Stunden verteilt. Uhrzeiten ohne Datum gelten für die letzten 24 h. FFP/EK landen auch in der BurnICU-Transfusionsliste (Volumen geschätzt: EK ≈ 300 ml, FFP ≈ 250 ml)."))}
-    <div class="nform">
+  const leer = !rateHist(p).length && !di.list.length && c.h > 1;
+  const open = UI.fold.nach != null ? !UI.fold.nach : leer;
+  let h = `<div class="card ph" style="--pc:var(--navy)"><div class="ph-h" data-act="fold" data-k="nach"><span class="fold">${open ? "▾" : "▸"}</span><h3>Nachtragen</h3><span class="tm">Präklinik/SR, Laufraten ab Uhrzeit, Diurese-Sammelwert, Zusatzgaben</span>${iBtn("v_nach")}</div>${vInfo("v_nach", I("Das Kapillarleck beginnt mit dem Unfall — was Präklinik und Schockraum gegeben haben, entscheidet, ob ein Defizit nachzuholen oder eine Übertherapie abzubremsen ist.", null, null, "Später dazugekommen: Präklinik/SR eintragen, dann die Stundentabelle von oben nach unten aus der Kurve füllen (Laufrate ab Zeilenbeginn, Diurese pro Stunde). Sammelwert von–bis über mehrere Stunden; ohne früheren Eintrag wird er gleichmäßig verteilt. Uhrzeiten gelten für die letzten 24 h. FFP/EK landen auch in der BurnICU-Transfusionsliste (EK ≈ 300 ml, FFP ≈ 250 ml)."))}`;
+  if (!open) return h + "</div>";
+  return h + `<div class="ph-b"><div class="nform">
       <span class="lbl">Präklinik + Schockraum</span><span class="ins"><input id="n_g" class="n" data-f="gegeben" inputmode="numeric" placeholder="ml" value="${esc(c.b.gegeben || "")}"> bis <input id="n_gb" class="t" data-f="gegebenBis" placeholder="hh:mm" value="${esc(c.d.gegebenBis || "")}"> Uhr</span>
       <span class="lbl">Laufrate ab</span><span class="ins"><input id="n_rt" class="t" placeholder="hh:mm"> <input id="n_rv" class="n" inputmode="numeric" placeholder="ml/h"> <select id="n_rk"><option value="ra">${c.bs.lsg === "delta" ? "Kristalloid" : "Ringer-Azetat"}</option><option value="alb">Albumin 20 %</option></select> <button class="btn sm" data-act="addrate">eintragen</button></span>
       <span class="lbl">Diurese Sammelwert</span><span class="ins">von <input id="n_dv" class="t" placeholder="hh:mm" value="${lastE ? fT(hourRound(lastE.t)) : ""}"> bis <input id="n_db" class="t" placeholder="hh:mm" value="${!lastE || hourFloor(Date.now()) > hourRound(lastE.t) ? fT(hourFloor(Date.now())) : ""}"> <input id="n_dm" class="n" inputmode="numeric" placeholder="ml"> <button class="btn sm" data-act="adddiu">eintragen</button></span>
       <span class="lbl">Zusatzgabe</span><span class="ins"><input id="n_xt" class="t" placeholder="hh:mm"> <select id="n_xa">${Object.entries(EXTRA_ART).map(([k, t]) => `<option value="${k}">${t}</option>`).join("")}<option value="FFP">FFP (Einheiten)</option><option value="EK">EK (Einheiten)</option></select> <input id="n_xm" class="n" inputmode="numeric" placeholder="ml bzw. E"> <button class="btn sm" data-act="addextra">eintragen</button></span>
-    </div></div>`;
+    </div></div></div>`;
 }
-function tableRows(c, mode) {
+function tableRows(c) {
   const S0 = hourFloor(c.u);
   const end = Math.min(hourFloor(c.now), c.u + 48 * H - 1);
   const rows = [];
@@ -1457,19 +1465,22 @@ function tableRows(c, mode) {
 }
 function vTable(p, c) {
   const hist = c.h >= 48;
-  const open = hist ? UI.hist : true;
-  let h = `<div class="card"><div class="ph-h" data-act="hist"><h2 style="margin:0">${hist ? (open ? "▾ " : "▸ ") : ""}Stundenprotokoll Schockphase (h 0–48)</h2></div>`;
+  const open = UI.fold.tab != null ? !UI.fold.tab : !hist;
+  const all = !!UI.allCols;
+  let h = `<div class="card ph" style="--pc:var(--teal)"><div class="ph-h" data-act="fold" data-k="tab"><span class="fold">${open ? "▾" : "▸"}</span><h3>Stundenprotokoll h 0–48</h3>${open ? `<button class="btn sm" data-act="cols">${all ? "weniger Spalten" : "alle Spalten"}</button>` : ""}<span class="tm"></span>${iBtn("v_tab")}</div>`;
+  const { t0 } = volT0(c);
+  h += vInfo("v_tab", I(null, null, null, `Zeile = Uhrzeit-Stunde, h = Stunden nach Unfall am Zeilenende. Laufrate gilt ab Zeilenbeginn; heller Wert = läuft aus der Vorstunde weiter. Diurese = ml seit dem letzten Eintrag (wie BurnICU) — fehlt eine Stunde, wird gemittelt (Ø); deshalb von oben nach unten füllen, Enter springt in die nächste Zeile. „SOP“ = Empfehlung nach dieser Stunde. Ist = Präklinik/SR + Laufraten + Albumin + Zusatzgaben; Ref. = Rule of 10 × Stunden ab Unfall.${t0 != null ? ` Zeilen vor ${fT(t0)} = Präklinik/Schockraum.` : ""} „alle Spalten“ zeigt Albumin, Zusatzgaben, ScvO2, HI, Rekap und IAP.`));
   if (!open) return h + "</div>";
   const di = diuInfo(p);
   const rh = rateHist(p), ah = albHist(p);
   const ex = extrasOf(p);
   const lak = serOf(p, "lab:Laktat"), scv = serOf(p, "lab:ScvO2"), pic = serOf(p, "picco"), iap = serOf(p, "iap"), rek = rekapSer(p);
   const rows = tableRows(c);
+  const S0 = rows[0];
   const inRow = (arr, S, fld) => arr.filter((x) => { const t = tMs(x.t); return t >= S && t < S + H && (!fld || (x[fld] != null && x[fld] !== "")); });
-  const { t0 } = volT0(c);
-  const showHI = c.hiAvail, showScv = c.scvAvail;
+  const showHI = all && c.hiAvail, showScv = all && c.scvAvail;
   const lsg = c.bs.lsg === "delta" ? "Kristalloid" : "Ringer-Azetat";
-  h += `<div class="row" style="margin:-2px 0 6px"><span class="lbl">Legende und Bedienung</span>${iBtn("v_tab")}</div>${vInfo("v_tab", I(null, null, null, `Eine Zeile = eine Uhrzeit-Stunde, h = Stunden nach Unfall am Zeilenende. Laufrate und Albumin gelten ab Zeilenbeginn; ein Wert in heller Schrift läuft aus der Vorstunde weiter. Diurese = ml seit dem letzten Eintrag (wie in BurnICU) — fehlt eine Stunde dazwischen, wird gemittelt (Ø, × löscht den Eintrag); deshalb von oben nach unten füllen, Enter springt in die nächste Zeile. „SOP nach dieser Stunde“ = Empfehlung aus Diurese und den übrigen Zielen dieser Stunde. Ist = Präklinik/SR + Laufraten + Albumin + Zusatzgaben; Referenz = Rule of 10 × Stunden ab Unfall.${t0 != null ? ` Zeilen vor ${fT(t0)} = Präklinik/Schockraum.` : ""} Laktat, ScvO2, HI, Rekap und IAP landen auch in BurnICU.`))}<div class="tblw"><table class="vt"><thead><tr><th>Uhrzeit</th><th title="Stunden nach Unfall am Zeilenende">h</th><th>Diurese ml</th><th>ml/kg/h</th><th>${lsg} ml/h</th><th>Albumin ml/h</th><th>Zusatz</th><th>Laktat</th>${showScv ? "<th>ScvO2</th>" : ""}${showHI ? "<th>HI</th>" : ""}<th>Rekap</th><th>IAP</th><th>SOP nach dieser Stunde</th><th>Ist kum.</th><th>Referenz</th></tr></thead><tbody>`;
+  h += `<div class="tblw"><table class="vt"><thead><tr><th>Uhrzeit</th><th title="Stunden nach Unfall am Zeilenende">h</th><th>Diurese ml</th><th>ml/kg/h</th><th>${lsg} ml/h</th>${all ? "<th>Albumin ml/h</th><th>Zusatz</th>" : ""}<th>Laktat</th>${showScv ? "<th>ScvO2</th>" : ""}${showHI ? "<th>HI</th>" : ""}${all ? "<th>Rekap</th><th>IAP</th>" : ""}<th>SOP</th><th>Ist</th><th>Ref.</th></tr></thead><tbody>`;
   const nowH = hourFloor(c.now);
   rows.forEach((S, i) => {
     const E = S + H;
@@ -1477,41 +1488,40 @@ function vTable(p, c) {
     const bk = di.map.get(E);
     const mk = (x) => S > c.u + (x - 1) * H && S <= c.u + x * H && S !== S0;
     const cls = [S === nowH ? "cur" : "", mk(8) ? "b8" : "", mk(24) ? "b24" : "", t0 != null && E <= t0 ? "pre" : ""].filter(Boolean).join(" ");
-    /* Diurese */
     let dCell;
-    const dKg = bk && c.kg ? bk.v / c.kg : null;
+    const dKg = bk && !bk.unk && c.kg ? bk.v / c.kg : null;
     const lo = loAt(c, E);
-    const dSt = dKg == null ? "" : dKg < lo ? "low" : c.uoHi && dKg > c.uoHi ? "hi" : "ok";
+    const dSt = dKg == null ? "" : !(dKg > lo) ? "low" : c.uoHi && dKg > c.uoHi ? "hi" : "ok";
     if (bk && bk.unk) dCell = `<td><span class="avg" title="Sammelwert über mehr als 12 h — kein Stundenwert">Σ ${r0(bk.v)} (> 12 h)</span> <button class="dlt" data-act="deldiu" data-ids="${bk.ids.join(",")}" title="Eintrag löschen">×</button></td>`;
     else if (bk && bk.n > 1) dCell = `<td class="diu-${dSt}"><span class="avg" title="Eintrag ${fT(bk.end)} Uhr: ${r0(bk.src)} ml über ${bk.n} h gemittelt">Ø ${r0(bk.v)}</span> <button class="dlt" data-act="deldiu" data-ids="${bk.ids.join(",")}" title="Eintrag löschen">×</button></td>`;
     else dCell = `<td class="${bk ? "diu-" + dSt : ""}"><input id="r_d_${S}" data-f="cell" data-kind="diu" data-s="${S}" data-col="d" data-i="${i}" inputmode="numeric" value="${bk ? r0(bk.v).replace(/\./g, "") : ""}"></td>`;
-    /* Rate */
-    const rIn = inRow(rh, S), rLast = last(rIn);
-    const rCur = valAt(rh, S);
-    const rCell = `<td><input id="r_r_${S}" data-f="cell" data-kind="rate" data-s="${S}" data-col="r" data-i="${i}" inputmode="numeric" value="${rLast ? esc(String(numDE(rLast.v))) : ""}" placeholder="${!rLast && rCur ? esc(String(numDE(rCur.v))) : ""}" title="${rLast ? "geändert " + fT(rLast.t) : rCur ? "läuft weiter" : ""}"${rLast ? ' style="font-weight:700"' : ""}>${rLast && new Date(tMs(rLast.t)).getMinutes() ? `<span class="grey small"> ${fT(rLast.t)}</span>` : ""}${rIn.length > 1 ? `<span class="grey small"> ${rIn.length}×</span>` : ""}</td>`;
-    const aIn = inRow(ah, S), aLast = last(aIn), aCur = valAt(ah, S);
-    const aCell = `<td><input id="r_a_${S}" data-f="cell" data-kind="alb" data-s="${S}" data-col="a" data-i="${i}" inputmode="numeric" class="w4" value="${aLast ? esc(String(numDE(aLast.v))) : ""}" placeholder="${!aLast && aCur && numDE(aCur.v) ? esc(String(numDE(aCur.v))) : ""}"${aLast ? ' style="font-weight:700"' : ""}></td>`;
-    const xIn = ex.filter((e) => { const t = tMs(e.t); return t >= S && t < E; });
-    const xCell = `<td>${xIn.map((e) => `<span class="ex">${esc(e.lbl)}<button data-act="delextra" data-src="${e.src}" data-id="${e.id}" title="löschen">×</button></span>`).join("")}</td>`;
+    const rIn = inRow(rh, S), rLast = last(rIn), rCur = valAt(rh, S);
+    const rCell = `<td><input id="r_r_${S}" data-f="cell" data-kind="rate" data-s="${S}" data-col="r" data-i="${i}" inputmode="numeric" value="${rLast ? esc(String(numDE(rLast.v))) : ""}" placeholder="${!rLast && rCur ? esc(String(numDE(rCur.v))) : ""}"${rLast ? ' style="font-weight:700"' : ""}>${rLast && new Date(tMs(rLast.t)).getMinutes() ? `<span class="grey small"> ${fT(rLast.t)}</span>` : ""}</td>`;
+    let extra = "";
+    if (all) {
+      const aIn = inRow(ah, S), aLast = last(aIn), aCur = valAt(ah, S);
+      extra += `<td><input id="r_a_${S}" data-f="cell" data-kind="alb" data-s="${S}" data-col="a" data-i="${i}" inputmode="numeric" class="w4" value="${aLast ? esc(String(numDE(aLast.v))) : ""}" placeholder="${!aLast && aCur && numDE(aCur.v) ? esc(String(numDE(aCur.v))) : ""}"${aLast ? ' style="font-weight:700"' : ""}></td>`;
+      const xIn = ex.filter((e) => { const t = tMs(e.t); return t >= S && t < E; });
+      extra += `<td>${xIn.map((e) => `<span class="ex">${esc(e.lbl)}<button data-act="delextra" data-src="${e.src}" data-id="${e.id}" title="löschen">×</button></span>`).join("")}</td>`;
+    }
     const lv = last(inRow(lak, S));
     const lCell = `<td><input id="r_l_${S}" data-f="cell" data-kind="lak" data-s="${S}" data-col="l" data-i="${i}" inputmode="decimal" class="w4" value="${lv ? esc(lv.v) : ""}"></td>`;
-    const sv = last(inRow(scv, S));
-    const sCell = showScv ? `<td><input id="r_s_${S}" data-f="cell" data-kind="scv" data-s="${S}" data-col="s" data-i="${i}" inputmode="decimal" class="w4" value="${sv ? esc(sv.v) : ""}"></td>` : "";
-    const hv = last(inRow(pic, S, "hi"));
-    const hCell = showHI ? `<td><input id="r_h_${S}" data-f="cell" data-kind="hi" data-s="${S}" data-col="h" data-i="${i}" inputmode="decimal" class="w4" value="${hv ? esc(String(hv.hi).replace(".", ",")) : ""}"></td>` : "";
-    const kv2 = last(inRow(rek, S));
-    const kCell = `<td><select id="r_k_${S}" data-f="cell" data-kind="rek" data-s="${S}" data-col="k" data-i="${i}" style="width:62px"><option value=""></option><option value="ok"${kv2 && kv2.v === "ok" ? " selected" : ""}>< 3 s</option><option value="fail"${kv2 && kv2.v === "fail" ? " selected" : ""}>≥ 3 s</option></select></td>`;
-    const iv = last(inRow(iap, S));
-    const iCell = `<td><input id="r_i_${S}" data-f="cell" data-kind="iap" data-s="${S}" data-col="i" data-i="${i}" inputmode="decimal" class="w4" value="${iv ? esc(iv.v) : ""}"${iv && numDE(iv.v) >= 12 ? ' style="color:var(--red);font-weight:700"' : ""}></td>`;
-    /* SOP-Entscheidung am Ende der Stunde */
+    let extra2 = "";
+    if (showScv) { const sv = last(inRow(scv, S)); extra2 += `<td><input id="r_s_${S}" data-f="cell" data-kind="scv" data-s="${S}" data-col="s" data-i="${i}" inputmode="decimal" class="w4" value="${sv ? esc(sv.v) : ""}"></td>`; }
+    if (showHI) { const hv = last(inRow(pic, S, "hi")); extra2 += `<td><input id="r_h_${S}" data-f="cell" data-kind="hi" data-s="${S}" data-col="h" data-i="${i}" inputmode="decimal" class="w4" value="${hv ? esc(String(hv.hi).replace(".", ",")) : ""}"></td>`; }
+    if (all) {
+      const kv2 = last(inRow(rek, S));
+      extra2 += `<td><select id="r_k_${S}" data-f="cell" data-kind="rek" data-s="${S}" data-col="k" data-i="${i}" style="width:62px"><option value=""></option><option value="ok"${kv2 && kv2.v === "ok" ? " selected" : ""}>< 3 s</option><option value="fail"${kv2 && kv2.v === "fail" ? " selected" : ""}>≥ 3 s</option></select></td>`;
+      const iv = last(inRow(iap, S));
+      extra2 += `<td><input id="r_i_${S}" data-f="cell" data-kind="iap" data-s="${S}" data-col="i" data-i="${i}" inputmode="decimal" class="w4" value="${iv ? esc(iv.v) : ""}"${iv && numDE(iv.v) >= 12 ? ' style="color:var(--red);font-weight:700"' : ""}></td>`;
+    }
     let dec = "";
     if (bk && !bk.unk && E <= c.now + 10 * MIN && (E - c.u) / H < 48.5) {
       const rAtE = valAt(rh, E - 1);
-      const rv = rAtE ? numDE(rAtE.v) : null;
-      const D = decisionAt(p, c, E, bk.v, rv);
+      const D = decisionAt(p, c, E, bk.v, rAtE ? numDE(rAtE.v) : null);
       if (D) {
         const fails = D.ev.crit.filter((x) => x.st === false).map((x) => x.k === "diu" ? "Diurese" : x.l.split(" ")[0]).join(", ");
-        dec = D.k === "up" ? `<span class="dec up" title="nicht erfüllt: ${esc(fails)}">↑ +20 %${D.neu ? " → " + r0(D.neu) : ""}</span>` : D.k === "dn" ? `<span class="dec dn">↓ −10 %${D.neu ? " → " + r0(D.neu) : ""}</span>` : `<span class="dec eq" title="offen: ${esc(D.ev.unk.join(", "))}">= halten</span>`;
+        dec = D.k === "up" ? `<span class="dec up" title="nicht erfüllt: ${esc(fails)}">↑ ${D.neu ? r0(D.neu) : "+20 %"}</span>` : D.k === "dn" ? `<span class="dec dn">↓ ${D.neu ? r0(D.neu) : "−10 %"}</span>` : `<span class="dec eq" title="offen: ${esc(D.ev.unk.join(", "))}">=</span>`;
       }
     }
     let ist = "", ref = "";
@@ -1520,12 +1530,14 @@ function vTable(p, c) {
       if (t0 == null || T >= t0) { const v = vol(p, c, T); if (v) { ist = tsd(v.ges); ref = v.soll != null ? tsd(v.soll) : ""; } }
       else ref = c.rot != null ? tsd(c.rot * Math.max(0, (T - c.u) / H)) : "";
     }
-    h += `<tr class="${cls}"><td>${S === S0 ? fD(S) + " " : ""}${fHH(S)}–${fHH(E)}</td><td class="num grey">${hh}</td>${dCell}<td class="num ${dSt}">${dKg != null ? fN(dKg, 2) : ""}</td>${rCell}${aCell}${xCell}${lCell}${sCell}${hCell}${kCell}${iCell}<td>${dec}</td><td class="num">${ist}</td><td class="num grey">${ref}</td></tr>`;
+    h += `<tr class="${cls}"><td>${S === S0 ? fD(S) + " " : ""}${fHH(S)}–${fHH(E)}</td><td class="num grey">${hh}</td>${dCell}<td class="num ${dSt}">${dKg != null ? fN(dKg, 2) : ""}</td>${rCell}${extra}${lCell}${extra2}<td>${dec}</td><td class="num">${ist}</td><td class="num grey">${ref}</td></tr>`;
   });
-  h += `</tbody></table></div></div>`;
-  return h;
+  return h + `</tbody></table></div></div>`;
 }
 function vTagesbilanz(p, c) {
+  const open = UI.fold.tb != null ? !UI.fold.tb : c.h >= 48;
+  let h = `<div class="card ph" style="--pc:var(--p-t3)"><div class="ph-h" data-act="fold" data-k="tb"><span class="fold">${open ? "▾" : "▸"}</span><h3>Tagesbilanz ab Unfall</h3><span class="tm"></span>${iBtn("v_tb")}</div>${vInfo("v_tb", I("Ab Tag 2–3 strömt das Ödem zurück (Rückresorption); die Tagesbilanz zeigt, ob die Volumenlast der Schockphase wieder ausgeschieden wird.", null, null, "Gezählt wird nur, was hier oder in BurnICU erfasst ist: Laufraten, Albumin, Zusatzgaben, Präklinik/SR. Erhaltungsinfusionen, Perfusoren und Ernährung zählen nicht mit."))}`;
+  if (!open) return h + "</div>";
   const di = diuInfo(p);
   const rows = [];
   for (let n = 1; n <= 5; n++) {
@@ -1534,9 +1546,9 @@ function vTagesbilanz(p, c) {
     const va = n === 1 ? null : vol(p, c, a), vb = vol(p, c, b);
     const kr = vb.kris - (va ? va.kris : 0), ko = vb.kol - (va ? va.kol : 0);
     const ds = diuSum(di, a, b);
-    rows.push(`<tr><td>Tag ${n} (h ${(n - 1) * 24}–${Math.min(n * 24, Math.floor(c.h))})</td><td>${tsd(kr)}</td><td>${tsd(ko)}</td><td>${tsd(kr + ko)}</td><td>${c.kg && c.vk ? fN((kr + ko) / (c.kg * c.vk), 1) : ""}</td><td>${ds.n ? tsd(ds.s) : "—"}</td><td>${ds.n && c.kg ? fN(ds.s / ds.n / c.kg, 2) : ""}</td><td>${ds.n}</td></tr>`);
+    rows.push(`<tr><td>Tag ${n} (h ${(n - 1) * 24}–${Math.min(n * 24, Math.floor(c.h))})</td><td>${tsd(kr)}</td><td>${tsd(ko)}</td><td>${tsd(kr + ko)}</td><td>${c.kg && c.vk ? fN((kr + ko) / (c.kg * c.vk), 1) : ""}</td><td>${ds.n ? tsd(ds.s) : "—"}</td><td>${ds.n && c.kg ? fN(ds.s / ds.n / c.kg, 2) : ""}</td></tr>`);
   }
-  return `<div class="card"><h2>Tagesbilanz ab Unfall ${iBtn("v_tb")}</h2>${vInfo("v_tb", I("Ab Tag 2–3 strömt das Ödem zurück (Rückresorption); die Tagesbilanz zeigt, ob die Volumenlast der Schockphase wieder ausgeschieden wird.", null, null, "Gezählt wird nur, was hier oder in BurnICU erfasst ist: Laufraten, Albumin, Zusatzgaben, Präklinik/SR. Erhaltungsinfusionen, Perfusoren und Ernährung zählen nicht mit."))}<table class="tb2"><tr><th>Zeitraum</th><th>Kristalloid ml</th><th>Kolloid/Blut ml</th><th>gesamt ml</th><th>ml/kg/% VKOF</th><th>Diurese ml</th><th>Ø ml/kg/h</th><th>Std.-Werte</th></tr>${rows.join("")}</table></div>`;
+  return h + `<div class="ph-b"><table class="tb2"><tr><th>Zeitraum</th><th>Kristalloid ml</th><th>Kolloid/Blut ml</th><th>gesamt ml</th><th>ml/kg/% VKOF</th><th>Diurese ml</th><th>Ø ml/kg/h</th></tr>${rows.join("")}</table></div></div>`;
 }
 
 /* ---------- Dialoge ---------- */
@@ -1573,6 +1585,11 @@ function vDialog(B, cur) {
         <button class="btn pri" data-act="print" data-v="all" ${c.u == null ? "disabled" : ""}>Checkliste + Volumenprotokoll ab jetzt</button>
       </div><div class="acts"><button class="btn" data-act="close">Schließen</button></div></div></div>`;
   }
+  if (d === "stamm" && cur) {
+    const c = calc(cur);
+    return `<div class="dlgbg"><div class="dlg wide"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Stammdaten & Übergabe Schockraum</h2><button class="btn pri" data-act="close">Fertig</button></div>${vStamm(cur, c)}
+      <div class="acts" style="justify-content:space-between"><button class="btn sm danger" data-act="dlg" data-v="del">Patient entlassen / löschen …</button><button class="btn pri" data-act="close">Fertig</button></div></div></div>`;
+  }
   if (d === "del" && cur) {
     return `<div class="dlgbg"><div class="dlg"><h2>Zi ${esc(cur.zimmer)} · ${esc(cur.name || "ohne Namen")} entfernen</h2>
       <p>Gilt auch in BurnICU — beide Apps nutzen denselben Speicher.</p>
@@ -1582,7 +1599,7 @@ function vDialog(B, cur) {
   if (d === "help") {
     return `<div class="dlgbg"><div class="dlg"><h2>So funktioniert LUminate</h2>
       <p><b>Kopplung mit BurnICU:</b> Beide Apps liegen auf derselben Domain (ftigiser-collab.github.io) und nutzen denselben Browserspeicher. Patienten, Unfallzeit, Gewicht, VKOF, Häkchen der Checkliste 48 h, Diurese, Laufraten, Laborwerte (Laktat, ScvO2, Na, Albumin, COHb, CK …), IAP, PiCCO-HI und Transfusionen gelten in beiden Apps — Änderungen erscheinen sofort, auch wenn beide gleichzeitig offen sind (BurnICU ab Version 3.27.1). Voraussetzung: gleicher Browser auf demselben Gerät.</p>
-      <p><b>Checkliste:</b> Phasen ab Unfallzeit (h 0 = Unfall). Fällig = gelb, überfällig = rot. „–“ blendet einen Punkt für diesen Patienten aus. Das (i) zeigt Pathophysiologie, Studien und die zugehörige SOP. Wo SOP und Literatur abweichen, gilt die SOP.</p>
+      <p><b>Checkliste:</b> Phasen ab Unfallzeit (h 0 = Unfall). Offen ist nur die aktuelle Phase; die anderen klappen per Klick auf. Fällig = gelb, überfällig = rot. Das (i) am Punkt zeigt Pathophysiologie, Studien und SOP, dazu Werte-Eingaben und „entfällt bei diesem Patienten“. Oben unter „Als Nächstes“ stehen die fälligen Punkte zum direkten Abhaken. Wo SOP und Literatur abweichen, gilt die SOP.</p>
       <p><b>Volumen:</b> Oben die aktuelle Anweisung nach SOP (stündliche Reevaluation, ±), darunter Defizit/Übertherapie aus Präklinik und Schockraum. Wer später dazukommt, trägt Präklinik/SR ein und füllt die Stundentabelle von oben nach unten.</p>
       <p><b>Erinnerungen:</b> Im Menü einschalten — solange die App offen ist (auch im Hintergrund), meldet der Browser fällige Stundendiurese, IAP und Checklistenpunkte.</p>
       <p><b>Daten:</b> nur auf diesem Gerät. Sicherung über BurnICU (Menü → Sicherung exportieren) enthält auch alles aus LUminate.</p>
@@ -1888,7 +1905,8 @@ function act(a, el) {
   const ds = el.dataset;
   switch (a) {
     case "sel": UI.sel = ds.id; UI.open = {}; UI.fold = {}; saveUI(); break;
-    case "tab": UI.tab = ds.v; if (ds.auf) { UI.tab = "check"; UI.fold.sr = false; } saveUI(); window.scrollTo(0, 0); break;
+    case "tab": UI.tab = ds.v; saveUI(); window.scrollTo(0, 0); break;
+    case "cols": UI.allCols = !UI.allCols; break;
     case "info": UI.open[ds.k] = !UI.open[ds.k]; break;
     case "fold": { const k = ds.k; const cur = document.querySelector(`[data-act="fold"][data-k="${k}"] .fold`); const isOpen = cur && cur.textContent === "▾"; UI.fold[k] = isOpen; break; }
     case "hist": UI.hist = !UI.hist; break;
