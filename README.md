@@ -4,6 +4,13 @@ Adresse: https://ftigiser-collab.github.io/LUminate/
 
 Eigene App (eigenes Symbol, eigener Offline-Speicher, eigenes Update) für die ersten fünf Tage eines großen Verbrennungspatienten auf der V1. Primär für den PC, druckbar auf A4. Arbeitsdokument, keine Patientenakte — Aliasnamen verwenden.
 
+## Neu in 1.2.0 — Algorithmus Volumenmanagement und Reevaluations-Erinnerung
+
+- **Klickbarer Algorithmus** (SOP Volumentherapie, Abbildung 1) als Grundlage bis h 72: Ziele (Diurese, HI, ScvO2, Laktat, Rekap; aus den Werten vorbelegt, änderbar) → MAP < 65–70 → ZVD/VCI → Fluid Responsiveness → Fluid Challenge → Echokardiografie (Dysfunktion → Dobutamin; Volumenüberladung → −10 %) bzw. Noradrenalin/Argipressin im MAP-Pfad. Ergebnis als Vorschlag mit Übernehmen-Knopf; Fußnoten und Quellen hinter (i).
+- **Umgehen jederzeit:** in der Jetzt-Karte „direkt … ml/h“, im Algorithmus „abweichend entscheiden“ oder „ohne Änderung abschließen“, Laufrate direkt eintragen, „✓ ohne Änderung“ in der Reevaluationszeile.
+- **Reevaluation als eigener Punkt:** stündlich fällig, spätestens nach 2 h überfällig (rot, Titelzeile, Browser-Meldung, überfällig alle 2 h erneut). Jede Laufratenänderung zählt als Reevaluation; Ergebnis und Pfad werden beim Patienten protokolliert. Hinweis in der Jetzt-Karte, wenn Browser-Erinnerungen aus sind.
+- Klinikname und Originalabbildung sind nicht eingebettet (öffentliches Repo); der Ablauf ist nachgebaut.
+
 ## Neu in 1.1.0 — ruhigeres Layout (Inhalte unverändert)
 
 - Eine Spalte statt zwei, schmaler.

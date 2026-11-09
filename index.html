@@ -268,6 +268,27 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
 .dlg.wide{width:min(980px,100%)}
 .sth{font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin:14px 0 6px}
 .dlg .cks{margin-top:8px}
+/* 1.2.0: Algorithmus und Reevaluation */
+.jb{display:flex;flex-direction:column;gap:6px;align-items:stretch;flex:none}
+.nudge{margin-top:10px;padding:6px 10px;border-radius:8px;background:var(--amb-bg);border:1px solid var(--amb-bd);font-size:13.5px}
+.rv{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0 10px;background:var(--raise)}
+.rv.d{background:var(--amb-bg);border-color:var(--amb-bd)}.rv.o{background:var(--red-bg);border-color:var(--red-bd)}
+.rv b.o{color:var(--red)}.rv b.d{color:var(--amb)}
+.algo .an{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:10px;background:#fff}
+.algo .an-h{font-weight:700;margin-bottom:4px}
+.algo .an-r{margin-top:6px;font-size:14px}
+.algo .az{display:grid;grid-template-columns:minmax(0,1fr) 170px auto;gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--raise);font-size:14px}
+.algo .az:first-of-type{border-top:0}
+.algo .az.n span:first-child{color:var(--red);font-weight:600}.algo .az.y span:first-child{color:var(--ok);font-weight:600}.algo .az.u span:first-child{color:var(--amb);font-weight:600}
+.algo .az-n{font-size:12.5px;color:var(--amb);margin:-2px 0 4px}
+.algo .arr{text-align:center;color:var(--dim);font-size:18px;line-height:1;margin-top:6px}
+.algo .an.q{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:6px}
+.algo .an.q.cur{border-color:var(--teal);box-shadow:0 0 0 2px var(--ok-bd)}
+.algo .an.q.done{background:var(--raise)}
+.algo .aq{font-weight:600;display:flex;gap:6px;align-items:center}
+.algo .ares{margin-top:6px}
+.algo .an.alt{background:var(--raise);display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+.algo .seg button{padding:5px 12px;font-size:13.5px}
 #print{display:none}
 @media print{
   @page{size:A4 portrait;margin:9mm 9mm 10mm}
@@ -332,7 +353,7 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
    (gleiche Domain). Eigener Speicher nur für den Verlaufsspiegel und die
    Bedienung. Hausstandard: SOPs der V1 gehen vor Literatur.
    ===================================================================== */
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.2.0";
 const BKEY = "burnicu_v3";
 const SKEY = "luminate_v1";
 const H = 36e5, MIN = 6e4, EPOCH = "1970-01-01T00:00:00.000Z";
@@ -776,7 +797,7 @@ function plan(p, c) {
     else if (out.ev.anyFail) {
       const neu = rate != null ? r10(rate * 1.2) : null;
       const esk = neu != null && c.rot && neu > 2 * c.rot;
-      out.main = { lv: "w", h: rate != null ? `Laufrate erhöhen: ${r0(rate)} → ${r0(neu)} ml/h (+20 %)` : "Laufrate erhöhen (+20 %)", t: `Nicht erfüllt: ${out.ev.crit.filter((x) => x.st === false).map((x) => x.l).join(", ")} — vorher ZVD/VCI bzw. Fluid Responsiveness prüfen.` + (esk ? " Über 2 × Rule of 10: Kolloid-Rescue (Albumin) erwägen, Ursachen prüfen (abdominelles Kompartmentsyndrom, Myoglobin, Blutung, Katheterlage)." : ""), neu };
+      out.main = { algo: true, lv: "w", h: rate != null ? `Laufrate erhöhen: ${r0(rate)} → ${r0(neu)} ml/h (+20 %)` : "Laufrate erhöhen (+20 %)", t: `Nicht erfüllt: ${out.ev.crit.filter((x) => x.st === false).map((x) => x.l).join(", ")} — vorher ZVD/VCI bzw. Fluid Responsiveness prüfen.` + (esk ? " Über 2 × Rule of 10: Kolloid-Rescue (Albumin) erwägen, Ursachen prüfen (abdominelles Kompartmentsyndrom, Myoglobin, Blutung, Katheterlage)." : ""), neu };
     } else if (out.ev.allOk) {
       const neu = rate != null ? r10(rate * 0.9) : null;
       const ex = out.ev.crit.filter((x) => x.st === "na").map((x) => x.l.split(" ")[0]);
@@ -866,6 +887,7 @@ function plan(p, c) {
   if (c.h >= 24) add("i", `h 24–48: Rate schrittweise senken (−10 %-Schritte bei erfüllten Zielen); Schockphase endet ${fRel(atMs(c, 48))}.`);
   return out;
 }
+
 
 /* ---------- Checkliste: Inhalt ---------- */
 const MECH = [["flamme", "Flamme", "Flammenverbrennung"], ["verbr", "Verbrühung", "Verbrühung"], ["kontakt", "Kontakt", "Kontaktverbrennung"], ["strom", "Strom", "Stromunfall"], ["chem", "chemisch", "Verätzung"], ["expl", "Explosion", "Explosionsverletzung"]];
@@ -1091,10 +1113,12 @@ function intoxItems(p) {
 function laufend(p, c) {
   const L = [];
   const now = c.now;
+  const rd = reevalDue(p, c);
+  if (rd) L.push({ k: "reeval", t: "Reevaluation (Algorithmus)", due: rd.due, over: rd.over, st: now >= rd.over ? "o" : now >= rd.due - 5 * MIN ? "d" : "", info: `${rd.last ? "zuletzt " + fRel(rd.last) + " · " : ""}stündlich, spätestens ${fRel(rd.over)}`, inp: "reeval" });
   if (c.schock) {
     const di = diuInfo(p);
     const nx = di.lastE ? hourRound(di.lastE.t) + H : hourFloor(now);
-    L.push({ k: "diu", t: "Stundendiurese + Reevaluation", due: nx, st: now >= nx + 10 * MIN ? "o" : now >= nx - 5 * MIN ? "d" : "", info: di.lastB ? `zuletzt ${r0(di.lastB.v)} ml (${fHH(di.lastB.h - H)}–${fHH(di.lastB.h)} Uhr)` : "noch kein Wert" });
+    L.push({ k: "diu", t: "Stundendiurese", due: nx, st: now >= nx + 10 * MIN ? "o" : now >= nx - 5 * MIN ? "d" : "", info: di.lastB ? `zuletzt ${r0(di.lastB.v)} ml (${fHH(di.lastB.h - H)}–${fHH(di.lastB.h)} Uhr)` : "noch kein Wert" });
     if (c.vk > 20 || c.inhal) {
       const s = serOf(p, "iap"), li = last(s);
       const nxi = li ? tMs(li.t) + 4 * H : now;
@@ -1132,6 +1156,148 @@ function dueList(p, c) {
   });
   intoxItems(p).forEach(([k, t]) => { if (!isDone(p, k) && !bsOf(p).na[k]) out.push({ it: { k, t: () => t, ph: "iv" }, st: "due" }); });
   return out.sort((a, b) => (a.st === "over" ? 0 : 1) - (b.st === "over" ? 0 : 1));
+}
+
+/* ---------- Algorithmus Volumenmanagement (SOP Volumentherapie, Abb. 1) — klickbar, jederzeit umgehbar ---------- */
+const ALGO_H = 72; /* Vorgabe V1: Grundlage der Volumentherapie in den ersten 72 h (Abbildung der SOP nennt 48 h) */
+function lastReeval(p) {
+  const a = (bsOf(p).reeval || []).map((x) => tMs(x.t));
+  const r = rateHist(p).filter((x) => x.t !== EPOCH).map((x) => tMs(x.t));
+  const all = a.concat(r).filter((t) => t <= Date.now() + MIN);
+  return all.length ? Math.max.apply(null, all) : null;
+}
+function reevalDue(p, c) {
+  if (!c.spec || c.u == null || c.h == null || c.h < 0 || c.h >= ALGO_H) return null;
+  const L = lastReeval(p);
+  const base = L != null ? L : Math.max(c.u, p.created ? tMs(p.created) : c.now);
+  return { last: L, due: base + H, over: base + 2 * H };
+}
+const ALGO_Z = [
+  ["diu", "Diurese > 0,3 ml/kg/h"],
+  ["hi", "Herzindex > 2,2 l/min/m²"],
+  ["scv", "ScvO2 > 70 %"],
+  ["lak", "Laktat-Abfall (Clearance)"],
+  ["rek", "Rekap < 3 s"]
+];
+const ALGO_ORDER = ["map", "fcm", "zvd", "fr", "fc", "dys", "ov"];
+const ALGO_Q = {
+  map: "MAP < 65–70 mmHg?",
+  fcm: "Fluid Challenge¹ (MAP-Pfad): Fluid responsive?",
+  zvd: "ZVD > 5 mmHg oder VCI < 50 % Atemmodulation?",
+  fr: "Fluid Responsiveness (PPV, SVV, PLR) vorhanden?",
+  fc: "Fluid Challenge¹: Fluid responsive?",
+  dys: "Echokardiografie: kardiale Dysfunktion?",
+  ov: "Echokardiografie: rechtsventrikuläre Dilatation² und/oder ZVD/RAP > 12–15 mmHg, VCI ohne Atemmodulation?"
+};
+function algoInit(p, c) {
+  const di = diuInfo(p);
+  const lb = di.lastB && !di.lastB.unk ? di.lastB : null;
+  const ev = evalAt(p, c, c.now, lb ? lb.v : null);
+  const z = {};
+  ev.crit.forEach((x) => { z[x.k] = x.st === "na" ? "na" : x.st === true ? "ja" : x.st === false ? "nein" : null; });
+  const a = {};
+  if (ev.map != null) a.map = ev.map < 65 ? "ja" : "nein";
+  return { z, a, ev, t: Date.now() };
+}
+function algoFlow(A) {
+  const steps = [];
+  const z = A.z, a = A.a;
+  if (ALGO_Z.some(([k]) => z[k] == null)) return { steps, need: true };
+  const anyNein = ALGO_Z.some(([k]) => z[k] === "nein");
+  steps.push("map");
+  if (a.map == null) return { steps, anyNein };
+  if (a.map === "ja") {
+    steps.push("fcm");
+    if (a.fcm == null) return { steps, anyNein };
+    if (a.fcm === "ja") return { steps, anyNein, res: "up" };
+    return { steps, anyNein, res: "ne" };
+  }
+  if (!anyNein) return { steps, anyNein, res: "down" };
+  steps.push("zvd");
+  if (a.zvd == null) return { steps, anyNein };
+  let toEcho = false;
+  if (a.zvd === "ja") {
+    steps.push("fr");
+    if (a.fr == null) return { steps, anyNein };
+    if (a.fr === "ja") steps.push("fc"); else toEcho = true;
+  } else steps.push("fc");
+  if (!toEcho) {
+    if (a.fc == null) return { steps, anyNein };
+    if (a.fc === "ja") return { steps, anyNein, res: "up" };
+  }
+  steps.push("dys", "ov");
+  if (a.dys == null || a.ov == null) return { steps, anyNein };
+  return { steps, anyNein, res: a.ov === "ja" ? "down" : a.dys === "ja" ? "dobu" : "hold", dobu: a.dys === "ja" };
+}
+const ALGO_INFO = I("Ziele nach jeder therapeutischen Intervention erneut prüfen. Verfehlte Ziele heißen nicht automatisch „mehr Volumen“: Erst Vorlast und Volumenreagibilität klären — sonst droht Fluid Creep mit Ödem, abdominellem Kompartmentsyndrom und Lungenversagen. Bleibt die Perfusion trotz Volumen schlecht, liegt die Ursache oft im Herzen (Myokarddepression) oder im Gefäßtonus (Sepsis).",
+  "Algorithmus der SOP, modifiziert nach Ziegler et al. (DAV 2022), Soussi et al. (Anesthesiology 2018: frühe hämodynamische Steuerung Schwerbrandverletzter) und dem Positionspapier der DGV „Therapie des Verbrennungsschocks“ (2023).",
+  "Volumentherapie (Dok-ID 1620273), Abbildung 1. Adjunkte: Blasendruck alle 4 h; bei niedriger Diurese Harnabflussstörung ausschließen (DK spülen, Sonografie). Ab h 6 Albumin 20 % 100 ml je 1000 ml VEL (Ziel 2,2–2,7 g/dl); Ziel-Natrium 135–139 mmol/l, > 139 → Eindrittelelektrolytlösung.",
+  "Das Ergebnis ist ein Vorschlag. Abweichen geht jederzeit: eigene Rate eintragen, ohne Änderung abschließen oder abbrechen. Jede Laufratenänderung zählt als Reevaluation; die nächste ist nach 1 h fällig und spätestens nach 2 h überfällig.");
+const ALGO_FN = I(null, null, "¹ Fluid Challenge: forciertes Delta durch Passive Leg Raise (RR > +20 mmHg, SVV > +10 %, EtCO2 > +5 %) bzw. SVV oder PPV > 20 % bei mechanisch beatmeten Patienten. ² Entwickelt der Patient ein ARDS: Iloprost bzw. Bauchlagerung erwägen (Horovitz-Quotient < 150 mmHg).");
+function vAlgo(p, c) {
+  const A = UI.algo || (UI.algo = algoInit(p, c));
+  const F = algoFlow(A);
+  const rr = valAt(rateHist(p), c.now), rate = rr ? numDE(rr.v) : null;
+  const seg = (grp, k, v, opts) => `<span class="seg">${opts.map(([val, t]) => `<button data-act="${grp}" data-k="${k}" data-v="${val}" class="${v === val ? "on" : ""}">${t}</button>`).join("")}</span>`;
+  const meas = Object.fromEntries((A.ev.crit || []).map((x) => [x.k, x]));
+  let h = `<div class="dlgbg"><div class="dlg wide algo"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">Reevaluation · ${c.h != null ? "Stunde " + Math.floor(c.h) : ""}</h2><div class="mut small">Algorithmus Volumenmanagement der SOP — Vorschlag, Abweichen jederzeit möglich</div></div><div class="row">${iBtn("al_i")}<button class="btn" data-act="close">Abbrechen</button></div></div>${vInfo("al_i", ALGO_INFO)}`;
+  h += `<div class="an"><div class="an-h">Ziele <span class="mut small">— nach jeder Intervention prüfen</span></div>`;
+  ALGO_Z.forEach(([k, l]) => {
+    const m = meas[k];
+    const opts = (k === "hi" || k === "scv") ? [["ja", "Ja"], ["nein", "Nein"], ["na", "nicht gemessen"]] : [["ja", "Ja"], ["nein", "Nein"]];
+    const v = A.z[k];
+    h += `<div class="az ${v === "nein" ? "n" : v === "ja" ? "y" : v === "na" ? "x" : "u"}"><span>${l}</span><span class="mut small">${m && m.v != null ? "gemessen: " + esc(m.v) : m && m.st === "na" ? "kein Monitoring" : "kein aktueller Wert"}</span>${seg("algo_z", k, v, opts)}</div>`;
+    if (k === "diu" && v === "nein") h += `<div class="az-n">Adjunkt: Harnabflussstörung ausschließen — DK spülen, Sonografie.</div>`;
+  });
+  const nNein = ALGO_Z.filter(([k]) => A.z[k] === "nein").length;
+  h += `<div class="an-r">${F.need ? "Alle fünf Ziele beantworten." : nNein ? `<b>${nNein} Ziel${nNein > 1 ? "e" : ""} nicht erfüllt</b> → Vorlast und Volumenreagibilität prüfen` : "<b>Alle Ziele erfüllt</b>"}</div></div>`;
+  F.steps.forEach((s) => {
+    const v = A.a[s];
+    let extra = "";
+    if (s === "map" && A.ev.map != null) extra = `<span class="mut small">gemessen: MAP ${fN(A.ev.map, 0)}</span>`;
+    if (s === "fc" || s === "fcm") extra = iBtn("al_fn");
+    if (s === "ov") extra = iBtn("al_fn");
+    h += `<div class="arr">↓</div><div class="an q ${v ? "done" : "cur"}"><div class="aq">${ALGO_Q[s]} ${extra}</div>${seg("algo_a", s, v, [["ja", "Ja"], ["nein", "Nein"]])}</div>`;
+  });
+  h += vInfo("al_fn", ALGO_FN);
+  if (F.res) {
+    const up = rate != null ? r10(rate * 1.2) : null, dn = rate != null ? r10(rate * 0.9) : null;
+    const mlkgh = rate != null && c.kg ? rate / c.kg : null;
+    const R = {
+      up: { cls: "w", h: `STEP UP: Laufrate +20 %${up ? ` (${r0(rate)} → ${r0(up)} ml/h)` : ""}`, t: "Interne oder externe Blutung? Danach Ziele nach 1 h erneut prüfen." + (up && c.rot && up > 2 * c.rot ? " Über 2 × Rule of 10: Albumin-Rescue erwägen, abdominellen Druck prüfen." : ""), to: up },
+      down: { cls: "ok", h: `STEP DOWN: Laufrate −10 %${dn ? ` (${r0(rate)} → ${r0(dn)} ml/h)` : ""}`, t: (F.dobu ? "Zusätzlich kardiale Dysfunktion: Dobutamin erwägen. " : "") + "Reduziere die Laufrate um 10 % jede Stunde, solange die Ziele erfüllt sind.", to: dn },
+      ne: { cls: "e", h: "Nicht volumenreagibel bei MAP < 65–70 mmHg: Noradrenalin", t: `Sepsiszeichen? Argipressin 0,01 IE/min erwägen bei Laufrate > 4 ml/kg/h${mlkgh != null ? ` (aktuell ${fN(mlkgh, 1)} ml/kg/h)` : ""} oder Noradrenalin > 0,25 µg/kg/min. Echokardiografie: Dysfunktion → Dobutamin? Volumenüberladung → Laufrate senken.`, to: null },
+      dobu: { cls: "w", h: "Kardiale Dysfunktion: Dobutamin erwägen", t: "Keine Volumenüberladung, nicht volumenreagibel — Laufrate halten, Inotropie statt Volumen.", to: null },
+      hold: { cls: "i", h: "Keine Volumenindikation: Laufrate halten", t: "Nicht volumenreagibel, keine Dysfunktion, keine Überladung — Ursachen prüfen: Blutung, abdominelles Kompartmentsyndrom, Sepsis, Katheterlage; Ziele nach 1 h erneut prüfen.", to: null }
+    }[F.res];
+    h += `<div class="arr">↓</div><div class="box ${R.cls} ares"><div class="bh">${R.h}</div><div class="bt">${R.t}</div><div class="row" style="margin-top:8px">${R.to ? `<button class="btn pri" data-act="algo_done" data-res="${F.res}" data-to="${R.to}">${r0(R.to)} ml/h übernehmen und abschließen</button>` : ""}<button class="btn" data-act="algo_done" data-res="${F.res}" data-to="">ohne Ratenänderung abschließen</button></div></div>`;
+  }
+  h += `<div class="an alt"><span class="lbl">Abweichend entscheiden:</span> Laufrate <input id="al_rate" inputmode="numeric" placeholder="${rate != null ? r0(rate) : "ml/h"}" style="width:110px"> ml/h <button class="btn sm" data-act="algo_manual">übernehmen und abschließen</button> <button class="btn sm" data-act="algo_done" data-res="manuell" data-to="">Reevaluation ohne Änderung abschließen</button></div>`;
+  return h + `</div></div>`;
+}
+function reevalLog(q, res, from, to, path) {
+  const bs = bsMut(q);
+  bs.reeval = (bs.reeval || []).concat([{ id: uid(), t: nowISO(), res, from: from != null ? from : null, to: to != null ? to : null, path: path || "" }]).slice(-300);
+}
+function algoFinish(res, to) {
+  const pid = UI.sel;
+  const B = readB();
+  const p0 = B.patients[pid];
+  if (!p0) return;
+  const rr = valAt(rateHist(p0), Date.now());
+  const from = rr ? numDE(rr.v) : null;
+  const A = UI.algo;
+  const path = A ? ALGO_Z.map(([k]) => k + ":" + (A.z[k] || "?")).concat(algoFlow(A).steps.map((s) => s + ":" + (A.a[s] || "?"))).join(" ") : "";
+  if (A && A.z.rek && A.z.rek !== "na") {
+    const meas = (A.ev.crit || []).find((x) => x.k === "rek");
+    const known = meas && meas.st !== null && meas.st !== "na" && (meas.st === true) === (A.z.rek === "ja");
+    if (!known) upd(pid, (q) => { const bs = bsMut(q); const e = { id: uid(), t: nowISO(), v: A.z.rek === "ja" ? "ok" : "fail" }; bs.rekap = insSorted(bs.rekap, e).slice(-200); q.rekap = { v: e.v, t: e.t }; });
+  }
+  if (to != null && to !== "" && Number(to) >= 0) setRate(pid, "ra", Date.now(), Math.round(Number(to)));
+  upd(pid, (q) => reevalLog(q, res, from, to !== "" && to != null ? Number(to) : null, path));
+  UI.dlg = null; UI.algo = null;
+  toast(to ? `Reevaluation abgeschlossen — Laufrate ${r0(Number(to))} ml/h ab ${fT(Date.now())}` : "Reevaluation abgeschlossen — Rate unverändert");
+  render();
 }
 
 /* ---------- Ansicht ---------- */
@@ -1232,9 +1398,16 @@ function vJetzt(p, c, P, due) {
   if (c.u == null) m = { lv: "w", h: "Unfallzeit eintragen", t: "Alle Zeiten rechnen ab Unfall (h 0)." };
   else if (P && P.main) m = P.main;
   else if (c.schock && c.rot == null) m = { lv: "w", h: "Gewicht und VKOF fehlen", t: "Ohne beides keine Rule of 10." };
+  else if (c.h >= 48 && c.h < ALGO_H) m = { lv: "i", h: `Stunde ${Math.floor(c.h)}: Reevaluation nach Algorithmus`, t: `Algorithmus bleibt bis h 72 Grundlage · Ziel-Diurese ${zielTxt(c)} · PiCCO 1 × pro Schicht.` };
   else if (c.h >= 48) m = { lv: "i", h: `Tag ${c.tag}: Volumen bedarfsorientiert`, t: `Ziel-Diurese ${zielTxt(c)} · PiCCO 1 × pro Schicht · Bilanz und Natrium im Blick.` };
   else m = { lv: "i", h: "Unfallzeit prüfen", t: "Sie liegt in der Zukunft." };
-  const btn = m.neu ? `<button class="btn pri" data-act="setrate" data-v="${m.neu}">${r0(m.neu)} ml/h übernehmen</button>` : c.u == null ? `<button class="btn pri" data-act="dlg" data-v="stamm">eintragen</button>` : "";
+  const algoOk = !!reevalDue(p, c);
+  let btn = "";
+  if (c.u == null) btn = `<button class="btn pri" data-act="dlg" data-v="stamm">eintragen</button>`;
+  else if (m.algo && algoOk) btn = `<div class="jb"><button class="btn pri" data-act="algo">Algorithmus durchgehen</button>${m.neu ? `<button class="btn sm" data-act="setrate" data-v="${m.neu}">direkt ${r0(m.neu)} ml/h</button>` : ""}</div>`;
+  else if (m.neu) btn = `<div class="jb"><button class="btn pri" data-act="setrate" data-v="${m.neu}">${r0(m.neu)} ml/h übernehmen</button>${algoOk ? `<button class="btn sm" data-act="algo">Algorithmus</button>` : ""}</div>`;
+  else if (algoOk) btn = `<div class="jb"><button class="btn pri" data-act="algo">Algorithmus durchgehen</button></div>`;
+  const nudge = algoOk && UI.notif !== true && "Notification" in window ? `<div class="nudge">🔔 Browser-Erinnerungen sind aus — Reevaluation spätestens alle 2 h melden lassen <button class="btn sm" data-act="notif">einschalten</button>${Notification.permission === "denied" ? ' <span class="mut small">(im Browser blockiert — in den Website-Einstellungen erlauben)</span>' : ""}</div>` : "";
   const rows = [];
   laufend(p, c).forEach((x) => rows.push({ t: x.due, st: x.st, txt: x.t, sub: x.info, inp: x.k === "diu" ? "diu" : x.inp, k: x.k, lf: true }));
   due.forEach(({ it, st }) => {
@@ -1248,6 +1421,7 @@ function vJetzt(p, c, P, due) {
   const act = (r) => {
     if (r.tick) return `<button class="btn sm" data-act="tick" data-k="${r.tick}">✓ erledigt</button>`;
     if (r.inp === "diu") return `<input id="nx_diu" data-f="diunow" inputmode="numeric" placeholder="ml">`;
+    if (r.inp === "reeval") return `<span class="row" style="gap:4px;flex-wrap:nowrap"><button class="btn sm pri" data-act="algo">Algorithmus</button><button class="btn sm" data-act="reeval_ok" title="Reevaluation ohne Ratenänderung dokumentieren">✓ ohne Änderung</button></span>`;
     if (r.inp === "iap") return `<input id="nx_iap" data-f="iap" inputmode="decimal" placeholder="mmHg">`;
     if (r.inp === "ck") return `<input id="nx_ck" data-f="lab:CK" inputmode="numeric" placeholder="CK U/l">`;
     if (r.inp === "cohb") return `<input id="nx_cohb" data-f="lab:COHb" inputmode="decimal" placeholder="COHb %">`;
@@ -1255,7 +1429,7 @@ function vJetzt(p, c, P, due) {
   };
   const list = show.map((r) => `<div class="nx-r ${r.st}"><span class="nx-t">${r.st === "o" ? "überfällig" : r.t == null ? "jetzt" : r.lf ? fRel(r.t) : "bis " + fRel(r.t)}</span><span class="nx-x">${esc(r.txt.length > 120 ? r.txt.slice(0, 118) + "…" : r.txt)}${r.sub ? `<small>${esc(r.sub)}</small>` : ""}</span><span class="nx-a">${act(r)}</span></div>`).join("");
   const more = rows.length > show.length ? `<button class="btn lnk" data-act="tab" data-v="check">+ ${rows.length - show.length} weitere in der Checkliste</button>` : "";
-  return `<div class="card jetzt ${m.lv}"><div class="j-h"><div><div class="j-m">${m.h}</div>${m.t ? `<div class="j-t">${m.t}</div>` : ""}</div>${btn}</div>${list ? `<div class="nx"><div class="nx-l">Als Nächstes</div>${list}${more}</div>` : ""}</div>`;
+  return `<div class="card jetzt ${m.lv}"><div class="j-h"><div><div class="j-m">${m.h}</div>${m.t ? `<div class="j-t">${m.t}</div>` : ""}</div>${btn}</div>${list ? `<div class="nx"><div class="nx-l">Als Nächstes</div>${list}${more}</div>` : ""}${nudge}</div>`;
 }
 
 /* ---------- Checkliste ---------- */
@@ -1429,16 +1603,24 @@ function vStatus(p, c, P) {
   </div>`;
   const vb = P.vol && !(P.vol.lv === "ok" && !P.vol.miss) ? `<div class="box ${P.vol.lv === "ok" ? "ok" : P.vol.lv}"><div class="bh">${P.vol.h}${P.vol.neu ? `<button class="btn sm ${P.vol.aufhol ? "" : "pri"}" data-act="setrate" data-v="${P.vol.neu}">${P.vol.aufhol ? "Aufholrate " : ""}${r0(P.vol.neu)} ml/h übernehmen</button>` : ""}</div><div class="bt">${P.vol.t}</div>${P.vol.miss ? `<div class="row" style="margin-top:6px"><input id="jb_g" data-f="gegeben" inputmode="numeric" placeholder="ml präklin. + SR" style="width:150px"><span class="lbl">bis</span><input id="jb_gb" data-f="gegebenBis" placeholder="hh:mm" style="width:80px"></div>` : ""}</div>` : P.vol ? `<div class="small mut" style="margin:2px 0 6px">${P.vol.h}.</div>` : "";
   const hints = P.hints.length ? `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin BG (1/3)" : "auf Ringer-Azetat"}</button>` : ""}</li>`).join("")}</ul>` : "";
-  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Schockphase · Stunde ${Math.floor(c.h)}</h2>${iBtn("v_reeval")}</div>${vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → −10 %; eines oder mehrere nicht erfüllt → +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge.", "Ein verfehltes Ziel zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde. HI/ScvO2 ohne Monitoring werden nicht bewertet (umstellbar in den Stammdaten)."))}
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Schockphase · Stunde ${Math.floor(c.h)}</h2>${iBtn("v_reeval")}</div>${vReevalRow(p, c)}${vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → −10 %; eines oder mehrere nicht erfüllt → +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge.", "Ein verfehltes Ziel zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde. HI/ScvO2 ohne Monitoring werden nicht bewertet (umstellbar in den Stammdaten)."))}
     ${facts}${quick}${vb}${hints}</div>`;
 }
+function vReevalRow(p, c) {
+  const rd = reevalDue(p, c);
+  if (!rd) return "";
+  const st = c.now >= rd.over ? "o" : c.now >= rd.due - 5 * MIN ? "d" : "";
+  const lr = last((bsOf(p).reeval || []).slice().sort(byT));
+  return `<div class="rv ${st}"><div><b>Reevaluation</b> ${st === "o" ? `<b class="o">überfällig seit ${fRel(rd.over)}</b>` : st === "d" ? `<b class="d">fällig</b> · spätestens ${fRel(rd.over)}` : `nächste ${fRel(rd.due)}, spätestens ${fRel(rd.over)}`}<span class="mut small"> · ${rd.last ? "zuletzt " + fRel(rd.last) + (lr && Math.abs(tMs(lr.t) - rd.last) < MIN ? ` (${esc(RES_TXT[lr.res] || lr.res)}${lr.to ? " → " + r0(lr.to) + " ml/h" : ""})` : " (Ratenänderung)") : "noch keine"}</span></div><div class="row" style="gap:6px"><button class="btn pri sm" data-act="algo">Algorithmus durchgehen</button><button class="btn sm" data-act="reeval_ok">✓ ohne Änderung</button></div></div>`;
+}
+const RES_TXT = { up: "STEP UP", down: "STEP DOWN", ne: "Noradrenalin", dobu: "Dobutamin", hold: "halten", manuell: "abweichend", ok: "ohne Änderung" };
 function vPostShock(p, c) {
   const di = diuInfo(p);
   const s24 = diuSum(di, c.now - 24 * H, c.now);
   const s6 = diuSum(di, c.now - 6 * H, c.now);
   const na = last(serOf(p, "lab:Na+"));
   const alb = last(serOf(p, "lab:Albumin"));
-  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Tag ${c.tag} · bedarfsorientiert</h2>${iBtn("v_post")}</div>${vInfo("v_post", IT_BY.t3_bil.info)}
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Tag ${c.tag} · ${c.h < ALGO_H ? "Algorithmus bis h 72" : "bedarfsorientiert"}</h2>${iBtn("v_post")}</div>${vInfo("v_post", IT_BY.t3_bil.info)}${vReevalRow(p, c)}
     <div class="facts"><span>Diurese 6 h <b>${s6.n ? r0(s6.s) + " ml" : "—"}</b>${s6.n && c.kg ? ` (${fN(s6.s / s6.n / c.kg, 2)} ml/kg/h)` : ""}</span><span>24 h <b>${s24.n ? tsd(s24.s) + " ml" : "—"}</b></span><span>Na <b>${na ? esc(na.v) : "—"}</b></span><span>Albumin <b>${alb ? esc(alb.v) : "—"}</b></span><span>Ziel ${zielTxt(c)}</span></div>
     <div class="qgrid"><div class="qb"><div class="ql">Diurese</div><input id="q_diu" data-f="diunow" inputmode="numeric" placeholder="ml seit letztem Eintrag"></div><div class="qb"><div class="ql">Natrium</div><input id="q_na" data-f="lab:Na+" inputmode="decimal" placeholder="mmol/l"></div><div class="qb"><div class="ql">Albumin</div><input id="q_alb2" data-f="lab:Albumin" inputmode="decimal" placeholder="g/dl"></div></div></div>`;
 }
@@ -1585,6 +1767,7 @@ function vDialog(B, cur) {
         <button class="btn pri" data-act="print" data-v="all" ${c.u == null ? "disabled" : ""}>Checkliste + Volumenprotokoll ab jetzt</button>
       </div><div class="acts"><button class="btn" data-act="close">Schließen</button></div></div></div>`;
   }
+  if (d === "algo" && cur) return vAlgo(cur, calc(cur));
   if (d === "stamm" && cur) {
     const c = calc(cur);
     return `<div class="dlgbg"><div class="dlg wide"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Stammdaten & Übergabe Schockraum</h2><button class="btn pri" data-act="close">Fertig</button></div>${vStamm(cur, c)}
@@ -1601,7 +1784,7 @@ function vDialog(B, cur) {
       <p><b>Kopplung mit BurnICU:</b> Beide Apps liegen auf derselben Domain (ftigiser-collab.github.io) und nutzen denselben Browserspeicher. Patienten, Unfallzeit, Gewicht, VKOF, Häkchen der Checkliste 48 h, Diurese, Laufraten, Laborwerte (Laktat, ScvO2, Na, Albumin, COHb, CK …), IAP, PiCCO-HI und Transfusionen gelten in beiden Apps — Änderungen erscheinen sofort, auch wenn beide gleichzeitig offen sind (BurnICU ab Version 3.27.1). Voraussetzung: gleicher Browser auf demselben Gerät.</p>
       <p><b>Checkliste:</b> Phasen ab Unfallzeit (h 0 = Unfall). Offen ist nur die aktuelle Phase; die anderen klappen per Klick auf. Fällig = gelb, überfällig = rot. Das (i) am Punkt zeigt Pathophysiologie, Studien und SOP, dazu Werte-Eingaben und „entfällt bei diesem Patienten“. Oben unter „Als Nächstes“ stehen die fälligen Punkte zum direkten Abhaken. Wo SOP und Literatur abweichen, gilt die SOP.</p>
       <p><b>Volumen:</b> Oben die aktuelle Anweisung nach SOP (stündliche Reevaluation, ±), darunter Defizit/Übertherapie aus Präklinik und Schockraum. Wer später dazukommt, trägt Präklinik/SR ein und füllt die Stundentabelle von oben nach unten.</p>
-      <p><b>Erinnerungen:</b> Im Menü einschalten — solange die App offen ist (auch im Hintergrund), meldet der Browser fällige Stundendiurese, IAP und Checklistenpunkte.</p>
+      <p><b>Algorithmus:</b> Bis h 72 ist der Algorithmus Volumenmanagement der SOP die Grundlage. „Algorithmus durchgehen“ führt Schritt für Schritt (Ziele → MAP → ZVD/VCI → Fluid Responsiveness → Fluid Challenge → Echo) zum Vorschlag. Umgehen geht immer: direkt übernehmen, eigene Rate eintragen oder „ohne Änderung“.</p><p><b>Erinnerungen:</b> Reevaluation stündlich fällig, spätestens nach 2 h überfällig (rot, Titelzeile, Browser-Meldung; überfällig alle 2 h erneut). Jede Laufratenänderung zählt als Reevaluation. Browser-Meldungen im Menü einschalten — sie kommen, solange die App offen ist (auch im Hintergrund).</p>
       <p><b>Daten:</b> nur auf diesem Gerät. Sicherung über BurnICU (Menü → Sicherung exportieren) enthält auch alles aus LUminate.</p>
       <div class="acts"><button class="btn pri" data-act="close">OK</button></div></div></div>`;
   }
@@ -1610,7 +1793,7 @@ function vDialog(B, cur) {
 
 /* ---------- Druck ---------- */
 const PR_LEG_C = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · AIS Abbreviated Injury Score (Bronchoskopie) · BGA Blutgasanalyse · COHb Carboxyhämoglobin · ScvO2 zentralvenöse O2-Sättigung · SpO2 pulsoxymetrische Sättigung · HBO hyperbare Oxygenierung · 4-DMAP 4-Dimethylaminophenol · DK Dauerkatheter · ZVK zentraler Venenkatheter · PiCCO Pulse Contour Cardiac Output · HI Herzindex · ELWI extravaskulärer Lungenwasserindex · IAP intraabdomineller Druck · Rekap Rekapillarisierungszeit · BB Blutbild · CK Kreatinkinase · BZ Blutzucker · Hb Hämoglobin · Hk Hämatokrit · EK Erythrozytenkonzentrat · FFP Fresh Frozen Plasma · TXA Tranexamsäure · PPI Protonenpumpenhemmer · MRE multiresistente Erreger · BG Berufsgenossenschaft · D-Arzt Durchgangsarzt · PRIS Propofol-Infusionssyndrom · HF Herzfrequenz · AF Atemfrequenz · ABA American Burn Association · ABSI Abbreviated Burn Severity Index · HES Hydroxyethylstärke · O2 Sauerstoff · Ca²⁺ ionisiertes Kalzium · Na/K Natrium/Kalium · CO Kohlenmonoxid · EKG Elektrokardiogramm · Anti-Xa Anti-Faktor-Xa-Aktivität · OP Operation · IE Internationale Einheiten · p.i. per inhalationem · i.v. intravenös · FiO2 inspiratorische O2-Fraktion · CT Computertomografie · Tox Toxikologie · Zi Zimmer · J Jahre · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
-const PR_LEG_V = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · HI Herzindex (l/min/m²) · ScvO2 zentralvenöse O2-Sättigung · Rekap Rekapillarisierungszeit · IAP intraabdomineller Druck (mmHg) · kum. kumulativ ab Unfall · Ref. Referenz Rule of 10 × Stunden ab Unfall · ZVD zentraler Venendruck · VCI Vena cava inferior · MAP mittlerer arterieller Druck · NA Noradrenalin · FFP Fresh Frozen Plasma · EK Erythrozytenkonzentrat · ABSI Abbreviated Burn Severity Index · PiCCO Pulse Contour Cardiac Output · Na Natrium · Zi Zimmer · J Jahre · E Einheiten · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
+const PR_LEG_V = "Abkürzungen: PPV Pulse Pressure Variation · SVV Schlagvolumenvariation · PLR Passive Leg Raise · RV rechtsventrikulär · RAP rechtsatrialer Druck · VEL Vollelektrolytlösung · Echo Echokardiografie · VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · HI Herzindex (l/min/m²) · ScvO2 zentralvenöse O2-Sättigung · Rekap Rekapillarisierungszeit · IAP intraabdomineller Druck (mmHg) · kum. kumulativ ab Unfall · Ref. Referenz Rule of 10 × Stunden ab Unfall · ZVD zentraler Venendruck · VCI Vena cava inferior · MAP mittlerer arterieller Druck · NA Noradrenalin · FFP Fresh Frozen Plasma · EK Erythrozytenkonzentrat · ABSI Abbreviated Burn Severity Index · PiCCO Pulse Contour Cardiac Output · Na Natrium · Zi Zimmer · J Jahre · E Einheiten · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
 function prHead(p, c, title) {
   return `<div class="ph1"><div><h1>${title}</h1><div class="meta">Zi ${esc(p.zimmer)} · <b>${esc(p.name || "________________")}</b> · ${c.age != null ? fN(c.age, 0) + " J" : "__ J"} · ${c.sex || "_"} · ${c.kg ? fN(c.kg, 0) + " kg" : "___ kg"} · ${c.cm ? fN(c.cm, 0) + " cm" : "___ cm"} · VKOF ${c.vk != null ? fN(c.vk, 1) + " %" : "___ %"}${c.tief != null ? ` (2b/3 ${fN(c.tief, 0)} %)` : ""}${c.inhal ? " · IHT" : ""}${c.strom ? " · Strom" : ""}${c.myo ? " · Myoglobinurie" : ""}${c.vk > 40 && c.absi ? ` · ABSI ${c.absi} (${c.absiTxt})` : ""}</div></div><div class="meta" style="text-align:right">Gedruckt ${fWDT(Date.now())}<br>LUminate · nach den SOPs der V1</div></div>`;
 }
@@ -1692,7 +1875,7 @@ function printVol(p, startMs, label) {
   let h = `<div class="pg">${prHead(p, c, "Verbrennung · Volumenprotokoll " + label)}${prTimeline(c)}
     <div class="boxes">${bx("Rule of 10 (Ringer-Azetat)", c.rot != null ? r0(c.rot) + " ml/h" : "___ ml/h")}${bx("Laufrate jetzt", rate != null ? r0(rate) + " ml/h" : "___")}${bx("Ziel-Diurese", zielTxt(c))}${bx("Volumen seit Unfall", v ? tsd(v.ges) + " ml" : "___")}${bx("Grenzen", c.ivy ? "Ivy " + tsd(c.ivy) + " ml/24 h · 6 ml/kg/% = " + tsd(c.rescue) : "___")}</div>`;
   if (P && P.main) h += `<div class="note"><b>Jetzt (${fT(c.now)}):</b> ${P.main.h}. ${P.main.t || ""}${P.vol && !P.vol.miss ? `<br><b>${P.vol.h}.</b> ${P.vol.t}` : ""}</div>`;
-  h += `<div class="note" style="border-color:#1d4268;background:#f2f6fa"><b>SOP stündlich:</b> Diurese > ${fN(c.uoLo, 1)} ml/kg/h · HI > 2,2 · ScvO2 > 70 % · Laktat fällt · Rekap < 3 s → alle erfüllt <b>−10 %</b>, eines nicht <b>+20 %</b> (vorher ZVD/VCI/Leg Raise). MAP < 65 → Flüssigkeitschallenge. Ab h 6: Albumin 20 % 100 ml je 1000 ml (h 6–8 nur erwägen), FFP nur nach Gerinnung. Na > 139 → Deltajonin BG (1/3). IAP alle 4 h. Ab h 48 bedarfsorientiert.</div>${steps}
+  h += `<div class="note" style="border-color:#1d4268;background:#f2f6fa"><b>SOP stündlich (Reevaluation spätestens alle 2 h):</b> Diurese > ${fN(c.uoLo, 1)} ml/kg/h · HI > 2,2 · ScvO2 > 70 % · Laktat fällt · Rekap < 3 s → alle erfüllt <b>−10 %</b>. ≥ 1 nicht erfüllt → <b>Algorithmus:</b> MAP < 65–70 → Fluid Challenge (responsiv: +20 %; nicht: Noradrenalin, Sepsis?, Argipressin bei > 4 ml/kg/h oder NA > 0,25) · sonst ZVD > 5/VCI < 50 % Atemmodulation → Fluid Responsiveness (PPV/SVV/PLR) → Fluid Challenge → responsiv: <b>+20 %</b> (Blutung?) · nicht responsiv → Echo: Dysfunktion → Dobutamin; RV-Dilatation/ZVD > 12–15/VCI starr → <b>−10 %</b>. Ab h 6: Albumin 20 % 100 ml je 1000 ml (h 6–8 nur erwägen), FFP nur nach Gerinnung. Na > 139 → Deltajonin BG (1/3). IAP alle 4 h. Ab h 48 bedarfsorientiert.</div>${steps}
     <table style="margin-top:4pt"><thead><tr><th>Uhrzeit</th><th>h</th><th>Diurese ml</th><th>ml/kg/h</th><th>Ziel ✓</th><th>Rate ml/h</th><th>Albumin</th><th>Zusatz</th><th>Laktat</th><th>ScvO2</th><th>HI</th><th>Rekap</th><th>IAP</th><th>↑ = ↓</th><th>neue Rate</th><th>Ist kum.</th><th>Ref. kum.</th><th>Kürzel</th></tr></thead><tbody>`;
   const ex = extrasOf(p);
   rows.forEach((S) => {
@@ -1907,6 +2090,12 @@ function act(a, el) {
     case "sel": UI.sel = ds.id; UI.open = {}; UI.fold = {}; saveUI(); break;
     case "tab": UI.tab = ds.v; saveUI(); window.scrollTo(0, 0); break;
     case "cols": UI.allCols = !UI.allCols; break;
+    case "algo": UI.algo = null; UI.dlg = "algo"; UI.menu = false; break;
+    case "algo_z": if (UI.algo) UI.algo.z[ds.k] = ds.v; break;
+    case "algo_a": if (UI.algo) { const i = ALGO_ORDER.indexOf(ds.k); ALGO_ORDER.slice(i + 1).forEach((k) => { delete UI.algo.a[k]; }); UI.algo.a[ds.k] = ds.v; } break;
+    case "algo_done": algoFinish(ds.res, ds.to); return;
+    case "algo_manual": { const n = numDE((document.getElementById("al_rate") || {}).value); if (n == null || n < 0 || n > 5000) return toast("Rate in ml/h eintragen"); algoFinish("manuell", Math.round(n)); return; }
+    case "reeval_ok": if (pid) { upd(pid, (q) => { const rr = valAt(rateHist(q), Date.now()); reevalLog(q, "ok", rr ? numDE(rr.v) : null, null, "ohne Algorithmus"); }); toast("Reevaluation dokumentiert — Rate unverändert"); } return;
     case "info": UI.open[ds.k] = !UI.open[ds.k]; break;
     case "fold": { const k = ds.k; const cur = document.querySelector(`[data-act="fold"][data-k="${k}"] .fold`); const isOpen = cur && cur.textContent === "▾"; UI.fold[k] = isOpen; break; }
     case "hist": UI.hist = !UI.hist; break;
@@ -1959,7 +2148,7 @@ function act(a, el) {
     case "deldiu": { const ids = ds.ids.split(","); upd(pid, (q) => { q.diurese = (q.diurese || []).filter((e) => ids.indexOf(e.id) < 0); }); ids.forEach((id) => mirDrop(pid, "diurese", id)); return; }
     case "menu": UI.menu = !UI.menu; break;
     case "dlg": UI.dlg = ds.v; UI.menu = false; break;
-    case "close": UI.dlg = null; break;
+    case "close": UI.dlg = null; UI.algo = null; break;
     case "print": doPrint(ds.v); return;
     case "reload": location.reload(); return;
     case "updcheck": UI.menu = false; checkUpdate(true); break;
@@ -2132,7 +2321,7 @@ setInterval(() => {
 }, 60 * 1e3);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { refresh(); checkUpdate(false); } });
 window.addEventListener("afterprint", () => { document.getElementById("print").innerHTML = ""; });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && (UI.dlg || UI.menu)) { UI.dlg = null; UI.menu = false; render(); } });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && (UI.dlg || UI.menu)) { UI.dlg = null; UI.algo = null; UI.menu = false; render(); } });
 
 /* ---------- Erinnerungen (Browser-Benachrichtigung, solange die App offen ist) ---------- */
 const notified = new Set();
@@ -2153,7 +2342,7 @@ function notifyTick() {
     const c = calc(p);
     if (c.vk != null && c.vk < 20) return;
     const msgs = [];
-    laufend(p, c).forEach((x) => { if (x.st) msgs.push([`${p.id}:${x.k}:${x.due}`, `${x.t} ${x.st === "o" ? "überfällig" : "fällig"}`]); });
+    laufend(p, c).forEach((x) => { if (x.st) msgs.push([`${p.id}:${x.k}:${x.due}:${x.st}${x.st === "o" ? ":" + Math.floor((c.now - (x.over || x.due)) / (2 * H)) : ""}`, `${x.t} ${x.st === "o" ? "überfällig" : "fällig"}${x.info ? " — " + x.info : ""}`]); });
     dueList(p, c).forEach(({ it, st }) => msgs.push([`${p.id}:${it.k}:${st}`, (st === "over" ? "überfällig: " : "fällig: ") + it.t({ p, c }).replace(/<[^>]+>/g, "").slice(0, 90)]));
     msgs.forEach(([k, t]) => {
       if (notified.has(k)) return;
@@ -2166,7 +2355,7 @@ function notifyTick() {
 (function primeNotified() {
   try {
     const B = readB();
-    burnPats(B).forEach((p) => { const c = calc(p); dueList(p, c).forEach(({ it, st }) => notified.add(`${p.id}:${it.k}:${st}`)); laufend(p, c).forEach((x) => { if (x.st === "o") notified.add(`${p.id}:${x.k}:${x.due}`); }); });
+    burnPats(B).forEach((p) => { const c = calc(p); dueList(p, c).forEach(({ it, st }) => notified.add(`${p.id}:${it.k}:${st}`)); laufend(p, c).forEach((x) => { if (x.st === "o" && x.k !== "reeval") notified.add(`${p.id}:${x.k}:${x.due}:o:${Math.floor((c.now - (x.over || x.due)) / (2 * H))}`); }); });
   } catch (e) {}
 })();
 
