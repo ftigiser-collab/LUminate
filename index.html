@@ -285,7 +285,7 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
    (gleiche Domain). Eigener Speicher nur für den Verlaufsspiegel und die
    Bedienung. Hausstandard: SOPs der V1 gehen vor Literatur.
    ===================================================================== */
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.0.1";
 const BKEY = "burnicu_v3";
 const SKEY = "luminate_v1";
 const H = 36e5, MIN = 6e4, EPOCH = "1970-01-01T00:00:00.000Z";
@@ -1121,6 +1121,8 @@ function vMenu() {
   return `<div class="dlgbg" style="background:transparent" data-act="menu"></div><div class="menu">
     <a href="/BurnICU/" target="_blank" rel="noopener">BurnICU öffnen ↗</a>
     <button data-act="notif">${UI.notif ? "Erinnerungen ausschalten" : "Erinnerungen einschalten"} <span class="mut small">(Browser-Benachrichtigung)</span></button>
+    ${UI.sel ? `<button data-act="dlg" data-v="del">Patient entlassen oder löschen …</button>` : ""}
+    <button data-act="demo">Testpatient anlegen <span class="mut small">(Unfall vor 3 h, 40 % VKOF, Cyanid-Verdacht)</span></button>
     <button data-act="dlg" data-v="help">So funktioniert die App</button>
     <button data-act="updcheck">Nach Update suchen</button>
     <div class="ft">LUminate v${APP_VERSION} · Daten nur auf diesem Gerät · gleicher Speicher wie BurnICU</div></div>`;
@@ -1239,6 +1241,7 @@ function vAufnahme(p, c) {
     ${fld("Tox", "c:tox", d.tox)}
     ${fld("Vorerkrankungen / Allergien", "c:ve", d.ve, { w2: true })}
   </div>
+  <div class="row" style="margin-top:10px;justify-content:flex-end"><button class="btn sm danger" data-act="dlg" data-v="del">Patient entlassen / löschen …</button></div>
   <div class="cks" style="margin-top:6px">${cbx("c:foto", d.foto, "Fotodoku")}${cbx("c:lb", d.lb, "Lund-Browder-Bogen")}${cbx("c:angeh", d.angeh, "Angehörige/Betreuer bekannt")}</div>
   </div></div>`;
   return h;
@@ -1550,6 +1553,12 @@ function vDialog(B, cur) {
         <button class="btn" data-act="print" data-v="volnow" ${c.u == null ? "disabled" : ""}>Volumenprotokoll ab jetzt (24 h)</button>
         <button class="btn pri" data-act="print" data-v="all" ${c.u == null ? "disabled" : ""}>Checkliste + Volumenprotokoll ab jetzt</button>
       </div><div class="acts"><button class="btn" data-act="close">Schließen</button></div></div></div>`;
+  }
+  if (d === "del" && cur) {
+    return `<div class="dlgbg"><div class="dlg"><h2>Zi ${esc(cur.zimmer)} · ${esc(cur.name || "ohne Namen")} entfernen</h2>
+      <p>Gilt auch in BurnICU — beide Apps nutzen denselben Speicher.</p>
+      <p><b>Entlassen:</b> Der Patient verschwindet aus beiden Apps und liegt im BurnICU-Archiv (Menü → Archiv), wie beim Entlassen in BurnICU.<br><b>Endgültig löschen:</b> für Testpatienten oder Fehleingaben — nicht wiederherstellbar.</p>
+      <div class="acts"><button class="btn" data-act="close">Abbrechen</button><button class="btn" data-act="discharge">Entlassen (Archiv)</button><button class="btn danger" data-act="delpat">Endgültig löschen</button></div></div></div>`;
   }
   if (d === "help") {
     return `<div class="dlgbg"><div class="dlg"><h2>So funktioniert LUminate</h2>
@@ -1919,6 +1928,8 @@ function act(a, el) {
     case "notif": UI.menu = false; toggleNotif(); break;
     case "create": createPatient(); return;
     case "adopt": adoptPatient(); return;
+    case "demo": UI.menu = false; createDemo(); return;
+    case "discharge": case "delpat": removePatient(a === "discharge"); return;
     default: return;
   }
   render();
@@ -1943,6 +1954,60 @@ function createPatient() {
   saveUI();
   refresh();
   toast("Angelegt — auch in BurnICU sichtbar");
+}
+function removePatient(archiv) {
+  const pid = UI.sel;
+  const B = readB();
+  const p = B.patients[pid];
+  if (!p) return;
+  delete B.patients[pid];
+  if (archiv) B.archive = (B.archive || []).concat([{ ...p, entlassen: nowISO() }]);
+  writeB(B);
+  const s = readS();
+  if (s.mirror && s.mirror[pid]) { delete s.mirror[pid]; MIR = s.mirror; }
+  UI.sel = null; UI.dlg = null; UI.fold = {}; UI.open = {};
+  s.sel = null;
+  writeS(s);
+  refresh();
+  toast(archiv ? "Entlassen — liegt im BurnICU-Archiv" : "Patient gelöscht");
+}
+/* Testpatient: Rauchgas in geschlossenem Raum, Unfall vor ~3 h, 40 % VKOF, IHT, intubiert — Cyanid-Verdacht (Bewusstseinsstörung, Kreislaufinstabilität, Laktat > 10 trotz Volumen), COHb nur 8 % */
+function createDemo() {
+  const B = readB();
+  const occ = Object.values(B.patients || {}).map((x) => Number(x.zimmer));
+  const z = [1, 2, 3, 4, 5, 6, 7, 8].find((x) => occ.indexOf(x) < 0);
+  if (!z) return toast("Kein freies Zimmer — erst einen Patienten entlassen");
+  const now = Date.now();
+  const u = now - 3 * H - 5 * MIN;
+  const tb = u + 2 * H;
+  const L = (n, arr) => ({ grp: (LABMETA[n] || [""])[0], unit: (LABMETA[n] || ["", ""])[1], imp: false, ueb: false, vals: arr.map(([t, v]) => ({ id: uid(), t: isoOf(t), v })) });
+  const p = newPatient({
+    name: "Test Cyanid", zimmer: z, gewicht: "80", groesse: "178", sex: "m", test: true, created: isoOf(tb),
+    diagnose: "Flammenverbrennung, 40 % VKOF, Inhalationstrauma — TESTPATIENT",
+    burn: { ...emptyBurn(), unfall: isoOf(u), vkof: "40", tief: "25", alter: "52", gegeben: "1000", gegebenT: isoOf(tb), rate: "500", inhal: true, russ: "Trachea" },
+    c48: { done: { rg_raum: true, rg_russ: true, rg_bew: true, rg_kreis: true, rg_svo2: true, s_lab: true }, mech: ["flamme"], lok: ["gesicht"], geschl: true, intub: true, intubT: fT(u + 70 * MIN), tubus: "8,0", tiefe: "23", gew: "geschätzt", gegebenBis: fT(tb), diuDK: "40", srMed: "Sufentanil, Midazolam, Noradrenalin", tox: "Brand in Wohnung, Matratze/Kunststoff" },
+    infRate: [{ id: uid(), t: isoOf(tb), v: 500 }],
+    diurese: [{ id: uid(), t: isoOf(now - 10 * MIN), v: "22" }],
+    labs: {
+      COHb: L("COHb", [[tb - 15 * MIN, "8"]]),
+      Laktat: L("Laktat", [[tb - 15 * MIN, "9,8"], [now - 20 * MIN, "11,5"]]),
+      ScvO2: L("ScvO2", [[now - 20 * MIN, "84"]]),
+      "Na+": L("Na+", [[now - 20 * MIN, "138"]]),
+      "K+": L("K+", [[now - 20 * MIN, "4,6"]]),
+      Hb: L("Hb", [[now - 20 * MIN, "15,8"]]),
+      MAP: L("MAP", [[now - 15 * MIN, "58"]])
+    },
+    devices: [{ id: uid(), typ: "ZVK", lage: "V. jug. int. re.", seit: todayYMD(), burn: false }, { id: uid(), typ: "Arterie", lage: "A. fem. li. (PiCCO)", seit: todayYMD(), burn: false }],
+    piccoAn: true,
+    picco: [{ id: uid(), t: isoOf(now - 30 * MIN), hi: 2.0 }],
+    iap: [{ id: uid(), t: isoOf(now - 40 * MIN), v: "9" }]
+  });
+  B.patients[p.id] = p;
+  writeB(B);
+  UI.sel = p.id; UI.tab = "check"; UI.fold = {}; UI.open = {};
+  saveUI();
+  refresh();
+  toast(`Testpatient in Zimmer ${z} angelegt — auch in BurnICU sichtbar`);
 }
 function adoptPatient() {
   const id = (document.getElementById("np_ex") || {}).value;
