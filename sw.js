@@ -1,7 +1,7 @@
 /* LUminate — Service Worker (offline) für https://ftigiser-collab.github.io/LUminate/.
    Eigener Cache-Präfix "luminate-", damit BurnICU, BurnICU Alltag und LUminate
    sich nicht gegenseitig aufräumen. Update: VERSION hochzählen und version.json anpassen. */
-const VERSION = 'luminate-v1.0.1';
+const VERSION = 'luminate-v1.0.2';
 const PREFIX = 'luminate-';
 const CORE = [
   './',

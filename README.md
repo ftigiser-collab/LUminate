@@ -4,6 +4,22 @@ Adresse: https://ftigiser-collab.github.io/LUminate/
 
 Eigene App (eigenes Symbol, eigener Offline-Speicher, eigenes Update) für die ersten fünf Tage eines großen Verbrennungspatienten auf der V1. Primär für den PC, druckbar auf A4. Arbeitsdokument, keine Patientenakte — Aliasnamen verwenden.
 
+## Neu in 1.0.2 (nach Faktencheck gegen die SOPs)
+
+- **Kein stündliches +20 % auf alte Werte mehr:** Ein verfehltes Ziel (HI, ScvO2, Laktat, Rekap) zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde — sonst „neu messen“.
+- **Übertherapie aus Präklinik/SR:** −10 % nur noch, wenn alle Ziele erfüllt sind; bei verfehlten Zielen Hinweis auf IAP, HI, Blutung, Katheterlage statt Senken-Knopf.
+- **Defizit aus Präklinik/SR:** Aufholrate nur bei aktueller Diurese unter Ziel, als „Aufholrate“ gekennzeichnet (geht über den SOP-Schritt hinaus); SOP-gerechtes Heruntertitrieren zählt nicht mehr als neues Defizit.
+- Diurese-Ziel streng „> 0,3 ml/kg/h“; Myoglobinurie im Korridor 200–300 ml/h nicht mehr als „zu hoch“ markiert; Sammelwert über > 12 h gilt nicht als Stundenwert.
+- **Deltajonin BG (1/3)** (Eindrittelelektrolyt, Na 45/K 25) überall eindeutig benannt.
+- Hydroxocobalamin nach SOP als Einmalgabe 5 g; 2. Dosis nur ärztliche Einzelfallentscheidung.
+- ABSI: Punkt nur für Grad 3 (neues Häkchen „Grad 3 vorhanden“), 12–13 Punkte „≤ 10 %“.
+- Studienangaben präzisiert (Navickis 2016, ABA 2024, 6S/CHEST 2012, Baud 1991), Legenden ergänzt.
+
+## Neu in 1.0.1
+
+- Patient **entlassen** (ins BurnICU-Archiv) oder **endgültig löschen** — im Menü und unten in den Stammdaten.
+- Menü → **Testpatient anlegen**: Unfall vor ~3 h, 40 % VKOF, Inhalationstrauma, Cyanid-Verdacht.
+
 ## Kopplung mit BurnICU
 
 LUminate liegt auf derselben Domain wie BurnICU (ftigiser-collab.github.io, eigenes Repo **LUminate**) und liest und schreibt **denselben Browserspeicher** (`burnicu_v3`). Es gibt keinen Export/Import zwischen den Apps — alles gilt sofort in beiden:

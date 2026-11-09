@@ -285,7 +285,7 @@ table.vt{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
    (gleiche Domain). Eigener Speicher nur für den Verlaufsspiegel und die
    Bedienung. Hausstandard: SOPs der V1 gehen vor Literatur.
    ===================================================================== */
-const APP_VERSION = "1.0.1";
+const APP_VERSION = "1.0.2";
 const BKEY = "burnicu_v3";
 const SKEY = "luminate_v1";
 const H = 36e5, MIN = 6e4, EPOCH = "1970-01-01T00:00:00.000Z";
@@ -528,11 +528,11 @@ function calc(p, now) {
   }
   if (o.schock || h == null || h < 48) {
     o.uoLo = o.myo ? 1.5 : o.child ? 1 : 0.3;
-    o.uoHi = o.myo ? 2 : o.child ? 1.5 : null;
+    o.uoHi = o.myo ? null : o.child ? 1.5 : null;
     o.uoMode = o.myo ? "Myoglobinurie (SOP Crush)" : o.child ? "Kind" : "SOP";
   } else {
     o.uoLo = o.myo ? 1 : 0.5;
-    o.uoHi = o.myo ? 2 : null;
+    o.uoHi = null;
     o.uoMode = o.myo ? "Myoglobinurie" : "nach Schockphase";
   }
   if (cm && kg) { o.bmi = kg / Math.pow(cm / 100, 2); o.kof = Math.sqrt(cm * kg / 3600); }
@@ -541,10 +541,12 @@ function calc(p, now) {
     let a = sex === "w" ? 1 : 0;
     a += age <= 20 ? 1 : age <= 40 ? 2 : age <= 60 ? 3 : age <= 80 ? 4 : 5;
     a += b.inhal ? 1 : 0;
-    a += (tief || 0) > 0 ? 1 : 0;
+    const g3 = b.drittgrad != null ? !!b.drittgrad : (tief || 0) > 0;
+    o.absiG3Ann = b.drittgrad == null && (tief || 0) > 0;
+    a += g3 ? 1 : 0;
     a += Math.min(10, Math.max(1, Math.ceil(vk / 10)));
     o.absi = a;
-    o.absiTxt = a <= 3 ? "≥ 99 %" : a <= 5 ? "98 %" : a <= 7 ? "80–90 %" : a <= 9 ? "50–70 %" : a <= 11 ? "20–40 %" : a <= 13 ? "~10 %" : "< 10 %";
+    o.absiTxt = a <= 3 ? "≥ 99 %" : a <= 5 ? "98 %" : a <= 7 ? "80–90 %" : a <= 9 ? "50–70 %" : a <= 11 ? "20–40 %" : a <= 13 ? "≤ 10 %" : "< 10 %";
   }
   o.hiAvail = bs.hd === "ja" ? true : bs.hd === "nein" ? false : piccoAktiv(p);
   o.scvAvail = bs.hd === "ja" ? true : bs.hd === "nein" ? false : !!devAct(p, "ZVK") || piccoAktiv(p) || serOf(p, "lab:ScvO2").length > 0;
@@ -552,7 +554,7 @@ function calc(p, now) {
   return o;
 }
 const zielTxt = (c) => {
-  if (c.myo) return "200–300 ml/h bzw. 1,5–2 ml/kg/h";
+  if (c.myo && c.uoLo >= 1.5) return "200–300 ml/h bzw. 1,5–2 ml/kg/h";
   if (c.kg) return `> ${r0(c.uoLo * c.kg)} ml/h (${fN(c.uoLo, 1)} ml/kg/h)` + (c.uoHi ? `, bis ${r0(c.uoHi * c.kg)} ml/h` : "");
   return `> ${fN(c.uoLo, 1)} ml/kg/h`;
 };
@@ -573,7 +575,7 @@ function diuHours(list) {
       if (lb) { lb.v += v; lb.ids = lb.ids.concat([e.id]); lb.multi = true; } else Hs.push({ h: tr, v, n: 1, ids: [e.id], src: v });
       return;
     }
-    if (n > 12) n = 1;
+    if (n > 12) { Hs.push({ h: tr, v, n: 1, ids: [e.id], src: v, end: tr, unk: true }); prev = tr; return; }
     for (let k = n - 1; k >= 0; k--) Hs.push({ h: tr - k * H, v: v / n, n, ids: [e.id], src: v, end: tr });
     prev = tr;
   });
@@ -660,18 +662,24 @@ function rekapSer(p) {
 }
 function evalAt(p, c, T, diuVal) {
   const crit = [];
+  /* letzte Laufratenänderung vor T: ein verfehltes Ziel zählt nur, wenn danach gemessen — sonst „neu messen“ (verhindert +20 % jede Stunde auf alten Wert) */
+  const rc = rateHist(p).filter((x) => x.t !== EPOCH && tMs(x.t) <= T);
+  const since = rc.length ? tMs(last(rc).t) : null;
+  const stale = (x, st) => st === false && since != null && x && tMs(x.t) < since ? null : st;
   const kg = c.kg;
   const lo = loAt(c, T);
-  crit.push({ k: "diu", l: `Diurese > ${fN(lo, 1)} ml/kg/h`, v: diuVal != null && kg ? fN(diuVal / kg, 2) : null, st: diuVal == null || !kg ? null : diuVal / kg >= lo });
+  crit.push({ k: "diu", l: `Diurese > ${fN(lo, 1)} ml/kg/h`, v: diuVal != null && kg ? fN(diuVal / kg, 2) : null, st: diuVal == null || !kg ? null : diuVal / kg > lo });
   if (c.hiAvail) {
     const x = lastIn(serOf(p, "picco"), T, 6 * H, "hi");
     const v = x ? numDE(x.hi) : null;
-    crit.push({ k: "hi", l: "HI > 2,2", v: v != null ? fN(v, 1) : null, st: v == null ? null : v > 2.2 });
+    const st = stale(x, v == null ? null : v > 2.2);
+    crit.push({ k: "hi", l: "HI > 2,2", v: v != null ? fN(v, 1) + (st === null && v <= 2.2 ? " · vor Anpassung, neu messen" : "") : null, st });
   } else crit.push({ k: "hi", l: "HI > 2,2", st: "na" });
   if (c.scvAvail) {
     const x = lastIn(serOf(p, "lab:ScvO2"), T, 6 * H);
     const v = x ? numDE(x.v) : null;
-    crit.push({ k: "scv", l: "ScvO2 > 70 %", v: v != null ? fN(v, 0) : null, st: v == null ? null : v > 70 });
+    const st = stale(x, v == null ? null : v > 70);
+    crit.push({ k: "scv", l: "ScvO2 > 70 %", v: v != null ? fN(v, 0) + (st === null && v <= 70 ? " · vor Anpassung, neu messen" : "") : null, st });
   } else crit.push({ k: "scv", l: "ScvO2 > 70 %", st: "na" });
   const ls = serOf(p, "lab:Laktat");
   const lx = lastIn(ls, T, 6 * H);
@@ -681,10 +689,11 @@ function evalAt(p, c, T, diuVal) {
     const i = ls.indexOf(lx);
     const prev = i > 0 ? numDE(ls[i - 1].v) : null;
     lst = lv == null ? null : lv <= 2 ? true : prev != null ? lv < prev : null;
+    lst = stale(lx, lst);
   }
-  crit.push({ k: "lak", l: "Laktat fällt", v: lx ? lx.v : null, st: lst });
+  crit.push({ k: "lak", l: "Laktat fällt", v: lx ? lx.v + (lst === null && numDE(lx.v) > 2 && since != null && tMs(lx.t) < since ? " · vor Anpassung, neu messen" : "") : null, st: lst });
   const rk = lastIn(rekapSer(p), T, 2 * H);
-  crit.push({ k: "rek", l: "Rekap < 3 s", v: rk ? (rk.v === "ok" ? "< 3 s" : "≥ 3 s") : null, st: rk ? rk.v === "ok" : null });
+  crit.push({ k: "rek", l: "Rekap < 3 s", v: rk ? (rk.v === "ok" ? "< 3 s" : "≥ 3 s") : null, st: stale(rk, rk ? rk.v === "ok" : null) });
   const act = crit.filter((x) => x.st !== "na");
   const mp = lastIn(serOf(p, "lab:MAP"), T, 2 * H);
   return { crit, anyFail: act.some((x) => x.st === false), allOk: act.every((x) => x.st === true), unk: act.filter((x) => x.st == null).map((x) => x.l), mapLow: !!(mp && numDE(mp.v) < 65), map: mp ? numDE(mp.v) : null };
@@ -712,9 +721,10 @@ function plan(p, c) {
   else if (!L) out.main = { lv: "w", h: "Stundendiurese eintragen", t: `Sie steuert die Laufrate — Ziel ${zielTxt(c)}.` };
   else {
     const alt = (now - tMs(L.t)) / MIN;
-    const diuV = di.lastB ? di.lastB.v : null;
+    const diuV = di.lastB && !di.lastB.unk ? di.lastB.v : null;
     out.ev = evalAt(p, c, now, diuV);
-    if (alt > 150) out.main = { lv: "w", h: `Diurese nachtragen — letzter Wert vor ${Math.floor(alt / 60)} h ${Math.round(alt % 60)} min`, t: "Erst mit aktueller Stundendiurese titrieren." };
+    if (di.lastB && di.lastB.unk) out.main = { lv: "w", h: "Stundendiurese eintragen", t: `Letzter Eintrag (${r0(di.lastB.v)} ml) ist ein Sammelwert über > 12 h — kein Stundenwert, nicht titrierbar.` };
+    else if (alt > 150) out.main = { lv: "w", h: `Diurese nachtragen — letzter Wert vor ${Math.floor(alt / 60)} h ${Math.round(alt % 60)} min`, t: "Erst mit aktueller Stundendiurese titrieren." };
     else if (rr && rr.t !== EPOCH && now - tMs(rr.t) < 60 * MIN) out.main = { lv: "i", h: `Laufrate halten — angepasst um ${fT(rr.t)}`, t: `Nächste Reevaluation ${fT(tMs(rr.t) + H)} (SOP: stündlich).` };
     else if (out.ev.anyFail) {
       const neu = rate != null ? r10(rate * 1.2) : null;
@@ -733,31 +743,40 @@ function plan(p, c) {
   const v = vol(p, c, now);
   out.v = v;
   if (v && c.rot != null) {
-    const dl = !L || (now - tMs(L.t)) / MIN > 150 ? null : di.lastB && c.kg ? di.lastB.v / c.kg < c.uoLo : null;
+    const dl = !L || (now - tMs(L.t)) / MIN > 150 || (di.lastB && di.lastB.unk) ? null : di.lastB && c.kg ? !(di.lastB.v / c.kg > c.uoLo) : null;
     const base = rate != null ? rate : c.rot;
     if (v.d0 == null) out.vol = { lv: "i", miss: true, h: "Volumen präklinisch + Schockraum fehlt", t: "Menge und Uhrzeit „bis“ eintragen — dann rechnet die App ab Stunde 0 (Unfall), ob ein Defizit oder eine Übertherapie besteht." };
     else {
       const grenze = (s) => Math.max(500, 0.2 * s);
-      const rest = -v.dJ;
+      /* aufgeholt = was seit Übernahme über die Rule of 10 hinaus lief (+ Kristalloid-Boli); SOP-konformes Heruntertitrieren erzeugt kein neues Defizit */
+      let surplus = 0;
+      if (v.t0 != null) {
+        const rh0 = rateHist(p);
+        rh0.forEach((x, i) => { const a0 = x.t === EPOCH ? -Infinity : tMs(x.t); const e0 = i + 1 < rh0.length ? tMs(rh0[i + 1].t) : Infinity; const lo0 = Math.max(a0, v.t0), hi0 = Math.min(e0, now); const rv = numDE(x.v); if (hi0 > lo0 && rv != null && rv > c.rot) surplus += (rv - c.rot) * (hi0 - lo0) / H; });
+        extrasOf(p).forEach((e) => { const t = tMs(e.t); if (e.art === "krist" && t > v.t0 && t <= now) surplus += e.ml; });
+      }
+      const rest = v.d0 < 0 ? -v.d0 - surplus : 0;
       const zahl = `Soll bis Übernahme ${tsd(v.soll0)} ml (Rule of 10 × ${fN(v.h0, 1)} h ab Unfall), gegeben ${tsd(v.g)} ml.`;
       if (v.d0 < -grenze(v.soll0)) {
         const kopf = `Defizit aus Präklinik/Schockraum: ${tsd(-v.d0)} ml unter Soll`;
-        if (rest <= 250) out.vol = { lv: "ok", h: kopf + " — inzwischen ausgeglichen", t: zahl + ` Kristalloid seit Unfall ${tsd(v.kris)} ml (Referenz jetzt ${tsd(v.soll)} ml). Weiter stündlich nach Diurese.` };
+        if (rest <= 250) out.vol = { lv: "ok", h: kopf + " — inzwischen ausgeglichen", t: zahl + ` Seit Übernahme ${tsd(surplus)} ml über der Rule of 10 gegeben. Weiter stündlich nach Diurese.` };
         else if (dl === false) out.vol = { lv: "i", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml — Diurese ist im Ziel: nicht nachschieben, weiter stündlich nach Diurese titrieren.` };
+        else if (dl == null) out.vol = { lv: "i", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml — erst aktuelle Stundendiurese eintragen; nachgeschoben wird nur bei Diurese unter Ziel.` };
         else {
           const n = v.hJ < 6 ? Math.max(2, Math.round(8 - v.hJ)) : 4;
           let neu = r10(base + rest / n);
           const cap = r10(2 * c.rot), capped = neu > cap;
           if (capped) neu = cap;
-          out.vol = { lv: "w", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml${dl == null ? " (Diurese noch unklar)" : ", Diurese unter Ziel"} → Laufrate für ${n} h auf ${r0(neu)} ml/h${capped ? " (gedeckelt auf 2 × Rule of 10)" : ""}, danach wieder stündlich nach Diurese.`, neu: neu > base ? neu : null };
+          out.vol = { lv: "w", h: kopf, t: zahl + ` Noch offen ${tsd(rest)} ml, Diurese unter Ziel → Aufholrate für ${n} h: ${r0(neu)} ml/h${capped ? " (gedeckelt auf 2 × Rule of 10)" : ""}, danach wieder stündlich nach Diurese. Geht über den SOP-Schritt (+20 %) hinaus — ärztliche Entscheidung.`, neu: neu > base ? neu : null, aufhol: true };
         }
       } else if (v.d0 > grenze(v.soll0)) {
         const kopf = `Übertherapie aus Präklinik/Schockraum: ${tsd(v.d0)} ml über Soll`;
         if (dl === true) out.vol = { lv: "e", h: kopf + " — trotzdem Diurese unter Ziel", t: zahl + " Nicht blind weiter steigern: intraabdominellen Druck (abdominelles Kompartmentsyndrom), HI/PiCCO, Blutung, Myoglobin und Katheterlage prüfen." };
-        else {
-          const neu = rate != null && rate > c.rot ? Math.max(r10(c.rot), r10(rate * 0.9)) : null;
-          out.vol = { lv: "w", h: kopf, t: zahl + ` Fluid Creep vermeiden: Laufrate nicht über Rule of 10 (${r0(c.rot)} ml/h)${neu ? `, jetzt −10 % auf ${r0(neu)} ml/h` : ""}; bei erfüllten Zielen weiter −10 % je Stunde.`, neu };
-        }
+        else if (out.ev && out.ev.anyFail) out.vol = { lv: "w", h: kopf, t: zahl + ` Ziele verfehlt (${out.ev.crit.filter((x) => x.st === false).map((x) => x.l).join(", ")}): Steigern nach SOP möglich, aber vorher intraabdominellen Druck, HI/PiCCO, Blutung und Katheterlage prüfen — Fluid Creep.` };
+        else if (out.ev && out.ev.allOk) {
+          const neu = rate != null ? r10(rate * 0.9) : null;
+          out.vol = { lv: "w", h: kopf, t: zahl + ` Alle Ziele erfüllt: Fluid Creep vermeiden, −10 % je Stunde${neu ? ` (jetzt ${r0(neu)} ml/h)` : ""}.`, neu };
+        } else out.vol = { lv: "w", h: kopf, t: zahl + " Fluid Creep vermeiden: senken (−10 %), sobald alle Ziele erfüllt sind; über die Rule of 10 nur bei verfehlten Zielen steigern." };
       } else out.vol = { lv: "ok", h: "Volumen ab Unfall passt zur Rule of 10", t: `Bis Übernahme ${tsd(v.g)} ml gegeben, Soll ${tsd(v.soll0)} ml (Abweichung < 20 %). Kristalloid seit Unfall ${tsd(v.kris)} ml.` };
     }
   }
@@ -779,8 +798,8 @@ function plan(p, c) {
   }
   const na = lastIn(serOf(p, "lab:Na+"), now, 12 * H);
   const nav = na ? numDE(na.v) : null;
-  if (nav != null && nav > 139 && c.bs.lsg !== "delta") add("w", `Natrium ${fN(nav, 0)} > 139 mmol/l → Ringer-Azetat auf Eindrittelelektrolytlösung (Deltajonin) umstellen (Ziel 135–139).`, { k: "lsg", v: "delta" });
-  if (nav != null && nav < 135 && c.bs.lsg === "delta") add("w", `Natrium ${fN(nav, 0)} < 135 mmol/l unter Deltajonin — zurück auf Ringer-Azetat? (Ziel 135–139)`, { k: "lsg", v: "ra" });
+  if (nav != null && nav > 139 && c.bs.lsg !== "delta") add("w", `Natrium ${fN(nav, 0)} > 139 mmol/l → Ringer-Azetat auf Eindrittelelektrolytlösung (Deltajonin BG (1/3), Na 45/K 25) umstellen (Ziel 135–139).`, { k: "lsg", v: "delta" });
+  if (nav != null && nav < 135 && c.bs.lsg === "delta") add("w", `Natrium ${fN(nav, 0)} < 135 mmol/l unter Deltajonin BG (1/3) — zurück auf Ringer-Azetat? (Ziel 135–139)`, { k: "lsg", v: "ra" });
   if (v && c.ivy) {
     const v24 = c.h >= 24 ? vol(p, c, c.u + 24 * H) : v;
     const pr = v24.ges / c.ivy * 100;
@@ -877,17 +896,17 @@ const ITEMS = [
     info: I("Grad 1 (Erythem) hat kein relevantes Kapillarleck. Präklinische Schätzungen weichen oft ab — überschätzt bei kleinen, unterschätzt bei Adipösen; jede Überschätzung bedeutet Überinfusion.") },
   { k: "o_iap", ph: "h0", at: 4, cond: (x) => x.c.vk > 20 || x.c.inhal, t: () => "IAP (Blasendruck) alle 4 h — Messung etabliert",
     info: I("Darmwand- und Mesenterialödem plus Aszites unter hohen Volumina → intraabdominelle Hypertonie (≥ 12 mmHg) bis zum abdominellen Kompartmentsyndrom (> 20 mmHg mit neuer Organdysfunktion: Oligurie, Beatmungsdruck ↑).",
-      "WSACS-Leitlinie (Kirkpatrick, Intensive Care Med 2013): Definitionen und Messung. Ivy et al. (J Trauma 2000): > 250 ml/kg in 24 h → hohes Risiko.", "Volumentherapie: IAP alle 4 h.") },
+      "Leitlinie der World Society of the Abdominal Compartment Syndrome (Kirkpatrick, Intensive Care Med 2013): Definitionen und Messung. Ivy et al. (J Trauma 2000): > 250 ml/kg in 24 h → hohes Risiko.", "Volumentherapie: IAP alle 4 h.") },
   { k: "o_alb", ph: "h0", at: 6, t: () => "Ab h 6: Gerinnung prüfen — FFP nur nach Gerinnungssituation · Albumin 20 % nur erwägen (ab h 8 nach SOP)",
     info: I("In den ersten 6–8 h ist das Leck so groß, dass Albumin mit ins Interstitium wandert und dort Wasser bindet; danach bleibt es zunehmend intravasal.",
-      "Navickis et al. (J Burn Care Res 2016, Meta-Analyse): Albumin in der Schockphase mit geringerer Letalität und weniger Kompartmentsyndromen assoziiert. ABA 2024: Albumin bei großen Verbrennungen bzw. steigendem Bedarf, Zeitpunkt offen; FFP nicht routinemäßig.",
+      "Navickis et al. (J Burn Care Res 2016, Meta-Analyse): Albumin senkte die Gesamtletalität nicht signifikant; nach Ausschluss zweier Studien mit hohem Bias-Risiko geringere Letalität und weniger Kompartmentsyndrome — Evidenz begrenzt. ABA 2024 (bedingte Empfehlung): Albumin in den ersten 24 h erwägen, v. a. bei großen Verbrennungen bzw. steigendem Bedarf; FFP nur im Rahmen von Studien.",
       "Volumentherapie: ab h 6 Albumin 100 ml je 1000 ml und FFP 1 je 1000 ml — auf der V1: h 6–8 Albumin nur erwägen, FFP nur nach Gerinnung.") },
   /* ---- h 8–24 ---- */
   { k: "y_alb", ph: "h8", at: 8, t: (x) => { const r = valAt(rateHist(x.p), x.c.now); return `Albumin 20 % per Perfusor: 100 ml je 1000 ml Volumen${r ? ` ≈ <b>${r0(numDE(r.v) / 10)} ml/h</b>` : ""} — Ziel-Albumin 2,2–2,7 g/dl`; },
     run: (x) => { const a = valAt(albHist(x.p), x.c.now); return a && numDE(a.v) ? `läuft ${r0(numDE(a.v))} ml/h` : ""; }, inp: [{ lab: "Albumin", u: "g/dl" }],
-    info: I("Hypoalbuminämie senkt den onkotischen Druck und verstärkt das Ödem auch in nicht verbrannter Haut; nach Abklingen des Lecks hält Albumin Volumen im Gefäß und spart Kristalloid.", "Navickis 2016 (Meta-Analyse): weniger Letalität und Kompartmentsyndrome; ABA 2024: Albumin empfohlen bei großen Verbrennungen.", "Volumentherapie: Albumin 20 % Perfusor 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl (Labor in g/dl).") },
-  { k: "y_na", ph: "h8", at: 8, t: () => "Natrium > 139 → Ringer-Azetat auf Deltajonin umstellen (Ziel 135–139)", inp: [{ lab: "Na+", u: "mmol/l" }],
-    info: I("Verdunstung über die Wundfläche (freies Wasser) und Natriumlast der Lösungen treiben das Natrium hoch; Hypernatriämie ist bei Verbrannten mit höherer Letalität assoziiert.", null, "Volumentherapie/Natriumstörungen (Dok-ID 1620146): bei Na⁺ > 139 Eindrittelelektrolytlösung (Deltajonin); im Haus laktatfreie Lösungen.") },
+    info: I("Hypoalbuminämie senkt den onkotischen Druck und verstärkt das Ödem auch in nicht verbrannter Haut; nach Abklingen des Lecks hält Albumin Volumen im Gefäß und spart Kristalloid.", "Navickis 2016 (Meta-Analyse): Gesamtletalität nicht signifikant gesenkt, nach Ausschluss von Studien mit hohem Bias-Risiko weniger Letalität und Kompartmentsyndrome — Evidenz begrenzt. ABA 2024: Albumin in den ersten 24 h erwägen (bedingte Empfehlung).", "Volumentherapie: Albumin 20 % Perfusor 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl (Labor in g/dl).") },
+  { k: "y_na", ph: "h8", at: 8, t: () => "Natrium > 139 → Ringer-Azetat auf Deltajonin BG (1/3) umstellen (Ziel 135–139)", inp: [{ lab: "Na+", u: "mmol/l" }],
+    info: I("Verdunstung über die Wundfläche (freies Wasser) und Natriumlast der Lösungen treiben das Natrium hoch; Hypernatriämie ist bei Verbrannten mit höherer Letalität assoziiert.", null, "Volumentherapie/Natriumstörungen (Dok-ID 1620146): bei Na⁺ > 139 Eindrittelelektrolytlösung — Deltajonin BG (1/3) (Na 45/K 25), nicht Deltajonin 140/4; im Haus laktatfreie Lösungen.") },
   { k: "y_ivy", ph: "h8", at: 8, t: (x) => `Ivy-Index im Blick: 250 ml/kg = <b>${x.c.ivy ? tsd(x.c.ivy) + " ml" : "___"}</b> in 24 h → Gefahr abdominelles Kompartmentsyndrom`,
     run: (x) => { const v = x.c.u != null ? vol(x.p, x.c, Math.min(x.c.now, x.c.u + 24 * H)) : null; return v && x.c.ivy ? `aktuell ${fN(v.ges / x.c.ivy * 100, 0)} %` : ""; },
     info: I(null, "Ivy et al. (J Trauma 2000): Verbrannte mit > 250 ml/kg in den ersten 24 h hatten ein hohes Risiko für ein abdominelles Kompartmentsyndrom.") },
@@ -953,13 +972,13 @@ const C48_EXPO = [["rg_raum", "Brand in geschlossenem Raum, Kunststoffe"], ["rg_
 const C48_CO_RG = [["rg_cohb", "COHb ↑ (Nichtraucher > 3 %, Raucher > 10 %)"], ["rg_spo2", "SpO2 normal trotz Klinik (misst COHb mit)"], ["rg_cosy", "Kopfschmerz, Übelkeit, Schwindel, Angina pectoris"]];
 const C48_CO_RH = [["rh_o2", "100 % O2 — COHb > 10 % → 6 h O2 (SOP)"], ["rh_cobga", "COHb-Kontrolle (BGA), erst dann FiO2 senken"], ["rh_ekg", "EKG und Troponin (kardiale Ischämie)"], ["rh_hbo", "HBO erwägen (Koma, Neurologie, Ischämie, Schwangerschaft) — Einzelfall"]];
 const C48_CN_RG = [["rg_kreis", "Kreislaufinstabilität, Bradykardie, Apnoe"], ["rg_lak", "Laktat > 10 mmol/l, Azidose trotz Volumen"], ["rg_svo2", "ScvO2 ↑ — nur unterstützend, allein kein Kriterium"]];
-const C48_CN_RH = [["rh_blut", "Vorher Blut (COHb, Laktat, ggf. Cyanid) — nicht verzögern"], ["rh_hydroxo", "Hydroxocobalamin 5 g i.v. über 15 min (Kinder 70 mg/kg); keine Nitrite/4-DMAP"], ["rh_cnlak", "Laktat/Kreislauf nach 1–2 h; instabil → 2. Dosis 5 g (max. 10 g)"], ["rh_stoer", "Danach: Rotfärbung stört Labore, CO-Oxymetrie, Blutleck-Alarm Dialyse"]];
+const C48_CN_RH = [["rh_blut", "Vorher Blut (COHb, Laktat, ggf. Cyanid) — nicht verzögern"], ["rh_hydroxo", "Hydroxocobalamin 5 g i.v. über 15 min (Kinder 70 mg/kg); keine Nitrite/4-DMAP"], ["rh_cnlak", "Laktat/Kreislauf nach 1–2 h kontrollieren — SOP: 5 g Einmalgabe; 2. Dosis nur als ärztliche Einzelfallentscheidung (Fachinfo max. 10 g)"], ["rh_stoer", "Danach: Rotfärbung stört Labore, CO-Oxymetrie, Blutleck-Alarm Dialyse"]];
 const C48_IHT = [["rh_hep", "Ruß: Heparin p.i. 4–6 × 10.000 IE + 3 ml MucoClear; β2-Mimetika bei Bronchospasmus"]];
 const INFO_CO = I("CO bindet etwa 250-mal stärker an Hämoglobin als O2, verschiebt die Bindungskurve nach links und hemmt die Cytochromoxidase. Das Pulsoxymeter misst COHb als Oxyhämoglobin mit — SpO2 normal trotz Gewebehypoxie.",
   "COHb-Halbwertszeit: Raumluft etwa 4–5 h, 100 % O2 etwa 60–90 min, HBO etwa 20–30 min. Weaver et al. (NEJM 2002): HBO senkte kognitive Spätfolgen nach CO-Vergiftung; bei Brandverletzten meist logistisch limitiert → Einzelfall.",
   "Inhalationstrauma: 100 % O2 (HFNC, Reservoirmaske, bei Vigilanzminderung Intubation); COHb > 10 % → 6 h Sauerstoff.");
 const INFO_CN = I("Blausäure aus verbrannten Kunststoffen, Wolle und Polyurethan blockiert die Cytochrom-c-Oxidase: die Zelle kann O2 nicht nutzen → Laktatazidose bei hoher venöser Sättigung (kleine avDO2), Kreislaufversagen, Koma.",
-  "Baud et al. (NEJM 1991): Laktat > 10 mmol/l bei Rauchgasopfern hoch prädiktiv für relevante Cyanidspiegel. Borron et al. (Ann Emerg Med 2007): Hydroxocobalamin bei Rauchgasopfern gut verträglich. Nitrite/4-DMAP bilden Methämoglobin und verschlechtern zusammen mit COHb den O2-Transport — kontraindiziert.",
+  "Baud et al. (NEJM 1991): Laktat > 10 mmol/l bei Rauchgasopfern ohne schwere Verbrennung hoch prädiktiv für relevante Cyanidspiegel (Sensitivität 87 %, Spezifität 94 %) — im Verbrennungsschock ist hohes Laktat unspezifisch, deshalb zusammen mit Exposition und Klinik werten. Borron et al. (Ann Emerg Med 2007): Hydroxocobalamin bei Rauchgasopfern gut verträglich. Nitrite/4-DMAP bilden Methämoglobin und verschlechtern zusammen mit COHb den O2-Transport — kontraindiziert.",
   "Inhalationstrauma: Hydroxocobalamin (Cyanokit) 5 g, Kinder 70 mg/kg; NW rötlicher Urin, mögliche Nephrotoxizität.");
 const INFO_IHT = I("Hitze und Ruß schädigen das Bronchialepithel; Exsudat und Fibrin bilden Casts, die kleine Atemwege verlegen; Surfactant-Störung und Pneumonierisiko steigen.",
   "Miller et al. (J Burn Care Res 2009, retrospektiv): vernebeltes Heparin plus Acetylcystein mit besserer Lungenfunktion; insgesamt geringe Evidenz. Lungenprotektive Beatmung nach ARDSNet (NEJM 2000).",
@@ -986,8 +1005,8 @@ function intoxRelevant(p, c) {
 const NICHT = [
   ["Keine Kühlung bei > 10 % VKOF", I("Hypothermie verstärkt Koagulopathie und Letalität; die Kühlung hilft nur in den ersten Minuten bei kleinen Flächen.", "AWMF S2k 044-001 (2025): keine Kühlung bei > 10 % VKOF.")],
   ["Keine Antibiotikaprophylaxe", I("Fördert Selektion resistenter Keime ohne Infektionen zu verhindern.", "Cochrane (Barajas-Nava 2013): keine Evidenz für systemische Prophylaxe; AWMF 2025: keine Prophylaxe.", "Inhalationstrauma: Antibiotika nur bei Pneumonie.")],
-  ["Kein HES, keine Gelatine", I("Kolloide auf Stärke- bzw. Gelatinebasis lagern sich ab und schädigen die Niere; im Kapillarleck kein Vorteil.", "HES bei kritisch Kranken mit mehr Nierenersatz und Letalität (6S, NEJM 2012; CHEST 2012); AWMF 2025: kein HES, keine Gelatine.")],
-  ["h 0–48 kein NaCl 0,9 %, Jonosteril oder Ringer-Laktat — Ringer-Azetat", I("NaCl 0,9 %: hyperchlorämische Azidose; laktathaltige Lösung verfälscht Laktat als Perfusionsmarker.", null, "Volumentherapie und Natriumstörungen: Ringer-Azetat, im Haus laktatfreie Lösungen; Na⁺ > 139 → Deltajonin.")],
+  ["Kein HES, keine Gelatine", I("HES lagert sich im Gewebe ab und schädigt die Niere; Gelatine birgt Nierenschädigung und Anaphylaxie; im Kapillarleck bringen künstliche Kolloide keinen Volumenvorteil.", "HES bei kritisch Kranken: mehr Nierenersatz (6S und CHEST, NEJM 2012), höhere Letalität in 6S; AWMF 2025: kein HES, keine Gelatine.")],
+  ["h 0–48 kein NaCl 0,9 %, Jonosteril oder Ringer-Laktat — Ringer-Azetat", I("NaCl 0,9 %: hyperchlorämische Azidose; laktathaltige Lösung verfälscht Laktat als Perfusionsmarker.", null, "Volumentherapie und Natriumstörungen: Ringer-Azetat, im Haus laktatfreie Lösungen; Na⁺ > 139 → Deltajonin BG (1/3).")],
   ["Kein Hochdosis-Vitamin C", I("Wurde wegen weniger Kapillarleck und weniger Volumen eingesetzt (Tanaka, Arch Surg 2000).", "VICTORY (Stoppe, JAMA 2026; ≥ 20 % VKOF, 50 mg/kg alle 6 h über 96 h): wegen Schaden abgebrochen, 28-Tage-Letalität 15,0 vs. 7,6 %. Physiologische Substitution bleibt unberührt.")],
   ["Keine Nitrite/4-DMAP bei Rauchgas", INFO_CN]
 ];
@@ -1133,7 +1152,7 @@ function vPatient(p) {
   const P = c.schock ? plan(p, c) : null;
   const due = c.vk != null && c.vk < 20 ? [] : dueList(p, c);
   let h = vBar(p, c);
-  if (c.vk != null && c.vk < 20) h += `<div class="banner w">VKOF ${fN(c.vk, 0)} % — unter 20 % keine Verbrennungs-Specials (wie in BurnICU): keine Schockphase nach SOP, keine Checkliste. Behandlung wie ein normaler Intensiv- bzw. IMC-Patient.</div>`;
+  if (c.vk != null && c.vk < 20) h += `<div class="banner w">VKOF ${fN(c.vk, 0)} % — unter 20 % keine Verbrennungs-Specials (wie in BurnICU): keine Schockphase nach SOP, keine Checkliste. Behandlung wie ein normaler Intensiv- bzw. IMC-Patient.${c.inhal ? " Achtung: Die SOP Volumentherapie gilt bei Inhalationstrauma auch unter 20 % VKOF (> 20 % und/oder IHT)." : ""}</div>`;
   if (c.h != null && c.h > 120) h += `<div class="banner i">Tag ${c.tag} — die App deckt Aufnahme bis Tag 5 ab. Weiter in BurnICU.</div>`;
   h += vNow(p, c, P, due);
   const nVol = P && P.main && P.main.lv !== "ok" ? 1 : 0;
@@ -1153,7 +1172,7 @@ function vBar(p, c) {
   t.push(kv("seit Unfall", c.h == null ? "—" : c.h < 0 ? "in der Zukunft?" : c.h < 48 ? `h ${Math.floor(c.h)} · Schockphase` : `Tag ${c.tag}`, c.h != null && c.h < 0, true));
   if (c.rot != null) t.push(kv("Rule of 10", `${r0(c.rot)} ml/h`, false, true));
   t.push(kv("Ziel-Diurese", zielTxt(c)));
-  if (c.vk > 40) t.push(kv("ABSI", c.absi != null ? `${c.absi} · Überleben ${c.absiTxt}` : "Alter/Geschlecht fehlt", c.absi == null));
+  if (c.vk > 40) t.push(kv("ABSI", c.absi != null ? `${c.absi} · Überleben ${c.absiTxt}${c.absiG3Ann ? " (Grad 3 angenommen)" : ""}` : "Alter/Geschlecht fehlt", c.absi == null));
   const fl = [];
   if (b.inhal) fl.push('<span class="flag a">IHT</span>');
   if (c.strom) fl.push('<span class="flag a">Strom</span>');
@@ -1172,7 +1191,6 @@ function vNow(p, c, P, due) {
   if (c.u != null && c.h >= 0 && c.h < 48) [6, 8, 24, 48].filter((x) => x > c.h).slice(0, 2).forEach((x) => nx.push(`<span class="nxc">h ${x}: ${fRel(atMs(c, x))}${x === 48 ? " (Ende Schockphase)" : ""}</span>`));
   let main;
   if (c.u == null) main = { lv: "w", h: "Unfallzeit fehlt", t: "Ohne Unfallzeit keine Rechnung ab Stunde 0 (Rule of 10, Defizit, Fälligkeiten)." };
-  else if (P && P.vol && P.vol.neu && P.main && !/^(Laufrate fehlt|Stundendiurese eintragen|Diurese nachtragen)/.test(P.main.h)) main = { ...P.vol, t: P.vol.t + ` — Stündliche Reevaluation: ${P.main.h}.` };
   else if (P && P.main) main = P.main;
   else if (c.schock && c.rot == null) main = { lv: "w", h: "Gewicht und VKOF fehlen", t: "Ohne beides keine Rule of 10." };
   else if (c.h >= 48) main = { lv: "i", h: `Tag ${c.tag}: Volumen bedarfsorientiert`, t: `Diurese-Ziel ${zielTxt(c)} · PiCCO 1 × pro Schicht · Bilanz und Natrium im Blick.` };
@@ -1219,7 +1237,7 @@ function vAufnahme(p, c) {
     ${fld("davon 2b/3 (%)", "tief", b.tief, { num: true })}
   </div>
   <div class="cks" style="margin-top:8px"><span class="lbl">Mechanismus</span>${MECH.map((m) => cbx("m:" + m[0], (d.mech || []).indexOf(m[0]) >= 0, m[1])).join("")}${cbx("c:geschl", d.geschl, "geschlossener Raum")}</div>
-  <div class="cks" style="margin-top:6px"><span class="lbl">Lokalisation</span>${LOK.map((l) => cbx("l:" + l[0], (d.lok || []).indexOf(l[0]) >= 0, l[1])).join("")}<span class="sep"></span>${cbx("inhal", b.inhal, "V. a. Inhalationstrauma")}${cbx("strom", c.strom, "Strom")}${cbx("myo", b.myo, "Myoglobinurie")}</div>
+  <div class="cks" style="margin-top:6px"><span class="lbl">Lokalisation</span>${LOK.map((l) => cbx("l:" + l[0], (d.lok || []).indexOf(l[0]) >= 0, l[1])).join("")}<span class="sep"></span>${cbx("drittgrad", b.drittgrad, "Grad 3 vorhanden")}${cbx("inhal", b.inhal, "V. a. Inhalationstrauma")}${cbx("strom", c.strom, "Strom")}${cbx("myo", b.myo, "Myoglobinurie")}</div>
   <div class="cks" style="margin-top:6px"><span class="lbl">Atemweg</span>${cbx("c:intub", d.intub, "intubiert")}</div>
   <div class="grid-f" style="margin-top:6px">
     ${d.intub ? fld("intubiert um", "c:intubT", d.intubT, { ph: "hh:mm" }) + fld("Tubus", "c:tubus", d.tubus) + fld("Tiefe (cm)", "c:tiefe", d.tiefe) : ""}
@@ -1363,15 +1381,15 @@ function vTiles(p, c, P) {
   const rr = valAt(rateHist(p), c.now), rate = rr ? numDE(rr.v) : null;
   const ar = valAt(albHist(p), c.now), alb = ar ? numDE(ar.v) : null;
   const v = vol(p, c, c.now);
-  const lb = di.lastB;
+  const lb = di.lastB && !di.lastB.unk ? di.lastB : null;
   const lbKg = lb && c.kg ? lb.v / c.kg : null;
   const st = lbKg == null ? "" : lbKg < c.uoLo ? "low" : c.uoHi && lbKg > c.uoHi ? "hi" : "okk";
   const v24 = v ? (c.h >= 24 ? vol(p, c, c.u + 24 * H) : v) : null;
   const mk = v24 && c.kg && c.vk ? v24.ges / (c.kg * c.vk) : null;
   const ivyP = v24 && c.ivy ? v24.ges / c.ivy * 100 : null;
-  const lsg = c.bs.lsg === "delta" ? "Deltajonin" : "Ringer-Azetat";
+  const lsg = c.bs.lsg === "delta" ? "Deltajonin BG (1/3)" : "Ringer-Azetat";
   return `<div class="tiles">
-    <div class="tile"><span class="tl">Rule of 10 ${iBtn("v_rot")}</span><span class="tv">${c.rot != null ? r0(c.rot) : "—"} <small>ml/h</small></span><span class="tk">${c.rot != null ? `${c.vk10} % × 10${c.rotKg ? " + " + c.rotKg : ""}${c.rotIht ? " + 100 IHT" : ""}` : c.rotNA ? "< 40 kg: Kinderschema" : "Gewicht/VKOF fehlt"}</span><span class="seg" style="margin-top:4px"><button data-act="lsg" data-v="ra" class="${c.bs.lsg !== "delta" ? "on" : ""}">Ringer-Azetat</button><button data-act="lsg" data-v="delta" class="${c.bs.lsg === "delta" ? "on" : ""}">Deltajonin</button></span></div>
+    <div class="tile"><span class="tl">Rule of 10 ${iBtn("v_rot")}</span><span class="tv">${c.rot != null ? r0(c.rot) : "—"} <small>ml/h</small></span><span class="tk">${c.rot != null ? `${c.vk10} % × 10${c.rotKg ? " + " + c.rotKg : ""}${c.rotIht ? " + 100 IHT" : ""}` : c.rotNA ? "< 40 kg: Kinderschema" : "Gewicht/VKOF fehlt"}</span><span class="seg" style="margin-top:4px"><button data-act="lsg" data-v="ra" class="${c.bs.lsg !== "delta" ? "on" : ""}">Ringer-Azetat</button><button data-act="lsg" data-v="delta" class="${c.bs.lsg === "delta" ? "on" : ""}">Deltajonin BG (1/3)</button></span></div>
     <div class="tile"><span class="tl">${lsg} jetzt</span><span class="tv">${rate != null ? r0(rate) : "—"} <small>ml/h</small></span><span class="tk">${rr && rr.t !== EPOCH ? "seit " + fRel(tMs(rr.t)) : "keine Rate"}${rate && c.rot ? ` · ${fN(rate / c.rot, 1)} × Rule of 10` : ""}</span><input id="t_rate" data-f="ratenow" inputmode="numeric" placeholder="neue Rate ab jetzt"></div>
     <div class="tile"><span class="tl">Albumin 20 % ${iBtn("v_alb")}</span><span class="tv">${alb ? r0(alb) : "—"} <small>ml/h</small></span><span class="tk">${c.h < 6 ? "erst ab h 6" : c.h < 8 ? "h 6–8: nur erwägen" : c.h >= 48 ? "nach Bedarf · Ziel 2,2–2,7 g/dl" : rate ? `SOP ≈ ${r0(rate / 10)} ml/h` : ""}</span><input id="t_alb" data-f="albnow" inputmode="numeric" placeholder="Albumin ml/h ab jetzt"></div>
     <div class="tile ${st}"><span class="tl">Diurese letzte Std. ${iBtn("v_diu")}</span><span class="tv">${lb ? r0(lb.v) : "—"} <small>ml/h</small></span><span class="tk">${lbKg != null ? fN(lbKg, 2) + " ml/kg/h · " : ""}${lb ? fHH(lb.h - H) + "–" + fHH(lb.h) + " Uhr" : ""} · Ziel ${zielTxt(c)}</span><input id="t_diu" data-f="diunow" inputmode="numeric" placeholder="ml seit letztem Eintrag"></div>
@@ -1381,7 +1399,7 @@ function vTiles(p, c, P) {
 }
 function vJetztBox(p, c, P) {
   const m = P.main;
-  const box = (b) => b ? `<div class="box ${b.lv === "ok" ? "ok" : b.lv}"><div class="bh">${b.h}${b.neu ? `<button class="btn sm pri" data-act="setrate" data-v="${b.neu}">${r0(b.neu)} ml/h übernehmen</button>` : ""}</div>${b.t ? `<div class="bt">${b.t}</div>` : ""}</div>` : "";
+  const box = (b) => b ? `<div class="box ${b.lv === "ok" ? "ok" : b.lv}"><div class="bh">${b.h}${b.neu ? `<button class="btn sm ${b.aufhol ? "" : "pri"}" data-act="setrate" data-v="${b.neu}">${b.aufhol ? "Aufholrate " : ""}${r0(b.neu)} ml/h übernehmen</button>` : ""}</div>${b.t ? `<div class="bt">${b.t}</div>` : ""}</div>` : "";
   const ev = P.ev || evalAt(p, c, c.now, P.di && P.di.lastB ? P.di.lastB.v : null);
   const chip = (x) => {
     const cls = x.st === "na" ? "x" : x.st === true ? "y" : x.st === false ? "n" : "u";
@@ -1396,10 +1414,10 @@ function vJetztBox(p, c, P) {
   let h = `<div class="card"><h2>Jetzt — Stunde ${Math.floor(c.h)} nach Unfall ${iBtn("v_reeval")}</h2>${box(m)}
     <div class="crit"><span class="lbl">Ziele (stündlich):</span>${ev.crit.map(chip).join("")}</div>
     <div class="row small" style="margin:4px 0 8px"><span class="lbl">HI/ScvO2 bewerten:</span><span class="seg">${[["auto", "automatisch"], ["ja", "ja"], ["nein", "nein (kein ZVK/PiCCO)"]].map(([v, t]) => `<button data-act="hd" data-v="${v}" class="${c.bs.hd === v ? "on" : ""}">${t}</button>`).join("")}</span></div>
-    ${vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab. Ohne ZVK/PiCCO fehlen HI und ScvO2 — dann entscheidet die App nach Diurese, Laktat und Rekap.", "ABA 2024 empfiehlt Laktat und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → STEP DOWN −10 %; eines oder mehrere nicht erfüllt → STEP UP +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge."))}
+    ${vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab. Ohne ZVK/PiCCO fehlen HI und ScvO2 — dann entscheidet die App nach Diurese, Laktat und Rekap.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → STEP DOWN −10 %; eines oder mehrere nicht erfüllt → STEP UP +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge."))}
     ${box(P.vol)}`;
   if (P.vol && P.vol.miss) h += `<div class="row" style="margin-bottom:8px"><span class="lbl">präklinisch + SR</span><input id="jb_g" data-f="gegeben" inputmode="numeric" placeholder="ml" style="width:100px"><span class="lbl">bis</span><input id="jb_gb" data-f="gegebenBis" placeholder="hh:mm" style="width:80px"></div>`;
-  if (P.hints.length) h += `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin" : "auf Ringer-Azetat"}</button>` : ""}</li>`).join("")}</ul>`;
+  if (P.hints.length) h += `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin BG (1/3)" : "auf Ringer-Azetat"}</button>` : ""}</li>`).join("")}</ul>`;
   h += `<div class="small" style="margin-top:6px"><b>Schritte von der aktuellen Rate:</b> ${(() => { const r = P.rate; if (!r) return "—"; return `+20 % → ${r0(r10(r * 1.2))} · −10 % → ${r0(r10(r * 0.9))} ml/h${c.rot ? ` · 2 × Rule of 10 = ${r0(2 * c.rot)} ml/h (Eskalationsgrenze)` : ""}`; })()}</div>`;
   return h + "</div>";
 }
@@ -1464,7 +1482,8 @@ function vTable(p, c) {
     const dKg = bk && c.kg ? bk.v / c.kg : null;
     const lo = loAt(c, E);
     const dSt = dKg == null ? "" : dKg < lo ? "low" : c.uoHi && dKg > c.uoHi ? "hi" : "ok";
-    if (bk && bk.n > 1) dCell = `<td class="diu-${dSt}"><span class="avg" title="Eintrag ${fT(bk.end)} Uhr: ${r0(bk.src)} ml über ${bk.n} h gemittelt">Ø ${r0(bk.v)}</span> <button class="dlt" data-act="deldiu" data-ids="${bk.ids.join(",")}" title="Eintrag löschen">×</button></td>`;
+    if (bk && bk.unk) dCell = `<td><span class="avg" title="Sammelwert über mehr als 12 h — kein Stundenwert">Σ ${r0(bk.v)} (> 12 h)</span> <button class="dlt" data-act="deldiu" data-ids="${bk.ids.join(",")}" title="Eintrag löschen">×</button></td>`;
+    else if (bk && bk.n > 1) dCell = `<td class="diu-${dSt}"><span class="avg" title="Eintrag ${fT(bk.end)} Uhr: ${r0(bk.src)} ml über ${bk.n} h gemittelt">Ø ${r0(bk.v)}</span> <button class="dlt" data-act="deldiu" data-ids="${bk.ids.join(",")}" title="Eintrag löschen">×</button></td>`;
     else dCell = `<td class="${bk ? "diu-" + dSt : ""}"><input id="r_d_${S}" data-f="cell" data-kind="diu" data-s="${S}" data-col="d" data-i="${i}" inputmode="numeric" value="${bk ? r0(bk.v).replace(/\./g, "") : ""}"></td>`;
     /* Rate */
     const rIn = inRow(rh, S), rLast = last(rIn);
@@ -1486,7 +1505,7 @@ function vTable(p, c) {
     const iCell = `<td><input id="r_i_${S}" data-f="cell" data-kind="iap" data-s="${S}" data-col="i" data-i="${i}" inputmode="decimal" class="w4" value="${iv ? esc(iv.v) : ""}"${iv && numDE(iv.v) >= 12 ? ' style="color:var(--red);font-weight:700"' : ""}></td>`;
     /* SOP-Entscheidung am Ende der Stunde */
     let dec = "";
-    if (bk && E <= c.now + 10 * MIN && (E - c.u) / H < 48.5) {
+    if (bk && !bk.unk && E <= c.now + 10 * MIN && (E - c.u) / H < 48.5) {
       const rAtE = valAt(rh, E - 1);
       const rv = rAtE ? numDE(rAtE.v) : null;
       const D = decisionAt(p, c, E, bk.v, rv);
@@ -1573,8 +1592,8 @@ function vDialog(B, cur) {
 }
 
 /* ---------- Druck ---------- */
-const PR_LEG_C = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · AIS Abbreviated Injury Score (Bronchoskopie) · BGA Blutgasanalyse · COHb Carboxyhämoglobin · ScvO2 zentralvenöse O2-Sättigung · SpO2 pulsoxymetrische Sättigung · HBO hyperbare Oxygenierung · 4-DMAP 4-Dimethylaminophenol · DK Dauerkatheter · ZVK zentraler Venenkatheter · PiCCO Pulse Contour Cardiac Output · HI Herzindex · ELWI extravaskulärer Lungenwasserindex · IAP intraabdomineller Druck · Rekap Rekapillarisierungszeit · BB Blutbild · CK Kreatinkinase · BZ Blutzucker · Hb Hämoglobin · Hk Hämatokrit · EK Erythrozytenkonzentrat · FFP Fresh Frozen Plasma · TXA Tranexamsäure · PPI Protonenpumpenhemmer · MRE multiresistente Erreger · BG Berufsgenossenschaft · D-Arzt Durchgangsarzt · PRIS Propofol-Infusionssyndrom · HF Herzfrequenz · AF Atemfrequenz · ABA American Burn Association · ABSI Abbreviated Burn Severity Index · HES Hydroxyethylstärke · O2 Sauerstoff · Ca²⁺ ionisiertes Kalzium · Na/K Natrium/Kalium · SOP Standardvorgehen der V1";
-const PR_LEG_V = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · HI Herzindex (l/min/m²) · ScvO2 zentralvenöse O2-Sättigung · Rekap Rekapillarisierungszeit · IAP intraabdomineller Druck (mmHg) · kum. kumulativ ab Unfall · Ref. Referenz Rule of 10 × Stunden ab Unfall · ZVD zentraler Venendruck · VCI Vena cava inferior · MAP mittlerer arterieller Druck · NA Noradrenalin · FFP Fresh Frozen Plasma · EK Erythrozytenkonzentrat · ABSI Abbreviated Burn Severity Index · PiCCO Pulse Contour Cardiac Output · Na Natrium · SOP Standardvorgehen der V1";
+const PR_LEG_C = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · AIS Abbreviated Injury Score (Bronchoskopie) · BGA Blutgasanalyse · COHb Carboxyhämoglobin · ScvO2 zentralvenöse O2-Sättigung · SpO2 pulsoxymetrische Sättigung · HBO hyperbare Oxygenierung · 4-DMAP 4-Dimethylaminophenol · DK Dauerkatheter · ZVK zentraler Venenkatheter · PiCCO Pulse Contour Cardiac Output · HI Herzindex · ELWI extravaskulärer Lungenwasserindex · IAP intraabdomineller Druck · Rekap Rekapillarisierungszeit · BB Blutbild · CK Kreatinkinase · BZ Blutzucker · Hb Hämoglobin · Hk Hämatokrit · EK Erythrozytenkonzentrat · FFP Fresh Frozen Plasma · TXA Tranexamsäure · PPI Protonenpumpenhemmer · MRE multiresistente Erreger · BG Berufsgenossenschaft · D-Arzt Durchgangsarzt · PRIS Propofol-Infusionssyndrom · HF Herzfrequenz · AF Atemfrequenz · ABA American Burn Association · ABSI Abbreviated Burn Severity Index · HES Hydroxyethylstärke · O2 Sauerstoff · Ca²⁺ ionisiertes Kalzium · Na/K Natrium/Kalium · CO Kohlenmonoxid · EKG Elektrokardiogramm · Anti-Xa Anti-Faktor-Xa-Aktivität · OP Operation · IE Internationale Einheiten · p.i. per inhalationem · i.v. intravenös · FiO2 inspiratorische O2-Fraktion · CT Computertomografie · Tox Toxikologie · Zi Zimmer · J Jahre · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
+const PR_LEG_V = "Abkürzungen: VKOF verbrannte Körperoberfläche · SR Schockraum · IHT Inhalationstrauma · HI Herzindex (l/min/m²) · ScvO2 zentralvenöse O2-Sättigung · Rekap Rekapillarisierungszeit · IAP intraabdomineller Druck (mmHg) · kum. kumulativ ab Unfall · Ref. Referenz Rule of 10 × Stunden ab Unfall · ZVD zentraler Venendruck · VCI Vena cava inferior · MAP mittlerer arterieller Druck · NA Noradrenalin · FFP Fresh Frozen Plasma · EK Erythrozytenkonzentrat · ABSI Abbreviated Burn Severity Index · PiCCO Pulse Contour Cardiac Output · Na Natrium · Zi Zimmer · J Jahre · E Einheiten · Deltajonin BG (1/3) Eindrittelelektrolytlösung · SOP Standardvorgehen der V1";
 function prHead(p, c, title) {
   return `<div class="ph1"><div><h1>${title}</h1><div class="meta">Zi ${esc(p.zimmer)} · <b>${esc(p.name || "________________")}</b> · ${c.age != null ? fN(c.age, 0) + " J" : "__ J"} · ${c.sex || "_"} · ${c.kg ? fN(c.kg, 0) + " kg" : "___ kg"} · ${c.cm ? fN(c.cm, 0) + " cm" : "___ cm"} · VKOF ${c.vk != null ? fN(c.vk, 1) + " %" : "___ %"}${c.tief != null ? ` (2b/3 ${fN(c.tief, 0)} %)` : ""}${c.inhal ? " · IHT" : ""}${c.strom ? " · Strom" : ""}${c.myo ? " · Myoglobinurie" : ""}${c.vk > 40 && c.absi ? ` · ABSI ${c.absi} (${c.absiTxt})` : ""}</div></div><div class="meta" style="text-align:right">Gedruckt ${fWDT(Date.now())}<br>LUminate · nach den SOPs der V1</div></div>`;
 }
@@ -1656,7 +1675,7 @@ function printVol(p, startMs, label) {
   let h = `<div class="pg">${prHead(p, c, "Verbrennung · Volumenprotokoll " + label)}${prTimeline(c)}
     <div class="boxes">${bx("Rule of 10 (Ringer-Azetat)", c.rot != null ? r0(c.rot) + " ml/h" : "___ ml/h")}${bx("Laufrate jetzt", rate != null ? r0(rate) + " ml/h" : "___")}${bx("Ziel-Diurese", zielTxt(c))}${bx("Volumen seit Unfall", v ? tsd(v.ges) + " ml" : "___")}${bx("Grenzen", c.ivy ? "Ivy " + tsd(c.ivy) + " ml/24 h · 6 ml/kg/% = " + tsd(c.rescue) : "___")}</div>`;
   if (P && P.main) h += `<div class="note"><b>Jetzt (${fT(c.now)}):</b> ${P.main.h}. ${P.main.t || ""}${P.vol && !P.vol.miss ? `<br><b>${P.vol.h}.</b> ${P.vol.t}` : ""}</div>`;
-  h += `<div class="note" style="border-color:#1d4268;background:#f2f6fa"><b>SOP stündlich:</b> Diurese > ${fN(c.uoLo, 1)} ml/kg/h · HI > 2,2 · ScvO2 > 70 % · Laktat fällt · Rekap < 3 s → alle erfüllt <b>−10 %</b>, eines nicht <b>+20 %</b> (vorher ZVD/VCI/Leg Raise). MAP < 65 → Flüssigkeitschallenge. Ab h 6: Albumin 20 % 100 ml je 1000 ml (h 6–8 nur erwägen), FFP nur nach Gerinnung. Na > 139 → Deltajonin. IAP alle 4 h. Ab h 48 bedarfsorientiert.</div>${steps}
+  h += `<div class="note" style="border-color:#1d4268;background:#f2f6fa"><b>SOP stündlich:</b> Diurese > ${fN(c.uoLo, 1)} ml/kg/h · HI > 2,2 · ScvO2 > 70 % · Laktat fällt · Rekap < 3 s → alle erfüllt <b>−10 %</b>, eines nicht <b>+20 %</b> (vorher ZVD/VCI/Leg Raise). MAP < 65 → Flüssigkeitschallenge. Ab h 6: Albumin 20 % 100 ml je 1000 ml (h 6–8 nur erwägen), FFP nur nach Gerinnung. Na > 139 → Deltajonin BG (1/3). IAP alle 4 h. Ab h 48 bedarfsorientiert.</div>${steps}
     <table style="margin-top:4pt"><thead><tr><th>Uhrzeit</th><th>h</th><th>Diurese ml</th><th>ml/kg/h</th><th>Ziel ✓</th><th>Rate ml/h</th><th>Albumin</th><th>Zusatz</th><th>Laktat</th><th>ScvO2</th><th>HI</th><th>Rekap</th><th>IAP</th><th>↑ = ↓</th><th>neue Rate</th><th>Ist kum.</th><th>Ref. kum.</th><th>Kürzel</th></tr></thead><tbody>`;
   const ex = extrasOf(p);
   rows.forEach((S) => {
@@ -1670,7 +1689,7 @@ function printVol(p, startMs, label) {
     const aIn = inRow(ah, S);
     const xIn = ex.filter((e) => { const t = tMs(e.t); return t >= S && t < E; }).map((e) => e.lbl).join(", ");
     let dec = "", neu = "";
-    if (bk && past) {
+    if (bk && !bk.unk && past) {
       const rAtE = valAt(rh, E - 1);
       const D = decisionAt(p, c, E, bk.v, rAtE ? numDE(rAtE.v) : null);
       if (D) { dec = D.k === "up" ? "↑" : D.k === "dn" ? "↓" : "="; neu = D.neu ? r0(D.neu) : ""; }
@@ -1716,6 +1735,7 @@ const FIELD = {
   ais: (q, v) => setBurn(q, { ais: v.trim() }),
   russ: (q, v) => setBurn(q, { russ: v.trim() }),
   inhal: (q, v, on) => setBurn(q, { inhal: on }),
+  drittgrad: (q, v, on) => setBurn(q, { drittgrad: on }),
   strom: (q, v, on) => { setBurn(q, { strom: on }); const m = (c48Of(q).mech || []).filter((x) => x !== "strom"); if (on) m.push("strom"); setC48(q, "mech", m); },
   myo: (q, v, on) => setBurn(q, { myo: on }),
   gegeben: (q, v) => { const bis = hhmmVor(c48Of(q).gegebenBis, Date.now()); setBurn(q, { gegeben: v.trim(), gegebenT: isoOf(bis != null ? bis : Date.now()) }); },
@@ -1984,7 +2004,7 @@ function createDemo() {
   const p = newPatient({
     name: "Test Cyanid", zimmer: z, gewicht: "80", groesse: "178", sex: "m", test: true, created: isoOf(tb),
     diagnose: "Flammenverbrennung, 40 % VKOF, Inhalationstrauma — TESTPATIENT",
-    burn: { ...emptyBurn(), unfall: isoOf(u), vkof: "40", tief: "25", alter: "52", gegeben: "1000", gegebenT: isoOf(tb), rate: "500", inhal: true, russ: "Trachea" },
+    burn: { ...emptyBurn(), unfall: isoOf(u), vkof: "40", tief: "25", drittgrad: true, alter: "52", gegeben: "1000", gegebenT: isoOf(tb), rate: "500", inhal: true, russ: "Trachea" },
     c48: { done: { rg_raum: true, rg_russ: true, rg_bew: true, rg_kreis: true, rg_svo2: true, s_lab: true }, mech: ["flamme"], lok: ["gesicht"], geschl: true, intub: true, intubT: fT(u + 70 * MIN), tubus: "8,0", tiefe: "23", gew: "geschätzt", gegebenBis: fT(tb), diuDK: "40", srMed: "Sufentanil, Midazolam, Noradrenalin", tox: "Brand in Wohnung, Matratze/Kunststoff" },
     infRate: [{ id: uid(), t: isoOf(tb), v: 500 }],
     diurese: [{ id: uid(), t: isoOf(now - 10 * MIN), v: "22" }],
