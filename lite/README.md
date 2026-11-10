@@ -22,6 +22,13 @@ Die klinischen Inhalte sind unverändert aus LUminate 1.3.0 übernommen:
 - **Ein Patientenformular** statt Stammdaten-Fenster mit Einzelfeldern
 - **Eigenständig:** eigener Speicher (`lulite_v1`), keine Kopplung mit BurnICU oder LUminate; mehrere Patienten über die Auswahl oben
 
+## Neu in 1.1.0
+
+- **Leiste, immer sichtbar:** Zeit seit Unfall, seit Aufnahme V1 (neues Feld beim Patienten) und seit der letzten Reevaluation. Die Reevaluation blinkt gelb ab 1 h (fällig) und rot ab 2 h (überfällig); Antippen öffnet den Algorithmus. Daneben der Status **CO · Cyanid · IHT** (offen / kein Hinweis / Verdacht).
+- **Abfrage Inhalation in der Aufnahme:** 11 Ja/Nein-Fragen (Exposition, Atemweg, CO, Cyanid) plus COHb und Laktat. Öffnet sich nach dem Anlegen eines Patienten von selbst, steht als erster Punkt in „Aufnahme · sofort“ und ist über die Leiste erreichbar. Bei Verdacht erscheinen die Schritte in der Aufnahme und unter „Jetzt fällig“. Neu gegenüber LUminate: die Fragen „Stridor, Heiserkeit oder Atemnot“ und „Versengte Nasen- oder Gesichtsbehaarung, Verbrennung in Mund oder Rachen“ (Warnzeichen nach AWMF S2k 044-001).
+- **Abschnitte farblich getrennt:** jede Karte mit eigener Farbe (Kopfband und Randstreifen), jede Phase der Checkliste mit eigener Farbe.
+- **Korrekturdurchgang (32 Stellen), u. a.:** „Tubus nicht kürzen“ → „Fixierung und Tubustiefe engmaschig prüfen und dem Ödem anpassen — akzidentelle Extubation vermeiden“ · „VKOF nachmessen“ → „neu bestimmen“ · „Brandhaut“ → „verbrannte Haut“ · „Devices“ → „Katheter und Zugänge“ · „Kompartimente“ → „Muskellogen“ · „forcieren“ → „abführen“ · „Opioid retard und akut“ → „retardiert und bei Bedarf“ · „anstoßen“ → „einleiten“ · „Heparin p.i.“ → „Heparin inhalativ“ · „SpO2 normal trotz Klinik“ → „trotz Hypoxiezeichen“ · „Flüssigkeitschallenge“ → „Fluid Challenge“ · Aufnahmelabor: BGA arteriell und zentralvenös getrennt · Fußnote Fluid Challenge: Anstieg des Schlagvolumens (vorher „SVV“) im Passive Leg Raise — **bitte gegen die SOP prüfen**.
+
 ## Technik
 
 Eine Datei (`index.html`), kein Build, keine externen Abhängigkeiten. Offline über `sw.js` (Cache-Präfix `lulite-`). Update: `APP_VERSION` in `index.html` und `VERSION` in `sw.js` hochzählen.

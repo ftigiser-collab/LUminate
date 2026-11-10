@@ -21,7 +21,7 @@ button{cursor:pointer}
 h1,h2,h3,p{margin:0}
 b{font-weight:650}
 .mut{color:var(--mut)}.small{font-size:13.5px}
-header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line)}
+header{background:var(--card)}
 .hd{max-width:1100px;margin:0 auto;padding:8px 12px;display:flex;align-items:center;gap:10px}
 .logo{font-size:17px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
 .logo span{color:var(--acc);font-weight:600}
@@ -43,8 +43,8 @@ nav.tabs button.on{color:var(--acc);border-top-color:var(--acc)}
 main{max-width:1100px;margin:0 auto;padding:12px 12px 96px}
 .cols{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
 .col{display:grid;gap:12px;align-content:start;min-width:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
-.card>h2{font-size:16.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card{--sc:#475569;--sb:#eef1f4;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--sc);border-radius:14px;padding:14px;min-width:0;overflow:hidden}
+.card>h2{font-size:16.5px;margin:-14px -14px 12px;padding:9px 14px;min-height:54px;display:flex;align-items:center;gap:8px;background:var(--sb);color:var(--sc);border-bottom:1px solid var(--line)}
 .card>h2 .r{margin-left:auto;font-weight:400;font-size:13.5px;color:var(--mut)}
 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
@@ -89,12 +89,13 @@ main{max-width:1100px;margin:0 auto;padding:12px 12px 96px}
 .info{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14.5px;margin:0 0 10px;display:grid;gap:7px}
 .info b{color:var(--acc)}
 .x{width:34px;height:34px;display:grid;place-items:center;color:var(--err);font-weight:700;font-size:18px}
-.ph-h{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;padding:2px 0;text-align:left}
-.ph-h h3{font-size:16.5px;flex:1;min-width:0}
-.ph-h .tm{font-size:13px;color:var(--mut);white-space:nowrap}
-.ph-h .fold{width:18px;color:var(--mut)}
-.ph-b{margin-top:8px}
-.card.now{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.ph-h{display:flex;align-items:center;gap:8px;width:calc(100% + 28px);margin:-14px;background:var(--sb);border:0;padding:14px;text-align:left}
+.ph-h.op{margin-bottom:0;border-bottom:1px solid var(--line)}
+.ph-h h3{font-size:16.5px;flex:1;min-width:0;color:var(--sc)}
+.ph-h .tm{font-size:13.5px;font-weight:650;color:var(--sc);white-space:nowrap}
+.ph-h .fold{width:18px;color:var(--sc)}
+.ph-b{margin-top:10px}
+.card.now{box-shadow:0 0 0 2px var(--sc)}
 .grp{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin:12px 0 2px}
 .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .f{display:grid;gap:3px;min-width:0}
@@ -152,6 +153,44 @@ table.tb td:first-child,table.tb th:first-child{text-align:left}
 .foot{margin-top:16px;font-size:12.5px;color:var(--mut);text-align:center}
 .leg{columns:2 220px;font-size:14px;gap:18px}
 .leg div{break-inside:avoid;padding:2px 0}
+/* Abschnittsfarben */
+.s-vol{--sc:#1d5fa8;--sb:#e6effa}.s-due{--sc:#9a5800;--sb:#fff1d2}.s-std{--sc:#0f6f66;--sb:#e0f3f0}
+.s-ein{--sc:#334155;--sb:#e9edf2}.s-bil{--sc:#6a46a3;--sb:#f0e9f9}.s-log{--sc:#5b6875;--sb:#eef1f4}
+.s-auf{--sc:#b8400c;--sb:#fde9dc}.s-h0{--sc:#a85a00;--sb:#fdefd3}.s-h8{--sc:#806400;--sb:#f9f1c9}
+.s-h24{--sc:#47730e;--sb:#ebf4dc}.s-t3{--sc:#0f6f66;--sb:#e0f3f0}.s-t4{--sc:#1d5fa8;--sb:#e6effa}.s-t5{--sc:#6a46a3;--sb:#f0e9f9}
+.s-no{--sc:#b3261e;--sb:#fdeae8}
+.tile{border-top:4px solid #334155}
+/* Leiste: Timer und Inhalations-Status, immer sichtbar */
+.stick{position:sticky;top:0;z-index:25;background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(20,35,50,.07)}
+.bar{max-width:1100px;margin:0 auto;padding:6px 12px 7px}
+.tms{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:6px}
+.tmr{display:block;border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:4px 6px 5px;text-align:center;min-width:0;min-height:0;color:var(--ink)}
+.tmr span{display:block;font-size:11.5px;line-height:1.25;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmr b{display:block;font-size:19px;line-height:1.2;font-weight:700;font-variant-numeric:tabular-nums}
+button.tmr{cursor:pointer}
+.tmr.due{border-color:#d08a00;animation:bl-due 1s steps(1) infinite}
+.tmr.over{border-color:var(--err);animation:bl-over 1s steps(1) infinite}
+.tmr.due span{color:#5c3600;font-weight:700}
+.tmr.over span,.tmr.over b{color:#fff}
+.tmr.over span{font-weight:700}
+@keyframes bl-due{0%{background:#ffd75e}50%{background:#fff3d9}}
+@keyframes bl-over{0%{background:#b3261e}50%{background:#e2574c}}
+@media (prefers-reduced-motion:reduce){.tmr.due{animation:none;background:#ffd75e}.tmr.over{animation:none;background:#b3261e}}
+.scs{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.sc{display:inline-block;min-height:0;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:650;line-height:1.4;border:1.5px dashed #94a1ad;background:#fff;color:var(--mut)}
+.sc.v{border:1.5px solid var(--err);background:var(--err);color:#fff}
+.sc.n{border:1.5px solid #8cc3a3;background:var(--ok-bg);color:var(--ok)}
+/* Abfrage Inhalation */
+.scr{border:1px solid #e3b3c8;border-left:5px solid #9d174d;background:#fdf0f5;border-radius:12px;padding:10px 12px;margin:8px 0 6px}
+.scr-h{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.scr-h b{color:#9d174d;font-size:16px}
+.scr .it{border-top-color:#ecc9d8}
+.seg button.on.j{background:var(--err);border-color:var(--err)}
+.seg button.on.nn{background:var(--ok);border-color:var(--ok)}
+.sq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.sq.j .lb{color:var(--err);font-weight:650}
+.sq .seg{flex-wrap:nowrap}
+.dlg ul.steps{margin:6px 0 0;padding-left:18px;font-size:14.5px}
 #print{display:none}
 @media (min-width:640px){
   .tiles{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -161,10 +200,13 @@ table.tb td:first-child,table.tb th:first-child{text-align:left}
   .az{grid-template-columns:minmax(0,1fr) auto;align-items:center}
 }
 @media (min-width:900px){
-  nav.tabs{position:sticky;top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);justify-content:center;padding:0}
+  .bar{display:flex;gap:16px;align-items:center;justify-content:space-between}
+  .tms{grid-template-columns:150px 170px 210px;gap:8px}
+  .scs{margin-top:0}
+  .sc{font-size:13.5px;padding:4px 11px}
+  nav.tabs{position:static;border-top:1px solid var(--line);justify-content:center;padding:0}
   nav.tabs button{flex:0 0 190px;border-top:0;border-bottom:3px solid transparent;padding:11px 4px 9px;font-size:15.5px}
   nav.tabs button.on{border-bottom-color:var(--acc)}
-  header{position:static}
   main{padding-bottom:40px}
   .cols{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .cols.w{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
@@ -203,7 +245,7 @@ table.tb td:first-child,table.tb th:first-child{text-align:left}
    Gleiche Inhalte (Checkliste, Daueranweisungen, Volumentherapie nach SOP, Algorithmus), einfachere Oberfläche.
    Eigenständig: eigener Speicher (lulite_v1), keine Kopplung mit BurnICU. Eine Datei, kein Build.
    ===================================================================== */
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 const SKEY = "lulite_v1";
 const H = 36e5, MIN = 6e4;
 
@@ -252,8 +294,8 @@ let S = load();
 function save() { try { localStorage.setItem(SKEY, JSON.stringify(S)); } catch (e) {} }
 const UI = { open: {}, fold: {}, dlg: null, menu: false, draft: {}, pd: null, algo: null, toast: "", more: false, logAll: false };
 const cur = () => S.pats[S.sel] || null;
-const newPat = () => ({ id: uid(), created: Date.now(), name: "", kg: "", cm: "", age: "", sex: "", unfall: null, vk: "", tief: "", mech: [], lok: [], f: {}, pre: "", preBis: null, lsg: "ra", done: {}, na: {}, ev: [], ueb: {} });
-function norm(p) { p.f = p.f || {}; p.done = p.done || {}; p.na = p.na || {}; p.ev = p.ev || []; p.mech = p.mech || []; p.lok = p.lok || []; p.ueb = p.ueb || {}; return p; }
+const newPat = () => ({ id: uid(), created: Date.now(), aufn: Date.now(), scr: {}, name: "", kg: "", cm: "", age: "", sex: "", unfall: null, vk: "", tief: "", mech: [], lok: [], f: {}, pre: "", preBis: null, lsg: "ra", done: {}, na: {}, ev: [], ueb: {} });
+function norm(p) { p.f = p.f || {}; p.done = p.done || {}; p.na = p.na || {}; p.ev = p.ev || []; p.mech = p.mech || []; p.lok = p.lok || []; p.ueb = p.ueb || {}; p.scr = p.scr || {}; if (p.aufn == null) p.aufn = p.created; return p; }
 Object.values(S.pats).forEach(norm);
 if (!cur()) S.sel = Object.keys(S.pats)[0] || null;
 
@@ -299,7 +341,7 @@ function calc(p, now) {
   o.strom = !!f.strom || p.mech.indexOf("strom") >= 0;
   o.myo = !!f.myo;
   o.intub = !!f.intub;
-  o.russ = !!f.inhal || !!p.done.rg_russ;
+  o.russ = ihtVerdacht(p);
   o.gesicht = p.lok.indexOf("gesicht") >= 0;
   o.devburn = !!f.devburn;
   if (kg && vk) {
@@ -334,7 +376,7 @@ function calc(p, now) {
   }
   o.hiAvail = !!f.picco;
   o.scvAvail = !!f.zvk || !!f.picco || lab(p, "ScvO2").length > 0;
-  o.aufH = u != null ? Math.max(0, (p.created - u) / H) : 0;
+  o.aufH = u != null ? Math.max(0, (p.aufn - u) / H) : 0;
   return o;
 }
 const zielTxt = (c) => {
@@ -362,7 +404,7 @@ function diuSum(p, A, B) {
 function volT0(p, c) {
   const g = numDE(p.pre);
   if (g == null) return { g: null, t0: null };
-  let t0 = p.preBis != null && c.u != null && p.preBis >= c.u ? p.preBis : p.created;
+  let t0 = p.preBis != null && c.u != null && p.preBis >= c.u ? p.preBis : p.aufn;
   if (c.u != null && t0 < c.u) t0 = c.u;
   return { g, t0 };
 }
@@ -523,7 +565,7 @@ function plan(p, c) {
   }
   /* weitere Hinweise */
   const add = (lv, t, act) => out.hints.push({ lv, t, act });
-  if (out.ev && out.ev.mapLow) add("e", `MAP ${fN(out.ev.map, 0)} < 65 mmHg: Flüssigkeitschallenge (SOP); persistierend Dobutamin bei kardialer Dysfunktion, Noradrenalin > 0,25 µg/kg/min → Argipressin 0,01 IE/min erwägen.`);
+  if (out.ev && out.ev.mapLow) add("e", `MAP ${fN(out.ev.map, 0)} < 65 mmHg: Fluid Challenge (SOP); persistierend Dobutamin bei kardialer Dysfunktion, Noradrenalin > 0,25 µg/kg/min → Argipressin 0,01 IE/min erwägen.`);
   const albNow = valAt(albHist(p), now);
   const albRate = albNow ? albNow.v : 0;
   if (c.h < 6) add("i", `Albumin frühestens ab h 6 (${fT(atMs(c, 6))}) — vorher verlässt es mit dem Kapillarleck das Gefäß.`);
@@ -555,7 +597,7 @@ function plan(p, c) {
   return out;
 }
 
-/* ---------- Inhalte: unverändert aus LUminate 1.3.0 übernommen ---------- */
+/* ---------- Inhalte: aus LUminate 1.3.0 übernommen; sprachlich/medizinisch korrigiert in Lite 1.1.0 (Liste im README) ---------- */
 const MECH = [["flamme", "Flamme", "Flammenverbrennung"], ["verbr", "Verbrühung", "Verbrühung"], ["kontakt", "Kontakt", "Kontaktverbrennung"], ["strom", "Strom", "Stromunfall"], ["chem", "chemisch", "Verätzung"], ["expl", "Explosion", "Explosionsverletzung"]];
 const LOK = [["gesicht", "Gesicht"], ["haende", "Hände"], ["perineum", "Perineum"], ["zirk", "zirkulär"]];
 const I = (pp, ev, sop, how) => ({ pp, ev, sop, how });
@@ -580,45 +622,45 @@ const ITEMS = [
     info: I("Verbrennungsschock: Hitze und Mediatoren (Histamin, Prostaglandine, Zytokine) öffnen die Kapillaren — lokal sofort, ab etwa 20–30 % VKOF generalisiert, also auch in nicht verbrannter Haut. Das Leck ist in den ersten 8–12 h maximal; Wasser und Eiweiß verlassen das Gefäß, das Plasmavolumen fällt. Deshalb zählt die Uhr ab Unfall, nicht ab Aufnahme. Laktatfreie Lösung, damit Laktat als Perfusionsmarker verwertbar bleibt; NaCl 0,9 % führt zur hyperchlorämischen Azidose.",
       "Rule of 10 (Chung et al., J Trauma 2010, US-Militär): Startrate ohne Gewichtsrechnung, liegt im Mittel zwischen modifizierter Brooke-Formel (2 ml) und Parkland (4 ml/kg/% VKOF). ABA-Leitlinie Burn Shock Resuscitation (Cartotto, J Burn Care Res 2024): eher niedrig starten (2–4, Richtung 2 ml/kg/% VKOF) und nach Antwort titrieren.",
       "Volumentherapie (Dok-ID 1620273): VKOF auf die nächste Zehnerstelle aufrunden × 10 ml/h; 40–80 kg; je angefangene 10 kg darüber + 100 ml/h; IHT + 100 ml/h. Ringer-Azetat.") },
-  { k: "s_picco", ph: "auf", t: (x) => `ZVK + PiCCO-Arterie bei > 30 % VKOF, > 20 % + IHT oder Komorbidität, Instabilität${x.c.vk > 30 || (x.c.vk >= 20 && x.c.inhal) ? ' <span class="flag a">indiziert</span>' : ""}`,
+  { k: "s_picco", ph: "auf", t: (x) => `ZVK und arterieller PiCCO-Katheter bei > 30 % VKOF, bei > 20 % mit IHT sowie bei Komorbidität oder Instabilität${x.c.vk > 30 || (x.c.vk >= 20 && x.c.inhal) ? ' <span class="flag a">indiziert</span>' : ""}`,
     run: (x) => piccoAktiv(x.p) ? "PiCCO aktiv" : devAct(x.p, "ZVK") ? "ZVK liegt" : "",
     info: I("In den ersten 24 h fällt das Herzzeitvolumen stärker, als das Plasmavolumen allein erklärt: Myokarddepression durch TNF-α und IL-6 und hohe Nachlast (Katecholamine, Vasopressin). Diurese und Blutdruck können bei Älteren und Herzinsuffizienten über die Perfusion täuschen.",
       "Holm et al. (Burns 2004, randomisiert): ITBVI-gesteuerte Therapie brachte deutlich mehr Volumen ohne Outcome-Vorteil. Die ABA-Leitlinie 2024 rät von transpulmonalen Thermodilutionswerten als Steuergröße ab. Die SOP nutzt HI und ScvO2 als zwei von fünf Reevaluationskriterien — es gilt die SOP.",
       "Volumentherapie (Monitoring): Anlage schon im Schockraum bzw. bei Aufnahme.") },
   { k: "s_aw", ph: "auf", t: (x) => x.c.intub ? "Tubus sicher fixieren, Lage, Tiefe und Cuffdruck dokumentieren" : "Atemweg beurteilen: Stridor, Heiserkeit, Ruß, Gesichts-/Halsverbrennung → früh sichern",
-    info: I("Thermischer Schaden der oberen Atemwege plus generalisiertes Kapillarleck plus Volumengabe ergeben ein supraglottisches Ödem mit Maximum nach 24–48 h. Ein gekürzter Tubus lässt sich dann nicht mehr korrigieren, eine Reintubation kann unmöglich werden.", null,
+    info: I("Thermischer Schaden der oberen Atemwege plus generalisiertes Kapillarleck plus Volumengabe ergeben ein supraglottisches Ödem mit Maximum nach 24–48 h. Mit dem Gesichtsödem verändern sich Tubustiefe und Fixierung; nach einer akzidentellen Extubation kann die Reintubation unmöglich werden.", null,
       "Inhalationstrauma (Dok-ID 1620224): Atemweg früh sichern bei drohender Verlegung, Ödem rückläufig nach 24–120 h; nicht jeder muss intubiert werden.") },
-  { k: "s_esch", ph: "auf", t: () => "Zirkulär tief (2b/3)? Escharotomie prüfen — Thorax: Beatmungsdruck; Extremität: Doppler distal, Kompartment",
+  { k: "s_esch", ph: "auf", t: () => "Zirkuläre tiefe Verbrennung (2b/3)? Escharotomie-Indikation prüfen — Thorax: Beatmungsdrücke; Extremität: distale Durchblutung (Doppler), Kompartmentsyndrom",
     info: I("Der Eschar ist unelastisch; das zunehmende Ödem darunter erhöht den Gewebedruck → distale Ischämie an Extremitäten, eingeschränkte Thoraxexkursion mit steigenden Beatmungsdrücken und CO2-Retention.",
       "AWMF S2k 044-001 (2025): Escharotomie bei tiefen Verbrennungen ab > 2/3 der Zirkumferenz; enzymatisches Débridement kann erwogen werden.") },
-  { k: "s_lab", ph: "auf", t: () => "Aufnahmelabor: BGA (COHb, Laktat, ScvO2, Ca²⁺), BB, Gerinnung, Na/K, Phosphat, Krea, CK, Myoglobin, Albumin, BZ, Blutgruppe",
+  { k: "s_lab", ph: "auf", t: () => "Aufnahmelabor: BGA arteriell (COHb, Laktat, Ca²⁺) und zentralvenös (ScvO2), Blutbild, Gerinnung, Na/K, Phosphat, Kreatinin, CK, Myoglobin, Albumin, Blutzucker, Blutgruppe",
     inp: [{ lab: "COHb", u: "%" }, { lab: "Laktat", u: "mmol/l" }, { lab: "Na+", u: "mmol/l" }, { lab: "Albumin", u: "g/dl" }, { lab: "CK", u: "U/l" }],
     info: I("COHb und Laktat früh bestimmen — CO und Cyanid sind die häufigste frühe Todesursache bei Bränden in geschlossenen Räumen. CK und Myoglobin als Ausgangswert (Strom, Crush), Albumin und Natrium als Startwerte für die SOP-Schritte ab h 6–8.") },
-  { k: "s_strom", ph: "auf", cond: (x) => x.c.strom, t: () => "Strom: 12-Kanal-EKG, Monitoring etablieren, Kompartimente untersuchen (Ausgangsbefund)",
+  { k: "s_strom", ph: "auf", cond: (x) => x.c.strom, t: () => "Stromunfall: 12-Kanal-EKG, EKG-Monitoring, Muskellogen untersuchen (Ausgangsbefund)",
     info: I("Strom fließt bevorzugt entlang Nerven, Gefäßen und Muskulatur; die Hitze entsteht in der Tiefe am Knochen (hoher Widerstand) → Muskelnekrose unter intakter Haut, Myoglobin, Kompartment, Rhythmusstörungen.",
       "AWMF S2k 044-001 (2025): EKG-Monitoring ≥ 24 h bei initialem Kreislaufstillstand, Bewusstlosigkeit oder pathologischem EKG.",
       "Crush-Syndrom: Myoglobin-Peak < 24 h, CK-Peak 24–36 h.") },
-  { k: "s_dk", ph: "auf", t: () => "DK mit Temperatursonde (Stundendiurese), Magensonde",
+  { k: "s_dk", ph: "auf", t: () => "Blasenkatheter mit Temperatursonde (Stundendiurese) und Magensonde legen",
     info: I("Die Stundendiurese ist in der Schockphase der einzige kontinuierlich verfügbare Endorganparameter; die Temperatursonde im DK misst Kerntemperatur ohne zusätzlichen Zugang. Magensonde: Gastroparese in der Schockphase, frühe enterale Ernährung.") },
   { k: "a_ppi", ph: "auf", to: 8, t: () => "Stressulkusprophylaxe: Pantoprazol 20 mg 1-0-0",
     info: I("Curling-Ulkus: Schleimhautischämie im Verbrennungsschock plus Stressreaktion; frühe enterale Ernährung schützt zusätzlich.", "REVISE (Cook, NEJM 2024): Pantoprazol bei invasiv Beatmeten senkt klinisch relevante obere GI-Blutungen (1,0 vs. 3,5 %), Letalität unverändert. Burn-Protokolle: Prophylaxe ab > 20 % VKOF.") },
   { k: "a_screen", ph: "auf", to: 24, t: () => "MRE-Screening-Abstriche bei Aufnahme (Hausstandard)",
     info: I("Brandwunden werden binnen Tagen besiedelt — zuerst grampositiv, ab etwa Tag 5 zunehmend gramnegativ einschließlich Pseudomonas. Die Aufnahmeflora ist die Referenz für spätere kalkulierte Therapien.") },
   { k: "a_stuhl", ph: "auf", to: 24, t: () => "Stuhlgang bei Aufnahme dokumentieren (danach spätestens alle 3 Tage)", info: I(null, null, "Ernährung und Abführen (Dok-ID 1620057).") },
-  { k: "a_bg", ph: "auf", to: 24, t: () => "Arbeits- oder Wegeunfall? → BG-Verfahren (D-Arzt-Bericht) anstoßen",
+  { k: "a_bg", ph: "auf", to: 24, t: () => "Arbeits- oder Wegeunfall? → BG-Verfahren (D-Arzt-Bericht) einleiten",
     info: I("Berufsgenossenschaftliches Heilverfahren früh melden — relevant für Reha, Kompressionsversorgung und Kostenübernahme.") },
   /* ---- h 0–8 ---- */
-  { k: "o_analgo", ph: "h0", at: 1, t: (x) => x.c.intub ? "Analgosedierung nach SOP: Aufnahmetag Sufentanil + Midazolam; Beatmung > 48 h absehbar → Sufentanil + Propofol (max. 5 Tage)" : "Analgesie nach SOP: Basis (Metamizol 4 g/24 h) + Opioid retard und akut",
+  { k: "o_analgo", ph: "h0", at: 1, t: (x) => x.c.intub ? "Analgosedierung nach SOP: Aufnahmetag Sufentanil + Midazolam; Beatmung > 48 h absehbar → Sufentanil + Propofol (max. 5 Tage)" : "Analgesie nach SOP: Basis (Metamizol 4 g/24 h) + Opioid retardiert und bei Bedarf",
     info: I("Verbrennungsschmerz ist nozizeptiv und neuropathisch mit primärer und sekundärer Hyperalgesie; Opioidbedarf und Toleranz steigen schnell, Verbandswechsel sind Spitzen.", null, "Analgesie, Sedierung, Delir (Dok-ID 1620165).") },
   { k: "o_bronch", ph: "h0", at: 1, cond: (x) => x.c.intub, t: () => "Bronchoskopie (intubiert, V. a. IHT): Ausmaß, Sekret/Ruß absaugen, AIS 0–4 dokumentieren", inp: [{ f: "ais", l: "AIS", u: "" }],
     info: I("Das endoskopische Grading (AIS) beschreibt Ausmaß und Schwere; die Bronchoskopie ist zugleich Therapie (Ruß, Fibrin-Casts).", null, "Inhalationstrauma: fiberoptische Bronchoskopie, Bronchoskopie bei Sekretretention.") },
-  { k: "o_wund", ph: "h0", at: 1, t: () => "Wunden: Blasen und Verunreinigungen aseptisch abtragen, Erstverband nach Stationsstandard, Fotodoku",
+  { k: "o_wund", ph: "h0", at: 1, t: () => "Wunden: Blasen und Verunreinigungen aseptisch abtragen, Erstverband nach Stationsstandard, Fotodokumentation",
     info: I("Blaseninhalt enthält Thromboxan und Prostaglandine, die die Durchblutung der Stasezone verschlechtern und eine Vertiefung (Konversion) begünstigen.", "AWMF S2k 044-001 (2025): Blasen und Verunreinigungen aseptisch abtragen.") },
-  { k: "o_en", ph: "h0", at: 2, t: () => "Enteral starten: Tag 1 <b>20 ml/h</b> Fresubin HPenergy — spätestens 24 h nach Aufnahme",
+  { k: "o_en", ph: "h0", at: 2, t: () => "Enterale Ernährung starten: Tag 1 <b>20 ml/h</b> Fresubin HPenergy — spätestens 24 h nach Aufnahme",
     info: I("Frühe enterale Ernährung erhält die Mukosabarriere (weniger Translokation), dämpft den Hypermetabolismus und beugt dem Curling-Ulkus vor.",
       "ESPEN-Leitlinie Verbrennung (Rousseau, Clin Nutr 2013): Beginn innerhalb von 12 h. Mosier et al. (J Burn Care Res 2011): frühe enterale Ernährung mit weniger Infektionen assoziiert.", "Ernährung: so früh wie möglich, spätestens 24 h; Tag 1 20 ml/h.") },
-  { k: "o_vkof", ph: "h0", at: 4, t: () => "VKOF nachmessen (Lund-Browder; Grad 1 zählt nicht) — ändert die Rule of 10", inp: [{ f: "vkof", l: "VKOF", u: "%" }, { f: "tief", l: "2b/3", u: "%" }],
-    info: I("Grad 1 (Erythem) hat kein relevantes Kapillarleck. Präklinische Schätzungen weichen oft ab — überschätzt bei kleinen, unterschätzt bei Adipösen; jede Überschätzung bedeutet Überinfusion.") },
+  { k: "o_vkof", ph: "h0", at: 4, t: () => "VKOF neu bestimmen (Lund-Browder; Grad 1 zählt nicht) — ändert die Rule of 10", inp: [{ f: "vkof", l: "VKOF", u: "%" }, { f: "tief", l: "2b/3", u: "%" }],
+    info: I("Grad 1 (Erythem) hat kein relevantes Kapillarleck. Präklinische Schätzungen weichen oft ab — kleine Flächen werden eher überschätzt, bei Adipositas ist die Schätzung besonders unsicher; jede Überschätzung bedeutet Überinfusion.") },
   { k: "o_alb", ph: "h0", at: 6, t: () => "Ab h 6: Gerinnung prüfen — FFP nur nach Gerinnungssituation · Albumin 20 % nur erwägen (ab h 8 nach SOP)",
     info: I("In den ersten 6–8 h ist das Leck so groß, dass Albumin mit ins Interstitium wandert und dort Wasser bindet; danach bleibt es zunehmend intravasal.",
       "Navickis et al. (J Burn Care Res 2016, Meta-Analyse): Albumin senkte die Gesamtletalität nicht signifikant; nach Ausschluss zweier Studien mit hohem Bias-Risiko geringere Letalität und weniger Kompartmentsyndrome — Evidenz begrenzt. ABA 2024 (bedingte Empfehlung): Albumin in den ersten 24 h erwägen, v. a. bei großen Verbrennungen bzw. steigendem Bedarf; FFP nur im Rahmen von Studien.",
@@ -639,11 +681,11 @@ const ITEMS = [
     info: I("Hypermetabolismus ab > 20 % VKOF: Grundumsatz bis 2,5-fach, katecholamingetrieben, anhaltend bis zu Jahren (Jeschke, PLoS One 2011); Muskelabbau ist die Folge, wenn nicht gegengesteuert wird.",
       "Propranolol: Herndon et al. (NEJM 2001, Kinder) senkt Ruheumsatz und Katabolie; Ali et al. (Crit Care 2015, Erwachsene) schnellere Wundheilung. Spurenelemente: Berger et al. (Am J Clin Nutr 2007) weniger Infektionen. Glutamin: RE-ENERGIZE (Heyland, NEJM 2022) ohne Nutzen — nicht routinemäßig.",
       "Ernährung: Zink 2 × 30 mg/d i.v. (Spiegel), Selen 300–500 µg/d i.v. 14 Tage (nicht bei Sepsis), Vitamin E 300 IE/d ab > 10 % VKOF, Propranolol 2–3 mg/kg/d bzw. 2 × 40 mg.") },
-  { k: "g_phys", ph: "h24", at: 24, t: () => "Antikontrakturlagerung, Schienen, Physio/Ergo etabliert",
+  { k: "g_phys", ph: "h24", at: 24, t: () => "Kontrakturprophylaxe: Lagerung, Schienen, Physio- und Ergotherapie begonnen",
     info: I("Kontrakturen beginnen früh in der Schonhaltung (Beugestellung); Lagerung in Gegenrichtung ab Tag 1 verhindert spätere Rekonstruktionen.") },
   { k: "g_angeh", ph: "h24", at: 24, t: (x) => `Angehörigengespräch geführt (Ablauf, Prognose, Ansprechpartner)${x.c.vk > 40 && x.c.absi ? ` — ABSI ${x.c.absi}, Überleben ${x.c.absiTxt}` : ""}`,
     info: I(null, "ABSI (Tobiasen 1982) und revidierter Baux-Score schätzen die Prognose, begründen aber allein keine Therapiebegrenzung.") },
-  { k: "g_zug", ph: "h24", at: 24, cond: (x) => x.c.devburn, t: () => "Zugänge durch Brandhaut: Wechsel planen",
+  { k: "g_zug", ph: "h24", at: 24, cond: (x) => x.c.devburn, t: () => "Katheter durch verbrannte Haut: Wechsel planen",
     info: I("Katheter durch verbrannte Haut sind hochgradig infektionsgefährdet (Besiedlung der Wunde).") },
   { k: "g_vw", ph: "h24", at: 30, t: () => "Verbandswechsel planen, Analgosedierung dafür festlegen" },
   /* ---- Tag 3 ---- */
@@ -652,18 +694,18 @@ const ITEMS = [
   { k: "t3_exz", ph: "t3", at: 48, to: 72, t: () => "Erste Exzision bis h 72 erfolgt oder terminiert (Gerinnung: pH ≥ 7,2, Temp ≥ 36 °C, Ca²⁺ ≥ 1,1, Fibrinogen ≥ 1,5–2 g/l)",
     info: I(null, "Ong et al. 2006: Frühexzision senkt Letalität und Liegedauer.", "Ernährung/metabolisches Bündel: Exzision Beginn ≤ 72 h, komplett ≤ 7 Tage; Transfusionsregime: Gerinnungsvoraussetzungen.") },
   { k: "t3_axa", ph: "t3", at: 48, t: () => "Anti-Xa nach der 3. Enoxaparin-Gabe kontrolliert, Dosis angepasst", inp: [{ lab: "Anti-Xa", u: "IE/ml" }] },
-  { k: "t3_stuhl", ph: "t3", at: 60, to: 72, t: () => "Stuhlgang? Spätestens alle 3 Tage forcieren (Macrogol, Laxoberal; Lactulose nur streng indiziert)", info: I(null, null, "Ernährung und Abführen: unter Opioiden Macrogol 1–3 Btl./d, ggf. Naloxon p.o.; Lactulose nur streng indiziert.") },
+  { k: "t3_stuhl", ph: "t3", at: 60, to: 72, t: () => "Stuhlgang? Spätestens alle 3 Tage abführen (Macrogol, Laxoberal; Lactulose nur bei strenger Indikation)", info: I(null, null, "Ernährung und Abführen: unter Opioiden Macrogol 1–3 Btl./d, ggf. Naloxon p.o.; Lactulose nur streng indiziert.") },
   /* ---- Tag 4 ---- */
-  { k: "t4_prop", ph: "t4", at: 72, to: 120, cond: (x) => x.c.intub, t: () => "Propofol? Maximal 5 Tage (PRIS) — Umstellung bis Tag 5 planen (z. B. Isofluran-Sedierung)",
+  { k: "t4_prop", ph: "t4", at: 72, to: 120, cond: (x) => x.c.intub, t: () => "Propofol? Maximal 5 Tage (PRIS) — Umstellung bis Tag 5 planen (z. B. inhalative Sedierung mit Isofluran)",
     info: I("Propofol-Infusionssyndrom: gestörte mitochondriale Fettsäureoxidation → Laktatazidose, Rhabdomyolyse, Hypertriglyzeridämie, Herzversagen; Risiko steigt mit Dosis und Dauer.", null, "Analgesie, Sedierung, Delir: Propofol max. 5 Tage.") },
   { k: "t4_ern", ph: "t4", at: 72, t: () => "Kalorienziel erreicht? Unter 80 % → Cernevit + Addel Trace, parenteral ergänzen" },
   { k: "t4_tra", ph: "t4", at: 72, cond: (x) => x.c.intub, t: () => "Langzeitbeatmung absehbar? Tracheotomie besprechen" },
   /* ---- Tag 5 ---- */
   { k: "t5_stuhl", ph: "t5", at: 96, t: () => "Stuhlgang erneut prüfen (alle 3 Tage)" },
-  { k: "t5_dev", ph: "t5", at: 96, t: () => "Devices: Liegedauer und Lage durch Brandhaut prüfen — Evaluation spätestens nach 7 Tagen" },
+  { k: "t5_dev", ph: "t5", at: 96, t: () => "Katheter und Zugänge: Liegedauer und Lage in verbrannter Haut prüfen — Evaluation spätestens nach 7 Tagen" },
   { k: "t5_supp", ph: "t5", at: 96, t: () => "Supplemente prüfen: Selen 14 Tage (Pause bei Sepsis), Zinkspiegel, Propranolol (HF-Ziel)" },
   { k: "t5_kompr", ph: "t5", at: 96, t: () => "Narbenmanagement vorbereiten: Kompressionsversorgung anmelden (Vorlauf), Physio/Ergo" },
-  { k: "t5_reha", ph: "t5", at: 96, t: () => "Sozialdienst, psychologische Betreuung, BG-/Reha-Verfahren anstoßen" }
+  { k: "t5_reha", ph: "t5", at: 96, t: () => "Sozialdienst, psychologische Betreuung, BG-/Reha-Verfahren einleiten" }
 ];
 const IT_BY = Object.fromEntries(ITEMS.map((x) => [x.k, x]));
 const ernTxt = (c) => {
@@ -684,17 +726,17 @@ const STAND = [
       "Volumentherapie: erstmals nach 60 min, dann stündlich; Algorithmus Volumenmanagement (Abb. 1) Grundlage bis h 72.") },
   { k: "z_temp", from: 0, to: 120, t: () => "Körpertemperatur ≥ 36 °C — keine Kühlung",
     info: I("Ohne Hautbarriere hohe Verdunstungs- und Strahlungsverluste. Hypothermie verschlechtert Gerinnung (Enzymkinetik, Thrombozytenfunktion) und erhöht die Letalität.", "AWMF S2k 044-001 (2025): keine Kühlung bei > 10 % VKOF, Normothermie sichern.") },
-  { k: "z_lage", from: 0, to: 120, t: () => "Lagerung: Oberkörper hoch, verbrannte Extremitäten hoch",
+  { k: "z_lage", from: 0, to: 120, t: () => "Lagerung: Oberkörper und verbrannte Extremitäten hochlagern",
     info: I("Hochlagerung senkt den hydrostatischen Druck im Kapillarbett und damit das Ödem an Gesicht/Atemweg und Extremitäten.") },
-  { k: "z_tubus", from: 0, to: 120, cond: (x) => x.c.intub, t: () => "Tubus <b>nicht kürzen</b> — das Atemwegsödem nimmt bis 24–48 h zu",
-    info: I("Thermischer Schaden der oberen Atemwege plus generalisiertes Kapillarleck plus Volumengabe ergeben ein supraglottisches Ödem mit Maximum nach 24–48 h. Ein gekürzter Tubus lässt sich dann nicht mehr korrigieren, eine Reintubation kann unmöglich werden.", null,
+  { k: "z_tubus", from: 0, to: 120, cond: (x) => x.c.intub, t: () => "Tubus: Fixierung und Tubustiefe engmaschig prüfen und dem Ödem anpassen — akzidentelle Extubation vermeiden (das Atemwegsödem nimmt bis 24–48 h zu)",
+    info: I("Thermischer Schaden der oberen Atemwege plus generalisiertes Kapillarleck plus Volumengabe ergeben ein supraglottisches Ödem mit Maximum nach 24–48 h. Mit dem Gesichtsödem verändern sich Tubustiefe und Fixierung; nach einer akzidentellen Extubation kann die Reintubation unmöglich werden.", null,
       "Inhalationstrauma (Dok-ID 1620224): Ödem rückläufig nach 24–120 h.") },
   { k: "z_aw", from: 0, to: 48, cond: (x) => !x.c.intub && (x.c.russ || x.c.gesicht), t: () => "Atemweg engmaschig: Stridor, Heiserkeit, zunehmendes Gesichtsödem → früh sichern",
     info: I("Das supraglottische Ödem erreicht sein Maximum nach 24–48 h — eine zunächst sichere Situation kann sich unter Volumengabe verschlechtern.", null, "Inhalationstrauma (Dok-ID 1620224): Atemweg früh sichern bei drohender Verlegung; nicht jeder muss intubiert werden.") },
   { k: "z_extub", from: 24, to: 120, cond: (x) => x.c.intub && x.c.russ, t: () => "Extubationsbereitschaft täglich prüfen (Cuff-Leak-Test) — Ödem rückläufig nach 24–120 h",
     info: I(null, null, "Inhalationstrauma: Beatmung VT 6 ml/kg, hoher PEEP; Ödem rückläufig nach 24–120 h.") },
   { k: "z_wean", from: 72, to: 120, cond: (x) => x.c.intub, t: () => "Weaning: täglich Aufwach- und Spontanatmungsversuch" },
-  { k: "z_strom", from: 0, to: 72, cond: (x) => x.c.strom, t: () => "Strom: EKG-Monitoring, Kompartimente engmaschig — die Hautläsion sagt nichts über die Tiefe; Urinfarbe/Myoglobin",
+  { k: "z_strom", from: 0, to: 72, cond: (x) => x.c.strom, t: () => "Stromunfall: EKG-Monitoring, Muskellogen engmaschig untersuchen — die Hautläsion sagt nichts über die Tiefenausdehnung; Urinfarbe und Myoglobin kontrollieren",
     info: I("Strom fließt bevorzugt entlang Nerven, Gefäßen und Muskulatur; die Hitze entsteht in der Tiefe am Knochen (hoher Widerstand) → Muskelnekrose unter intakter Haut, Myoglobin, Kompartment, Rhythmusstörungen.",
       "AWMF S2k 044-001 (2025): EKG-Monitoring ≥ 24 h bei initialem Kreislaufstillstand, Bewusstlosigkeit oder pathologischem EKG.",
       "Crush-Syndrom: Myoglobin-Peak < 24 h, CK-Peak 24–36 h.") },
@@ -735,12 +777,12 @@ function standNow(p, c) {
   const h = c.h == null ? 0 : c.h;
   return STAND.filter((s) => (!s.cond || s.cond(x)) && h >= s.from && h < s.to);
 }
-const C48_EXPO = [["rg_raum", "Brand in geschlossenem Raum, Kunststoffe"], ["rg_russ", "Ruß Mund/Nase/Sputum, Gesichtsverbrennung"], ["rg_bew", "Bewusstseinsstörung, Krampfanfall"]];
-const C48_CO_RG = [["rg_cohb", "COHb ↑ (Nichtraucher > 3 %, Raucher > 10 %)"], ["rg_spo2", "SpO2 normal trotz Klinik (misst COHb mit)"], ["rg_cosy", "Kopfschmerz, Übelkeit, Schwindel, Angina pectoris"]];
-const C48_CO_RH = [["rh_o2", "100 % O2 — COHb > 10 % → 6 h O2 (SOP)"], ["rh_cobga", "COHb-Kontrolle (BGA), erst dann FiO2 senken"], ["rh_ekg", "EKG und Troponin (kardiale Ischämie)"], ["rh_hbo", "HBO erwägen (Koma, Neurologie, Ischämie, Schwangerschaft) — Einzelfall"]];
+const C48_EXPO = [["rg_raum", "Brand in geschlossenem Raum, brennende Kunststoffe"], ["rg_russ", "Ruß in Mund, Nase oder Sputum; Gesichtsverbrennung"], ["rg_bew", "Bewusstseinsstörung oder Krampfanfall"]];
+const C48_CO_RG = [["rg_cohb", "COHb ↑ (Nichtraucher > 3 %, Raucher > 10 %)"], ["rg_spo2", "SpO2 normal trotz Hypoxiezeichen (Pulsoxymeter misst COHb mit)"], ["rg_cosy", "Kopfschmerz, Übelkeit, Schwindel, Angina pectoris"]];
+const C48_CO_RH = [["rh_o2", "100 % O2 — COHb > 10 % → 6 h O2 (SOP)"], ["rh_cobga", "COHb-Kontrolle (BGA), erst dann FiO2 senken"], ["rh_ekg", "EKG und Troponin (kardiale Ischämie)"], ["rh_hbo", "HBO erwägen (Koma, neurologische Ausfälle, kardiale Ischämie, Schwangerschaft) — Einzelfallentscheidung"]];
 const C48_CN_RG = [["rg_kreis", "Kreislaufinstabilität, Bradykardie, Apnoe"], ["rg_lak", "Laktat > 10 mmol/l, Azidose trotz Volumen"], ["rg_svo2", "ScvO2 ↑ — nur unterstützend, allein kein Kriterium"]];
-const C48_CN_RH = [["rh_blut", "Vorher Blut (COHb, Laktat, ggf. Cyanid) — nicht verzögern"], ["rh_hydroxo", "Hydroxocobalamin 5 g i.v. über 15 min (Kinder 70 mg/kg); keine Nitrite/4-DMAP"], ["rh_cnlak", "Laktat/Kreislauf nach 1–2 h kontrollieren — SOP: 5 g Einmalgabe; 2. Dosis nur als ärztliche Einzelfallentscheidung (Fachinfo max. 10 g)"], ["rh_stoer", "Danach: Rotfärbung stört Labore, CO-Oxymetrie, Blutleck-Alarm Dialyse"]];
-const C48_IHT = [["rh_hep", "Ruß: Heparin p.i. 4–6 × 10.000 IE + 3 ml MucoClear; β2-Mimetika bei Bronchospasmus"]];
+const C48_CN_RH = [["rh_blut", "Vor der Gabe Blut abnehmen (COHb, Laktat, ggf. Cyanidspiegel) — die Gabe dadurch nicht verzögern"], ["rh_hydroxo", "Hydroxocobalamin 5 g i.v. über 15 min (Kinder 70 mg/kg); keine Nitrite/4-DMAP"], ["rh_cnlak", "Laktat/Kreislauf nach 1–2 h kontrollieren — SOP: 5 g Einmalgabe; 2. Dosis nur als ärztliche Einzelfallentscheidung (Fachinfo max. 10 g)"], ["rh_stoer", "Danach: Rotfärbung verfälscht photometrische Laborwerte und die CO-Oxymetrie und löst den Blutleck-Alarm der Dialyse aus"]];
+const C48_IHT = [["rh_hep", "Rußablagerungen: Heparin inhalativ 4–6 ×/d je 10.000 IE + 3 ml MucoClear; β2-Mimetika bei Bronchospasmus"]];
 const INFO_CO = I("CO bindet etwa 250-mal stärker an Hämoglobin als O2, verschiebt die Bindungskurve nach links und hemmt die Cytochromoxidase. Das Pulsoxymeter misst COHb als Oxyhämoglobin mit — SpO2 normal trotz Gewebehypoxie.",
   "COHb-Halbwertszeit: Raumluft etwa 4–5 h, 100 % O2 etwa 60–90 min, HBO etwa 20–30 min. Weaver et al. (NEJM 2002): HBO senkte kognitive Spätfolgen nach CO-Vergiftung; bei Brandverletzten meist logistisch limitiert → Einzelfall.",
   "Inhalationstrauma: 100 % O2 (HFNC, Reservoirmaske, bei Vigilanzminderung Intubation); COHb > 10 % → 6 h Sauerstoff.");
@@ -756,7 +798,7 @@ const NICHT = [
   ["Kein HES, keine Gelatine", I("HES lagert sich im Gewebe ab und schädigt die Niere; Gelatine birgt Nierenschädigung und Anaphylaxie; im Kapillarleck bringen künstliche Kolloide keinen Volumenvorteil.", "HES bei kritisch Kranken: mehr Nierenersatz (6S und CHEST, NEJM 2012), höhere Letalität in 6S; AWMF 2025: kein HES, keine Gelatine.")],
   ["h 0–48 kein NaCl 0,9 %, Jonosteril oder Ringer-Laktat — Ringer-Azetat", I("NaCl 0,9 %: hyperchlorämische Azidose; laktathaltige Lösung verfälscht Laktat als Perfusionsmarker.", null, "Volumentherapie und Natriumstörungen: Ringer-Azetat, im Haus laktatfreie Lösungen; Na⁺ > 139 → Deltajonin BG (1/3).")],
   ["Kein Hochdosis-Vitamin C", I("Wurde wegen weniger Kapillarleck und weniger Volumen eingesetzt (Tanaka, Arch Surg 2000).", "VICTORY (Stoppe, JAMA 2026; ≥ 20 % VKOF, 50 mg/kg alle 6 h über 96 h): wegen Schaden abgebrochen, 28-Tage-Letalität 15,0 vs. 7,6 %. Physiologische Substitution bleibt unberührt.")],
-  ["Keine Nitrite/4-DMAP bei Rauchgas", INFO_CN]
+  ["Keine Nitrite, kein 4-DMAP bei Rauchgasvergiftung", INFO_CN]
 ];
 const LEGENDE = [["2b/3", "Verbrennungsgrad 2b bzw. 3 (tief)"], ["4-DMAP", "4-Dimethylaminophenol"], ["ABA", "American Burn Association"], ["ABSI", "Abbreviated Burn Severity Index"], ["ADH", "antidiuretisches Hormon"], ["AF", "Atemfrequenz"], ["AIS", "Abbreviated Injury Score (Bronchoskopie)"], ["Anti-Xa", "Anti-Faktor-Xa-Aktivität"], ["ANV", "akutes Nierenversagen"], ["ARDS", "akutes Lungenversagen"], ["avDO2", "arteriovenöse O2-Differenz"], ["AWMF", "Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften"], ["BB", "Blutbild"], ["BG", "Berufsgenossenschaft"], ["BGA", "Blutgasanalyse"], ["BZ", "Blutzucker"], ["Ca²⁺", "ionisiertes Kalzium"], ["CK", "Kreatinkinase"], ["CO", "Kohlenmonoxid"], ["CO2", "Kohlendioxid"], ["COHb", "Carboxyhämoglobin"], ["CT", "Computertomografie"], ["D-Arzt", "Durchgangsarzt"], ["DAV", "Deutschsprachige Arbeitsgemeinschaft für Verbrennungsbehandlung"], ["Deltajonin", "BG (1/3) Eindrittelelektrolytlösung"], ["DGV", "Deutsche Gesellschaft für Verbrennungsmedizin"], ["DK", "Dauerkatheter"], ["Dobu", "Dobutamin"], ["E", "Einheiten"], ["Echo", "Echokardiografie"], ["EK", "Erythrozytenkonzentrat"], ["EKG", "Elektrokardiogramm"], ["ELWI", "extravaskulärer Lungenwasserindex"], ["ESPEN", "Europäische Gesellschaft für klinische Ernährung"], ["EtCO2", "endtidales CO2"], ["FFP", "Fresh Frozen Plasma"], ["FiO2", "inspiratorische O2-Fraktion"], ["GI", "gastrointestinal"], ["h", "Stunde ab Unfall"], ["Hb", "Hämoglobin"], ["HBO", "hyperbare Oxygenierung"], ["HES", "Hydroxyethylstärke"], ["HF", "Herzfrequenz"], ["HFNC", "High-Flow-Sauerstoff über Nasenkanüle"], ["HI", "Herzindex (l/min/m²)"], ["Hk", "Hämatokrit"], ["i.v.", "intravenös"], ["IAP", "intraabdomineller Druck (mmHg)"], ["IE", "Internationale Einheiten"], ["IHT", "Inhalationstrauma"], ["IL-6", "Interleukin 6"], ["ITBVI", "intrathorakaler Blutvolumenindex"], ["J", "Jahre"], ["KOF", "Körperoberfläche"], ["Lite", "vereinfachte Fassung von LUminate"], ["MAP", "mittlerer arterieller Druck"], ["MCP", "Metoclopramid"], ["MRE", "multiresistente Erreger"], ["NA", "Noradrenalin"], ["Na", "Natrium"], ["Na/K", "Natrium/Kalium"], ["NW", "Nebenwirkung"], ["O2", "Sauerstoff"], ["OP", "Operation"], ["p.i.", "per inhalationem"], ["PEEP", "positiver endexspiratorischer Druck"], ["PiCCO", "Pulse Contour Cardiac Output"], ["PLR", "Passive Leg Raise"], ["PPI", "Protonenpumpenhemmer"], ["PPV", "Pulse Pressure Variation"], ["PRIS", "Propofol-Infusionssyndrom"], ["RAAS", "Renin-Angiotensin-Aldosteron-System"], ["RAP", "rechtsatrialer Druck"], ["Rekap", "Rekapillarisierungszeit"], ["RR", "Blutdruck"], ["RV", "rechtsventrikulär"], ["S2k", "konsensbasierte Leitlinie (AWMF-Stufe)"], ["ScvO2", "zentralvenöse O2-Sättigung"], ["SIRS", "systemisches Entzündungssyndrom"], ["SOP", "Standardvorgehen der V1"], ["SpO2", "pulsoxymetrische Sättigung"], ["SR", "Schockraum"], ["SV", "Schlagvolumen"], ["SVV", "Schlagvolumenvariation"], ["TNF-α", "Tumornekrosefaktor α"], ["Tox", "Toxikologie"], ["TXA", "Tranexamsäure"], ["V1", "Verbrennungs-Intensivstation"], ["VCI", "Vena cava inferior"], ["VEL", "Vollelektrolytlösung"], ["VKOF", "verbrannte Körperoberfläche"], ["VT", "Tidalvolumen"], ["ZVD", "zentraler Venendruck"], ["ZVK", "zentraler Venenkatheter"]];
 
@@ -797,8 +839,43 @@ function intoxItems(p) {
   const L = [];
   if (coVerdacht(p)) L.push(...C48_CO_RH);
   if (cyanVerdacht(p)) L.push(...C48_CN_RH);
-  if (p.f.inhal || p.done.rg_russ) L.push(...C48_IHT);
+  if (ihtVerdacht(p)) L.push(...C48_IHT);
   return L;
+}
+/* ---------- Abfrage Inhalation: CO, Cyanid, Inhalationstrauma — jede Frage Ja/Nein ---------- */
+const C48L = Object.fromEntries([...C48_EXPO, ...C48_CO_RG, ...C48_CN_RG]);
+C48L.rg_strid = "Stridor, Heiserkeit oder Atemnot";
+C48L.rg_haar = "Versengte Nasen- oder Gesichtsbehaarung, Verbrennung in Mund oder Rachen";
+const SCR = [
+  ["Exposition", ["rg_raum", "rg_bew"]],
+  ["Atemweg — Inhalationstrauma", ["rg_russ", "rg_strid", "rg_haar"]],
+  ["Kohlenmonoxid (CO)", ["rg_cohb", "rg_spo2", "rg_cosy"]],
+  ["Cyanid", ["rg_kreis", "rg_lak", "rg_svo2"]]
+];
+const SCT = { v: "Verdacht", n: "kein Hinweis", o: "offen" };
+const scrAns = (p, k) => p.scr[k] || (p.done[k] ? "j" : null);
+function scrSet(p, k, v) {
+  if (v) p.scr[k] = v; else delete p.scr[k];
+  if (v === "j") { if (!p.done[k]) p.done[k] = Date.now(); } else delete p.done[k];
+}
+const ihtVerdacht = (p) => !!(p.f.inhal || p.done.rg_russ || p.done.rg_strid || p.done.rg_haar);
+function scrState(p) {
+  const all = SCR.reduce((a, g) => a.concat(g[1]), []);
+  const need = (ks) => ks.every((k) => scrAns(p, k));
+  return {
+    total: all.length, open: all.filter((k) => !scrAns(p, k)).length,
+    co: coVerdacht(p) ? "v" : need(["rg_raum", "rg_bew", "rg_russ", "rg_cohb", "rg_spo2", "rg_cosy"]) ? "n" : "o",
+    cn: cyanVerdacht(p) ? "v" : need(["rg_raum", "rg_bew", "rg_russ", "rg_kreis", "rg_lak"]) ? "n" : "o",
+    iht: ihtVerdacht(p) ? "v" : need(["rg_russ", "rg_strid", "rg_haar"]) ? "n" : "o"
+  };
+}
+/* COHb und Laktat aus der Abfrage übernehmen; eindeutige Werte beantworten die Frage gleich mit */
+function scrCommit(p) {
+  const t = Date.now();
+  const co = numDE(UI.draft.s_cohb), lk = numDE(UI.draft.s_lak);
+  if (co != null && co >= 0) { addEv(p, { t, k: "lab", n: "COHb", v: co }); if (co >= 10) scrSet(p, "rg_cohb", "j"); else if (co < 3) scrSet(p, "rg_cohb", "n"); }
+  if (lk != null && lk >= 0) { addEv(p, { t, k: "lab", n: "Laktat", v: lk }); if (lk > 10) scrSet(p, "rg_lak", "j"); }
+  delete UI.draft.s_cohb; delete UI.draft.s_lak;
 }
 /* Reevaluation: stündlich fällig, nach 2 h überfällig — Grundlage bis h 72 */
 const ALGO_H = 72;
@@ -809,7 +886,7 @@ function lastReeval(p) {
 function reevalDue(p, c) {
   if (!c.spec || c.u == null || c.h == null || c.h < 0 || c.h >= ALGO_H) return null;
   const L = lastReeval(p);
-  const base = L != null ? L : Math.max(c.u, p.created);
+  const base = L != null ? L : Math.max(c.u, p.aufn);
   return { last: L, due: base + H, over: base + 2 * H };
 }
 /* Laufende Aufgaben mit Fälligkeit */
@@ -873,7 +950,7 @@ const ALGO_ORDER = ["map", "fcm", "zvd", "fr", "fc", "dys", "ov"];
 const ALGO_Q = {
   map: "MAP < 65–70 mmHg?",
   fcm: "Fluid Challenge¹ (MAP-Pfad): Fluid responsive?",
-  zvd: "ZVD > 5 mmHg oder VCI < 50 % Atemmodulation?",
+  zvd: "ZVD > 5 mmHg oder Atemmodulation der VCI < 50 %?",
   fr: "Fluid Responsiveness (PPV, SVV, PLR) vorhanden?",
   fc: "Fluid Challenge¹: Fluid responsive?",
   dys: "Echokardiografie: kardiale Dysfunktion?",
@@ -913,7 +990,7 @@ const ALGO_INFO = I("Ziele nach jeder therapeutischen Intervention erneut prüfe
   "Algorithmus der SOP, modifiziert nach Ziegler et al. (DAV 2022), Soussi et al. (Anesthesiology 2018: frühe hämodynamische Steuerung Schwerbrandverletzter) und dem Positionspapier der DGV „Therapie des Verbrennungsschocks“ (2023).",
   "Volumentherapie (Dok-ID 1620273), Abbildung 1. Adjunkte: Blasendruck alle 4 h; bei niedriger Diurese Harnabflussstörung ausschließen (DK spülen, Sonografie). Ab h 6 Albumin 20 % 100 ml je 1000 ml VEL (Ziel 2,2–2,7 g/dl); Ziel-Natrium 135–139 mmol/l, > 139 → Eindrittelelektrolytlösung.",
   "Das Ergebnis ist ein Vorschlag. Abweichen geht jederzeit: eigene Rate eintragen, ohne Änderung abschließen oder abbrechen. Jede Laufratenänderung zählt als Reevaluation; die nächste ist nach 1 h fällig und spätestens nach 2 h überfällig.");
-const ALGO_FN = I(null, null, "¹ Fluid Challenge: forciertes Delta durch Passive Leg Raise (RR > +20 mmHg, SVV > +10 %, EtCO2 > +5 %) bzw. SVV oder PPV > 20 % bei mechanisch beatmeten Patienten. ² Entwickelt der Patient ein ARDS: Iloprost bzw. Bauchlagerung erwägen (Horovitz-Quotient < 150 mmHg).");
+const ALGO_FN = I(null, null, "¹ Fluid Challenge: positiv bei Anstieg im Passive Leg Raise (Blutdruck > 20 mmHg, Schlagvolumen > 10 %, EtCO2 > 5 %) bzw. bei SVV oder PPV > 20 % unter kontrollierter Beatmung. ² Entwickelt der Patient ein ARDS: Iloprost bzw. Bauchlagerung erwägen (Horovitz-Quotient < 150 mmHg).");
 function algoInit(p, c) {
   const L = last(diuList(p));
   const ev = evalAt(p, c, c.now, L && !L.unk ? L.ph : null);
@@ -991,6 +1068,27 @@ function vHeader(p, c) {
     <div class="ver">LUminate Lite ${APP_VERSION}</div></div>`;
   return h;
 }
+const fEl = (ms) => { if (ms == null || !Number.isFinite(ms) || ms < 0) return "—"; const s = Math.floor(ms / 1000); return Math.floor(s / 3600) + ":" + pad(Math.floor(s % 3600 / 60)) + ":" + pad(s % 60); };
+/* Leiste: Zeit seit Unfall, seit Aufnahme V1, seit letzter Reevaluation (blinkt ab 1 h, rot ab 2 h) + Status CO/Cyanid/Inhalationstrauma */
+function vBar(p, c) {
+  const rd = reevalDue(p, c), L = lastReeval(p);
+  const base = L != null ? L : rd ? Math.max(c.u, p.aufn) : null;
+  const lbl = L != null ? "seit Reevaluation" : "noch keine Reevaluation";
+  const s = scrState(p), now = Date.now();
+  const tv = (t0) => t0 == null ? "—" : fEl(now - t0);
+  const chip = (l, st) => `<button class="sc ${st}" data-act="scropen" title="Abfrage Inhalation öffnen">${l}: ${SCT[st]}</button>`;
+  return `<div class="bar"><div class="tms"><div class="tmr"><span>seit Unfall</span><b data-t0="${c.u != null ? c.u : ""}">${tv(c.u)}</b></div><div class="tmr"><span>seit Aufnahme V1</span><b data-t0="${p.aufn != null ? p.aufn : ""}">${tv(p.aufn)}</b></div><button class="tmr re" data-act="${rd ? "algo" : "tab"}" data-v="vol" data-lbl="${lbl}" data-due="${rd ? rd.due : ""}" data-over="${rd ? rd.over : ""}" title="Reevaluation"><span>${lbl}</span><b data-t0="${base != null ? base : ""}">${tv(base)}</b></button></div><div class="scs">${chip("CO", s.co)}${chip("Cyanid", s.cn)}${chip("IHT", s.iht)}</div></div>`;
+}
+function tickTimers() {
+  const now = Date.now();
+  document.querySelectorAll("[data-t0]").forEach((el) => { const tx = el.dataset.t0 === "" ? "—" : fEl(now - Number(el.dataset.t0)); if (el.textContent !== tx) el.textContent = tx; });
+  const re = document.querySelector(".tmr.re");
+  if (!re) return;
+  const st = re.dataset.due === "" ? "" : now >= Number(re.dataset.over) ? "over" : now >= Number(re.dataset.due) ? "due" : "";
+  re.classList.toggle("due", st === "due"); re.classList.toggle("over", st === "over");
+  const l = re.querySelector("span"), tx = st === "over" ? "Reevaluation überfällig" : st === "due" ? "Reevaluation fällig" : re.dataset.lbl;
+  if (l.textContent !== tx) l.textContent = tx;
+}
 function vTabs(p, c) {
   const due = dueList(p, c);
   const tasks = laufend(p, c).filter((x) => x.st);
@@ -1029,8 +1127,8 @@ function vPre() {
   return `<label class="f" style="width:130px"><span>ml gesamt</span><input data-d="pre_ml" inputmode="numeric" value="${dv("pre_ml")}"></label><label class="f" style="width:120px"><span>bis (Uhrzeit)</span><input type="time" data-d="pre_bis" value="${dv("pre_bis")}"></label><button class="btn sm" data-act="savepre" style="align-self:flex-end">Speichern</button>`;
 }
 function vVolNow(p, c, P) {
-  let h = `<div class="card"><h2>Volumen ${iBtn("v_reeval")}<span class="r">${c.schock ? "Schockphase · Stunde " + Math.floor(c.h) : c.h != null && c.h >= 48 ? "Tag " + c.tag : ""}</span></h2>`;
-  h += vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → −10 %; eines oder mehrere nicht erfüllt → +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Flüssigkeitschallenge.", "Ein verfehltes Ziel zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde. HI/ScvO2 werden nur mit PiCCO bzw. ZVK bewertet."));
+  let h = `<div class="card s-vol"><h2>Volumen ${iBtn("v_reeval")}<span class="r">${c.schock ? "Schockphase · Stunde " + Math.floor(c.h) : c.h != null && c.h >= 48 ? "Tag " + c.tag : ""}</span></h2>`;
+  h += vInfo("v_reeval", I("Fünf Ziele bilden Makro- (HI), Mikro- (Rekap, Laktat) und Organperfusion (Diurese) sowie die O2-Bilanz (ScvO2) ab.", "ABA 2024 empfiehlt Laktat/Basendefizit und transpulmonale Thermodilution nicht als routinemäßige Steuergrößen; die V1-SOP verwendet alle fünf — es gilt die SOP.", "Volumentherapie: Reevaluation erstmals nach 60 min, dann stündlich. Alle erfüllt → −10 %; eines oder mehrere nicht erfüllt → +20 %, vorher ZVD, VCI-Sonografie, Fluid Responsiveness (Leg Raise: ΔMAP > 20 mmHg, ΔSV > 10 %, ΔEtCO2 > 5 %). MAP < 65 → immer Fluid Challenge.", "Ein verfehltes Ziel zählt nur, wenn es nach der letzten Laufratenänderung gemessen wurde. HI/ScvO2 werden nur mit PiCCO bzw. ZVK bewertet."));
   if (c.u == null || c.h < 0) return h + `<p class="mut">Sobald die Unfallzeit eingetragen ist, steht hier die aktuelle Anweisung.</p></div>`;
   h += vReevalRow(p, c);
   if (c.schock) {
@@ -1050,8 +1148,10 @@ function vVolNow(p, c, P) {
 }
 function vDue(p, c) {
   const tasks = laufend(p, c), due = dueList(p, c);
-  let h = `<div class="card"><h2>Jetzt fällig<span class="r">${due.length + tasks.filter((x) => x.st).length} offen</span></h2>`;
-  if (!tasks.length && !due.length) return h + `<p class="mut">Im Moment ist nichts fällig.</p></div>`;
+  let h = `<div class="card s-due"><h2>Jetzt fällig<span class="r">${due.length + tasks.filter((x) => x.st).length} offen</span></h2>`;
+  const scO = scrState(p);
+  if (scO.open) h += `<div class="it st-due"><span class="x" style="color:#9d174d">?</span><div class="itx">Abfrage Inhalation: CO, Cyanid, Inhalationstrauma<div class="fr">bei Aufnahme · ${scO.open} von ${scO.total} Fragen offen</div></div><button class="btn sm" data-act="scropen">Abfrage</button></div>`;
+  else if (!tasks.length && !due.length) return h + `<p class="mut">Im Moment ist nichts fällig.</p></div>`;
   tasks.forEach((x) => {
     h += `<div class="it ${x.st === "o" ? "st-over" : x.st === "d" ? "st-due" : "st-wait"}"><span class="x" style="color:var(--mut)">↻</span><div class="itx">${x.t}<div class="fr">${x.st === "o" ? "überfällig" : x.st === "d" ? "fällig" : "nächste " + fRel(x.due)} · ${x.info}</div></div><button class="btn sm" data-act="${x.go === "algo" ? "algo" : "tab"}" data-v="vol">${x.gt}</button></div>`;
   });
@@ -1068,7 +1168,7 @@ function vDue(p, c) {
 }
 function vStand(p, c) {
   const L = standNow(p, c);
-  let h = `<div class="card"><h2>Gilt jetzt<span class="r">Ziele und Daueranweisungen</span></h2>`;
+  let h = `<div class="card s-std"><h2>Gilt jetzt<span class="r">Ziele und Daueranweisungen</span></h2>`;
   L.forEach((s) => {
     const x = { p, c }, key = "st_" + s.k, run = s.run ? s.run(x) : "";
     h += `<div class="it"><span class="x" style="color:var(--acc)">•</span><div class="itx">${s.t(x)}${run ? ` <span class="mut small">(${run})</span>` : ""}</div>${s.info ? iBtn(key) : "<span></span>"}</div>${s.info ? vInfo(key, s.info) : ""}`;
@@ -1083,6 +1183,11 @@ function vJetzt(p, c, P) {
   let h = "";
   if (miss.length) h += box("w", "Es fehlt: " + miss.join(", "), "Ohne diese Angaben kann die App weder Rule of 10 noch Fristen berechnen.", `<button class="btn pri" data-act="edit">Patient bearbeiten</button>`);
   if (c.vk != null && c.vk < 20) h += box("i", "VKOF unter 20 %", "LUminate ist für Verbrennungen ab 20 % VKOF gedacht — Rule of 10, Algorithmus und Fristen gelten darunter nicht ohne Weiteres.");
+  const sc = scrState(p);
+  if (sc.open) h += box("w", `Abfrage Inhalation offen — ${sc.open} von ${sc.total} Fragen`, "CO-Vergiftung, Cyanid-Vergiftung und Inhalationstrauma werden erst erkannt, wenn die Abfrage beantwortet ist.", `<button class="btn pri" data-act="scropen">Abfrage ${sc.open < sc.total ? "fortsetzen" : "starten"}</button>`);
+  if (sc.co === "v" && C48_CO_RH.some(([k]) => !p.done[k] && !p.na[k])) h += box("e", "CO-Verdacht — sofort 100 % O2", "Schritte unter „Jetzt fällig“ abhaken; COHb-Kontrolle, bevor die FiO2 gesenkt wird.");
+  if (sc.cn === "v" && C48_CN_RH.some(([k]) => !p.done[k] && !p.na[k])) h += box("e", "Cyanid-Verdacht — Hydroxocobalamin 5 g i.v. über 15 min", "Vor der Gabe Blut abnehmen, die Gabe dadurch nicht verzögern. Schritte unter „Jetzt fällig“ abhaken.");
+  if (ihtVerdacht(p) && !p.f.inhal) h += box("w", "Hinweise auf ein Inhalationstrauma", "Noch nicht als Verdachtsdiagnose übernommen — mit Inhalationstrauma erhöht sich die Rule of 10 um 100 ml/h.", `<button class="btn pri" data-act="ihtset">V. a. Inhalationstrauma übernehmen</button>`);
   if (c.h != null && c.h >= 120) h += box("i", "Tag 5 ist vorbei", "Die Checkliste endet nach 120 h — ab hier Standard-Intensivtherapie.");
   return h + vTiles(p, c) + `<div class="cols w"><div class="col">${vVolNow(p, c, P)}${vDue(p, c)}</div><div class="col">${vStand(p, c)}</div></div>` + vFoot();
 }
@@ -1095,7 +1200,7 @@ function vEntry(p, c) {
   const Ld = last(ser(p, "diu"));
   const albOn = (c.h != null && c.h >= 6) || albHist(p).length > 0;
   const rek = UI.draft.e_rek;
-  let h = `<div class="card"><h2>Eintragen ${iBtn("v_ein")}</h2>${vInfo("v_ein", I(null, null, null, "Nur ausfüllen, was es Neues gibt, dann Speichern. Die Uhrzeit gilt für alle Felder dieses Eintrags; leer = jetzt. Später dazugekommen: frühere Laufraten und Diurese nacheinander mit ihrer Uhrzeit eintragen (gilt für die letzten 24 h). Jede Laufratenänderung zählt als Reevaluation."))}<div class="form">`;
+  let h = `<div class="card s-ein"><h2>Eintragen ${iBtn("v_ein")}</h2>${vInfo("v_ein", I(null, null, null, "Nur ausfüllen, was es Neues gibt, dann Speichern. Die Uhrzeit gilt für alle Felder dieses Eintrags; leer = jetzt. Später dazugekommen: frühere Laufraten und Diurese nacheinander mit ihrer Uhrzeit eintragen (gilt für die letzten 24 h). Jede Laufratenänderung zählt als Reevaluation."))}<div class="form">`;
   h += fin("e_diu", "Diurese (ml)", "ml", "numeric");
   h += `<label class="f"><span>Diurese seit${Ld ? " (leer = " + fT(Ld.t) + ")" : " (leer = 1 h)"}</span><input type="time" data-d="e_dius" value="${dv("e_dius")}"></label>`;
   h += fin("e_rate", "Laufrate neu (ml/h)", "ml/h", "numeric");
@@ -1118,7 +1223,7 @@ function vZiele(p, c, P) {
   const L = last(diuList(p));
   const ev = P.ev || evalAt(p, c, c.now, L && !L.unk ? L.ph : null);
   const mk = (x) => x.st === true ? '<span class="mk y">✓</span>' : x.st === false ? '<span class="mk n">✗</span>' : x.st === "na" ? '<span class="mk u">–</span>' : '<span class="mk u">?</span>';
-  let h = `<div class="card"><h2>Ziele ${iBtn("v_reeval")}<span class="r">alle erfüllt → −10 % · eines nicht → +20 %</span></h2>${vReevalRow(p, c)}<div class="zl">`;
+  let h = `<div class="card s-vol"><h2>Ziele ${iBtn("v_reeval")}<span class="r">alle erfüllt → −10 % · eines nicht → +20 %</span></h2>${vReevalRow(p, c)}<div class="zl">`;
   ev.crit.forEach((x) => { h += `<div class="zr">${mk(x)}<span>${x.l}</span><span class="zv">${x.st === "na" ? "kein Monitoring" : x.v || "kein aktueller Wert"}</span></div>`; });
   return h + `</div></div>`;
 }
@@ -1129,7 +1234,7 @@ function vBilanz(p, c) {
   const mk = v24 && c.kg && c.vk ? v24.ges / (c.kg * c.vk) : null;
   const ivyP = v24 && c.ivy ? v24.ges / c.ivy * 100 : null;
   const rr = valAt(rateHist(p), c.now), ar = valAt(albHist(p), c.now);
-  let h = `<div class="card"><h2>Bilanz ${iBtn("v_vol")}</h2>${vInfo("v_vol", I("Referenz = Rule of 10 × Stunden ab Unfall ist nur eine Linie zum Vergleich: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: über 6 ml/kg/% VKOF in 24 h häufiger Kompartmentsyndrome und ARDS. Ivy et al. (J Trauma 2000): > 250 ml/kg in den ersten 24 h → hohes Risiko für ein abdominelles Kompartmentsyndrom.", "Volumentherapie: Ivy-Index > 250 ml/kg → hohes Risiko.", "Gezählt wird nur, was hier erfasst ist: Präklinik/Schockraum, Laufraten, Albumin-Perfusor, Zusatzgaben (FFP ≈ 250 ml, EK ≈ 300 ml je Einheit). Erhaltungsinfusionen, Perfusoren und Ernährung zählen nicht mit."))}
+  let h = `<div class="card s-bil"><h2>Bilanz ${iBtn("v_vol")}</h2>${vInfo("v_vol", I("Referenz = Rule of 10 × Stunden ab Unfall ist nur eine Linie zum Vergleich: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: über 6 ml/kg/% VKOF in 24 h häufiger Kompartmentsyndrome und ARDS. Ivy et al. (J Trauma 2000): > 250 ml/kg in den ersten 24 h → hohes Risiko für ein abdominelles Kompartmentsyndrom.", "Volumentherapie: Ivy-Index > 250 ml/kg → hohes Risiko.", "Gezählt wird nur, was hier erfasst ist: Präklinik/Schockraum, Laufraten, Albumin-Perfusor, Zusatzgaben (FFP ≈ 250 ml, EK ≈ 300 ml je Einheit). Erhaltungsinfusionen, Perfusoren und Ernährung zählen nicht mit."))}
     <div class="facts">
     <span>${lsgName(p)}<b>${rr ? r0(rr.v) + " ml/h" : "—"}</b></span>
     <span>Albumin 20 %<b>${ar && ar.v ? r0(ar.v) + " ml/h" : "—"}</b></span>
@@ -1171,7 +1276,7 @@ function evTxt(p, c, e) {
 function vLog(p, c) {
   const all = p.ev.slice().sort((a, b) => b.t - a.t);
   const L = UI.logAll ? all : all.slice(0, 12);
-  let h = `<div class="card"><h2>Verlauf<span class="r">${all.length} Einträge</span></h2>`;
+  let h = `<div class="card s-log"><h2>Verlauf<span class="r">${all.length} Einträge</span></h2>`;
   if (!all.length) return h + `<p class="mut">Noch nichts eingetragen.</p></div>`;
   h += `<div class="log">${L.map((e) => `<div class="lg"><span class="t">${fRel(e.t)}</span><span>${evTxt(p, c, e)}</span><button data-act="evdel" data-k="${e.id}" aria-label="Eintrag löschen" title="Eintrag löschen">×</button></div>`).join("")}</div>`;
   if (all.length > 12) h += `<button class="btn lnk" data-act="logall">${UI.logAll ? "weniger anzeigen" : `alle ${all.length} anzeigen`}</button>`;
@@ -1186,53 +1291,51 @@ function vItem(p, c, it) {
   const st = itemState(p, c, it), x = { p, c }, w = itemWin(c, it), key = "it_" + it.k;
   const run = it.run ? it.run(x) : "";
   const fr = st === "done" ? "erledigt " + fRel(p.done[it.k]) : st === "na" ? "entfällt" : c.u == null ? "" : st === "over" ? "überfällig seit " + fRel(atMs(c, w.to)) : st === "due" ? "fällig bis " + fRel(atMs(c, w.to)) : "ab " + fRel(atMs(c, w.at));
-  return `<div class="it st-${st}"><button class="cb" data-act="tick" data-k="${it.k}" aria-label="${st === "done" ? "erledigt — zurücknehmen" : "als erledigt markieren"}">${st === "done" ? "✓" : st === "na" ? "–" : ""}</button><div class="itx">${it.t(x)}<div class="fr">${fr}${run ? " · " + run : ""}</div></div>${iBtn(key)}</div>${vInfo(key, it.info, `<div><button class="btn sm" data-act="na" data-k="${it.k}">${p.na[it.k] ? "doch nicht entfallen" : "entfällt bei diesem Patienten"}</button></div>`)}`;
+  return `<div class="it st-${st}"><button class="cb" data-act="tick" data-k="${it.k}" aria-label="${st === "done" ? "erledigt — zurücknehmen" : "als erledigt markieren"}">${st === "done" ? "✓" : st === "na" ? "–" : ""}</button><div class="itx">${it.t(x)}<div class="fr">${fr}${run ? " · " + run : ""}</div></div>${iBtn(key)}</div>${vInfo(key, it.info, `<div><button class="btn sm" data-act="na" data-k="${it.k}">${p.na[it.k] ? "entfällt doch nicht" : "entfällt bei diesem Patienten"}</button></div>`)}`;
 }
 function vPhase(p, c, ph) {
   const items = visItems(p, c, ph.k);
   if (!items.length) return "";
+  const auf = ph.k === "auf";
   const sts = items.map((it) => itemState(p, c, it));
-  const done = sts.filter((s) => s === "done" || s === "na").length, over = sts.filter((s) => s === "over").length;
+  const sc = auf ? scrState(p) : null;
+  const ivOpen = auf ? intoxItems(p).filter(([k]) => !p.done[k] && !p.na[k]).length : 0;
+  const total = items.length + (auf ? 1 : 0);
+  const done = sts.filter((s) => s === "done" || s === "na").length + (auf && !sc.open ? 1 : 0);
+  const over = sts.filter((s) => s === "over").length;
   const cur = c.h != null && c.h >= ph.at && c.h < ph.to;
-  const offen = done < items.length;
-  const open = UI.fold[ph.k] != null ? !UI.fold[ph.k] : cur || (c.h == null && ph.k === "auf") || (ph.k === "auf" && offen && c.h != null && c.h < 24) || over > 0;
-  let h = `<div class="card${cur ? " now" : ""}"><button class="ph-h" data-act="fold" data-k="${ph.k}" data-o="${open ? 1 : 0}"><span class="fold">${open ? "▾" : "▸"}</span><h3>${ph.t}</h3>${over ? `<span class="flag r">${over} überfällig</span>` : ""}<span class="tm">${done}/${items.length}</span></button>`;
-  if (open) h += `<div class="ph-b">${c.u != null ? `<div class="small mut" style="margin-bottom:4px">${fRel(atMs(c, ph.at))} – ${fRel(atMs(c, ph.to))}${cur ? " · <b>aktuelle Phase</b>" : ""}</div>` : ""}${items.map((it) => vItem(p, c, it)).join("")}</div>`;
+  const open = UI.fold[ph.k] != null ? !UI.fold[ph.k] : cur || (c.h == null && auf) || (auf && (done < total || ivOpen > 0) && (c.h == null || c.h < 24)) || over > 0;
+  let h = `<div class="card s-${ph.k}${cur ? " now" : ""}"><button class="ph-h${open ? " op" : ""}" data-act="fold" data-k="${ph.k}" data-o="${open ? 1 : 0}"><span class="fold">${open ? "▾" : "▸"}</span><h3>${ph.t}</h3>${auf && sc.co === "v" ? '<span class="flag r">CO</span>' : ""}${auf && sc.cn === "v" ? '<span class="flag r">Cyanid</span>' : ""}${over ? `<span class="flag r">${over} überfällig</span>` : ""}<span class="tm">${done}/${total}</span></button>`;
+  if (open) h += `<div class="ph-b">${c.u != null ? `<div class="small mut" style="margin-bottom:4px">${fRel(atMs(c, ph.at))} – ${fRel(atMs(c, ph.to))}${cur ? " · <b>aktuelle Phase</b>" : ""}</div>` : ""}${auf ? vScrBlock(p) : ""}${items.map((it) => vItem(p, c, it)).join("")}</div>`;
   return h + `</div>`;
 }
-function vIntox(p, c) {
-  const rel = intoxRelevant(p, c), co = coVerdacht(p), cn = cyanVerdacht(p);
-  const iht = p.f.inhal || p.done.rg_russ;
-  const open = UI.fold.iv != null ? !UI.fold.iv : rel;
-  let h = `<div class="card"><button class="ph-h" data-act="fold" data-k="iv" data-o="${open ? 1 : 0}"><span class="fold">${open ? "▾" : "▸"}</span><h3>Inhalations-Intoxikation</h3>${co ? '<span class="flag r">CO-Verdacht</span>' : ""}${cn ? '<span class="flag r">Cyanid-Verdacht</span>' : ""}<span class="tm">${rel ? (co || cn ? "" : "kein Verdacht") : "keine Exposition"}</span></button>`;
-  if (!open) return h + `</div>`;
+/* Abfrage Inhalation in der Aufnahme: Status + Schritte bei Verdacht */
+function vScrBlock(p) {
+  const s = scrState(p), co = s.co === "v", cn = s.cn === "v", iht = ihtVerdacht(p);
+  const chip = (l, st) => `<span class="sc ${st}">${l}: ${SCT[st]}</span>`;
   const row = ([k, t], info, obj) => {
     const on = !!p.done[k];
     return `<div class="it ${on ? "st-done" : "st-due"}"><button class="cb" data-act="tick" data-k="${k}" aria-label="erledigt">${on ? "✓" : ""}</button><div class="itx">${t}${on ? `<div class="fr">erledigt ${fRel(p.done[k])}</div>` : ""}</div>${info ? iBtn(info) : "<span></span>"}</div>${info ? vInfo(info, obj) : ""}`;
   };
-  const crit = ([k, t]) => `<div class="it ${p.done[k] ? "st-done" : ""}"><button class="cb" data-act="tick" data-k="${k}" aria-label="trifft zu">${p.done[k] ? "✓" : ""}</button><div class="itx" style="color:var(--ink)">${t}</div><span></span></div>`;
-  h += `<div class="ph-b">`;
-  if (co) h += `<div class="grp">CO — handeln</div>` + C48_CO_RH.map((x, i) => row(x, i === 0 ? "iv_co" : null, INFO_CO)).join("");
-  if (cn) h += `<div class="grp">Cyanid — handeln</div>` + C48_CN_RH.map((x, i) => row(x, i === 0 ? "iv_cn" : null, INFO_CN)).join("");
-  if (iht) h += `<div class="grp">Inhalationstrauma</div>` + C48_IHT.map((x) => row(x, "iv_iht", INFO_IHT)).join("");
-  const lv = (n) => { const l = last(lab(p, n)); return l ? `${fN(l.v, 1)} ${LABU[n]} (${fRel(l.t)})` : "kein Wert"; };
-  h += `<div class="grp">Kriterien — ankreuzen, was zutrifft</div><div class="small mut">COHb ${lv("COHb")} · Laktat ${lv("Laktat")} — Werte im Reiter Volumen eintragen.</div>
-    <div class="grp">Exposition</div>${C48_EXPO.map(crit).join("")}<div class="grp">CO</div>${C48_CO_RG.map(crit).join("")}<div class="grp">Cyanid</div>${C48_CN_RG.map(crit).join("")}`;
-  return h + `</div></div>`;
+  let h = `<div class="scr"><div class="scr-h"><div><b>Abfrage Inhalation</b><div class="small mut">${s.open ? `${s.open} von ${s.total} Fragen offen` : "alle Fragen beantwortet"}</div></div><button class="btn sm${s.open ? " pri" : ""}" data-act="scropen">${!s.open ? "Abfrage ändern" : s.open < s.total ? "Abfrage fortsetzen" : "Abfrage starten"}</button></div><div class="scs">${chip("CO", s.co)}${chip("Cyanid", s.cn)}${chip("Inhalationstrauma", s.iht)}</div>`;
+  if (co) h += `<div class="grp">CO-Verdacht — handeln</div>` + C48_CO_RH.map((x, i) => row(x, i === 0 ? "iv_co" : null, INFO_CO)).join("");
+  if (cn) h += `<div class="grp">Cyanid-Verdacht — handeln</div>` + C48_CN_RH.map((x, i) => row(x, i === 0 ? "iv_cn" : null, INFO_CN)).join("");
+  if (iht) h += `<div class="grp">V. a. Inhalationstrauma</div>` + C48_IHT.map((x) => row(x, "iv_iht", INFO_IHT)).join("");
+  return h + `</div>`;
 }
 function vNicht() {
   const open = UI.fold.nt === false;
-  let h = `<div class="card"><button class="ph-h" data-act="fold" data-k="nt" data-o="${open ? 1 : 0}"><span class="fold">${open ? "▾" : "▸"}</span><h3>Nicht tun</h3><span class="tm">${NICHT.length} Punkte</span></button>`;
+  let h = `<div class="card s-no"><button class="ph-h${open ? " op" : ""}" data-act="fold" data-k="nt" data-o="${open ? 1 : 0}"><span class="fold">${open ? "▾" : "▸"}</span><h3>Nicht tun</h3><span class="tm">${NICHT.length} Punkte</span></button>`;
   if (open) h += `<div class="ph-b">${NICHT.map(([t, inf], i) => `<div class="it"><span class="x">✕</span><div class="itx">${t}</div>${iBtn("nt" + i)}</div>${vInfo("nt" + i, inf)}`).join("")}</div>`;
   return h + `</div>`;
 }
 function vCheck(p, c) {
-  return `<div class="cols w"><div class="col">${PHASES.map((ph) => vPhase(p, c, ph)).join("")}</div><div class="col">${vIntox(p, c)}${vNicht()}</div></div>` + vFoot();
+  return `<div class="cols w"><div class="col">${PHASES.map((ph) => vPhase(p, c, ph)).join("")}</div><div class="col">${vNicht()}</div></div>` + vFoot();
 }
 
 /* ----- Dialoge ----- */
 function pdOf(p) {
-  return { name: p.name, age: p.age, sex: p.sex, cm: p.cm, kg: p.kg, vk: p.vk, tief: p.tief, unfall: p.unfall != null ? dtLocal(p.unfall) : "", mech: p.mech.slice(), lok: p.lok.slice(), f: { ...p.f }, pre: p.pre, preBis: p.preBis != null ? fT(p.preBis) : "", ueb: { ...p.ueb } };
+  return { name: p.name, age: p.age, sex: p.sex, cm: p.cm, kg: p.kg, vk: p.vk, tief: p.tief, unfall: p.unfall != null ? dtLocal(p.unfall) : "", aufn: p.aufn != null ? dtLocal(p.aufn) : "", mech: p.mech.slice(), lok: p.lok.slice(), f: { ...p.f }, pre: p.pre, preBis: p.preBis != null ? fT(p.preBis) : "", ueb: { ...p.ueb } };
 }
 function vPat() {
   const d = UI.pd;
@@ -1240,14 +1343,14 @@ function vPat() {
   const chip = (grp, k, t) => { const on = grp === "f" ? !!d.f[k] : d[grp].indexOf(k) >= 0; return `<button class="chip${on ? " on" : ""}" data-act="pdtog" data-g="${grp}" data-k="${k}" aria-pressed="${on}">${t}</button>`; };
   const seg = (k, opts) => `<div class="seg">${opts.map(([v, t]) => `<button data-act="pdseg" data-k="${k}" data-v="${v}" class="${(k === "sex" ? d.sex : d.ueb[k]) === v ? "on" : ""}">${t}</button>`).join("")}</div>`;
   let h = `<div class="dlgbg"><div class="dlg" role="dialog" aria-label="Patient"><div class="dh"><h2>${UI.dlg === "new" ? "Neuer Patient" : "Patient bearbeiten"}</h2><button class="btn sm" data-act="close">Abbrechen</button></div>
-    <div class="form pform">${pin("name", "Name / Alias", { w2: true })}${pin("unfall", "Unfallzeit", { type: "datetime-local", w2: true })}${pin("vk", "VKOF (%)", { num: true })}${pin("tief", "davon 2b/3 (%)", { num: true })}${pin("kg", "Gewicht (kg)", { num: true })}${pin("cm", "Größe (cm)", { num: true })}${pin("age", "Alter (Jahre)", { num: true })}<div class="f"><span>Geschlecht</span>${seg("sex", [["m", "m"], ["w", "w"]])}</div></div>
-    <h3>Besonderheiten</h3><div class="chips">${chip("f", "inhal", "V. a. Inhalationstrauma")}${chip("f", "intub", "intubiert")}${chip("f", "g3", "Grad 3 vorhanden")}${chip("f", "myo", "Myoglobinurie")}${chip("f", "zvk", "ZVK liegt")}${chip("f", "picco", "PiCCO liegt")}${chip("f", "devburn", "Zugang durch Brandhaut")}</div>
+    <div class="form pform">${pin("name", "Name / Alias", { w2: true })}${pin("unfall", "Unfallzeit", { type: "datetime-local", w2: true })}${pin("aufn", "Aufnahme V1 (Intensivstation)", { type: "datetime-local", w2: true })}${pin("vk", "VKOF (%)", { num: true })}${pin("tief", "davon 2b/3 (%)", { num: true })}${pin("kg", "Gewicht (kg)", { num: true })}${pin("cm", "Größe (cm)", { num: true })}${pin("age", "Alter (Jahre)", { num: true })}<div class="f"><span>Geschlecht</span>${seg("sex", [["m", "m"], ["w", "w"]])}</div></div>
+    <h3>Besonderheiten</h3><div class="chips">${chip("f", "inhal", "V. a. Inhalationstrauma")}${chip("f", "intub", "intubiert")}${chip("f", "g3", "Grad 3 vorhanden")}${chip("f", "myo", "Myoglobinurie")}${chip("f", "zvk", "ZVK liegt")}${chip("f", "picco", "PiCCO liegt")}${chip("f", "devburn", "Katheter durch verbrannte Haut")}</div>
     <h3>Mechanismus</h3><div class="chips">${MECH.map((m) => chip("mech", m[0], m[1])).join("")}${chip("f", "raum", "geschlossener Raum")}</div>
     <h3>Lokalisation</h3><div class="chips">${LOK.map((l) => chip("lok", l[0], l[1])).join("")}</div>
     <h3>Volumen präklinisch + Schockraum</h3><div class="form pform">${pin("pre", "ml gesamt", { num: true })}${pin("preBis", "gegeben bis (Uhrzeit)", { type: "time" })}</div>
     <h3>Übergabe Schockraum</h3>
     <div class="form pform">${d.f.intub ? pin("ueb.tubus", "Tubus / Tiefe (cm) / intubiert um", { w2: true }) : ""}<div class="f w2"><span>Escharotomie</span>${seg("esch", [["erfolgt", "erfolgt"], ["nötig", "nötig"], ["nein", "nicht nötig"]])}</div>${d.ueb.esch === "erfolgt" ? pin("ueb.eschOrt", "Escharotomie wo", { w2: true }) : ""}<div class="f w2"><span>Tetanus</span>${seg("tet", [["aktuell", "aktuell"], ["gegeben", "gegeben"]])}</div></div>
-    <div class="chips" style="margin-top:10px">${chip("f", "foto", "Fotodoku")}${chip("f", "lb", "Lund-Browder-Bogen")}${chip("f", "angeh", "Angehörige bekannt")}${chip("f", "gewGem", "Gewicht gemessen")}</div>
+    <div class="chips" style="margin-top:10px">${chip("f", "foto", "Fotodokumentation")}${chip("f", "lb", "Lund-Browder-Bogen")}${chip("f", "angeh", "Angehörige bekannt")}${chip("f", "gewGem", "Gewicht gemessen")}</div>
     <label class="f" style="margin-top:10px"><span>Notizen: SR-Medikamente, Begleitverletzungen/CT, Tox, Vorerkrankungen/Allergien, AIS, Ruß bis …</span><textarea data-pd="ueb.notiz">${esc(d.ueb.notiz || "")}</textarea></label>
     <div class="df">${UI.dlg === "edit" ? `<button class="btn dng" data-act="del" style="margin-right:auto">Patient löschen</button>` : ""}<button class="btn pri" data-act="pdsave">Speichern</button></div></div></div>`;
   return h;
@@ -1290,6 +1393,28 @@ function vAlgo(p, c) {
   h += `<div class="an alt"><div class="mut small">Abweichend entscheiden</div><div class="row"><input data-d="al_rate" inputmode="numeric" placeholder="${rate != null ? r0(rate) : "ml/h"}" value="${dv("al_rate")}" aria-label="Laufrate ml/h"> ml/h <button class="btn sm" data-act="algo_manual">übernehmen</button><button class="btn sm" data-act="algo_done" data-res="manuell" data-to="">ohne Änderung abschließen</button></div></div>`;
   return h + `</div></div>`;
 }
+function vScr(p) {
+  const s = scrState(p);
+  const chip = (l, st) => `<span class="sc ${st}">${l}: ${SCT[st]}</span>`;
+  const lv = (n) => { const l = last(lab(p, n)); return l ? `zuletzt ${fN(l.v, 1)} ${LABU[n]} (${fRel(l.t)})` : "noch kein Wert"; };
+  let h = `<div class="dlgbg"><div class="dlg" role="dialog" aria-label="Abfrage Inhalation"><div class="dh"><div><h2>Abfrage Inhalation</h2><div class="mut small">CO · Cyanid · Inhalationstrauma — jede Frage mit Ja oder Nein beantworten</div></div>${iBtn("scr_i")}</div>${vInfo("scr_i", I("CO und Cyanid sind die häufigste frühe Todesursache bei Bränden in geschlossenen Räumen; das Pulsoxymeter zeigt beides nicht an. Ein Inhalationstrauma erhöht den Volumenbedarf und gefährdet den Atemweg.", null, null, "CO-Verdacht: COHb ≥ 10 %, COHb erhöht bzw. SpO2 normal trotz Hypoxiezeichen — oder Exposition plus Symptome, solange kein COHb vorliegt. Cyanid-Verdacht: Exposition plus Bewusstseinsstörung, Kreislaufinstabilität oder Laktat > 10 mmol/l. Inhalationstrauma: eines der Atemwegszeichen."))}`;
+  SCR.forEach(([g, ks]) => {
+    h += `<h3>${g}</h3>`;
+    ks.forEach((k) => {
+      const a = scrAns(p, k);
+      h += `<div class="sq${a === "j" ? " j" : ""}"><div class="lb">${C48L[k]}</div><div class="seg"><button data-act="scr" data-k="${k}" data-v="j" class="${a === "j" ? "on j" : ""}" aria-pressed="${a === "j"}">Ja</button><button data-act="scr" data-k="${k}" data-v="n" class="${a === "n" ? "on nn" : ""}" aria-pressed="${a === "n"}">Nein</button></div></div>`;
+    });
+    if (g.indexOf("CO") >= 0) h += `<label class="f" style="max-width:240px;margin-top:6px"><span>COHb (%) — ${lv("COHb")}</span><input data-d="s_cohb" inputmode="decimal" value="${dv("s_cohb")}" autocomplete="off"></label>`;
+    if (g === "Cyanid") h += `<label class="f" style="max-width:240px;margin-top:6px"><span>Laktat (mmol/l) — ${lv("Laktat")}</span><input data-d="s_lak" inputmode="decimal" value="${dv("s_lak")}" autocomplete="off"></label>`;
+  });
+  h += `<h3>Ergebnis${s.open ? ` — noch ${s.open} Frage${s.open > 1 ? "n" : ""} offen` : ""}</h3><div class="scs" style="margin:0 0 6px">${chip("CO", s.co)}${chip("Cyanid", s.cn)}${chip("Inhalationstrauma", s.iht)}</div>`;
+  const steps = (L) => `<ul class="steps">${L.map(([, t]) => `<li>${t}</li>`).join("")}</ul>`;
+  if (s.co === "v") h += box("e", "CO-Verdacht", steps(C48_CO_RH));
+  if (s.cn === "v") h += box("e", "Cyanid-Verdacht", steps(C48_CN_RH));
+  if (ihtVerdacht(p)) h += box("w", "Verdacht auf Inhalationstrauma", steps(C48_IHT), p.f.inhal ? "" : `<button class="btn pri" data-act="ihtset">V. a. Inhalationstrauma übernehmen (Rule of 10 + 100 ml/h)</button>`);
+  if (!s.open && s.co === "n" && s.cn === "n" && s.iht === "n") h += box("ok", "Kein Hinweis auf CO, Cyanid oder Inhalationstrauma", "Bei neuer Klinik oder neuen Werten Abfrage wiederholen.");
+  return h + `<div class="df"><button class="btn pri" data-act="scrdone">Fertig</button></div></div></div>`;
+}
 function vAbk() {
   return `<div class="dlgbg"><div class="dlg" role="dialog" aria-label="Abkürzungen"><div class="dh"><h2>Abkürzungen</h2><button class="btn sm" data-act="close">Schließen</button></div><div class="leg">${LEGENDE.map(([a, t]) => `<div><b>${a}</b> ${t}</div>`).join("")}</div></div></div>`;
 }
@@ -1305,6 +1430,7 @@ function vAbout() {
 function vDialog(p, c) {
   if (UI.dlg === "new" || UI.dlg === "edit") return vPat();
   if (UI.dlg === "algo" && p) return vAlgo(p, c);
+  if (UI.dlg === "scr" && p) return vScr(p);
   if (UI.dlg === "abk") return vAbk();
   if (UI.dlg === "about") return vAbout();
   return "";
@@ -1317,6 +1443,9 @@ function buildPrint(p, c) {
   let h = `<h1>LUminate Lite — ${esc(p.name || "Patient")}</h1><div class="pm">${patSum(p, c)}${c.u != null ? ` · Unfall ${fD(c.u)} ${fT(c.u)} · Stunde ${Math.floor(c.h)} (Tag ${c.tag})` : ""} · Druck ${fD(now)} ${fT(now)}</div>`;
   h += `<div class="pm">Rule of 10: ${c.rot != null ? r0(c.rot) + " ml/h" : "—"} · Zieldiurese ${zielTxt(c)}${c.ivy ? " · Ivy-Index 250 ml/kg = " + tsd(c.ivy) + " ml/24 h" : ""}${c.absi ? " · ABSI " + c.absi + " (Überleben " + c.absiTxt + ")" : ""}</div>`;
   const u = p.ueb, ub = [];
+  if (p.aufn != null) ub.push(`Aufnahme V1: ${fD(p.aufn)} ${fT(p.aufn)}`);
+  { const s = scrState(p); const ja = SCR.reduce((a, g) => a.concat(g[1]), []).filter((k) => scrAns(p, k) === "j").map((k) => C48L[k]);
+    ub.push(`Abfrage Inhalation: CO ${SCT[s.co]} · Cyanid ${SCT[s.cn]} · Inhalationstrauma ${SCT[s.iht]}${s.open ? ` (${s.open} Fragen offen)` : ""}${ja.length ? " — Ja: " + ja.join("; ") : ""}`); }
   if (p.mech.length) ub.push("Mechanismus: " + p.mech.map((m) => (MECH.find((y) => y[0] === m) || [])[2] || m).join(", ") + (p.f.raum ? ", geschlossener Raum" : ""));
   if (p.lok.length) ub.push("Lokalisation: " + p.lok.map((m) => (LOK.find((y) => y[0] === m) || [])[1] || m).join(", "));
   if (numDE(p.pre) != null) ub.push(`Volumen präklinisch + Schockraum ${tsd(numDE(p.pre))} ml${p.preBis ? " bis " + fT(p.preBis) : ""}`);
@@ -1324,7 +1453,7 @@ function buildPrint(p, c) {
   if (u.esch) ub.push("Escharotomie: " + (u.esch === "nein" ? "nicht nötig" : u.esch) + (u.eschOrt ? " (" + esc(u.eschOrt) + ")" : ""));
   if (u.tet) ub.push("Tetanus: " + u.tet);
   if (u.notiz) ub.push("Notizen: " + esc(u.notiz));
-  if (ub.length) h += `<h2>Übergabe Schockraum</h2><ul>${ub.map((t) => `<li>${t}</li>`).join("")}</ul>`;
+  if (ub.length) h += `<h2>Aufnahme und Übergabe Schockraum</h2><ul>${ub.map((t) => `<li>${t}</li>`).join("")}</ul>`;
   h += `<h2>Checkliste Aufnahme bis Tag 5</h2>`;
   PHASES.forEach((ph) => {
     const items = visItems(p, c, ph.k);
@@ -1387,19 +1516,22 @@ function savePat() {
   p.name = (d.name || "").trim(); p.age = d.age; p.sex = d.sex; p.cm = d.cm; p.kg = d.kg; p.vk = d.vk; p.tief = d.tief;
   const u = d.unfall ? new Date(d.unfall).getTime() : null;
   p.unfall = u != null && Number.isFinite(u) ? u : null;
+  const an = d.aufn ? new Date(d.aufn).getTime() : null;
+  p.aufn = an != null && Number.isFinite(an) ? an : isNew ? Date.now() : p.aufn;
   p.mech = d.mech; p.lok = d.lok; p.f = d.f; p.ueb = d.ueb;
   p.pre = d.pre;
   p.preBis = d.preBis ? (p.unfall != null ? hhmmNach(d.preBis, p.unfall) : hhmmVor(d.preBis, Date.now())) : null;
   if (isNew) { S.pats[p.id] = p; S.sel = p.id; S.tab = "jetzt"; }
   save();
-  UI.dlg = null; UI.pd = null;
-  toast(isNew ? "Patient angelegt" : "Patient gespeichert");
+  UI.dlg = isNew ? "scr" : null; UI.pd = null;
+  toast(isNew ? "Patient angelegt — jetzt Abfrage Inhalation" : "Patient gespeichert");
 }
 function createDemo() {
   const now = Date.now(), p = newPat();
   const u = now - 3 * H - 10 * MIN;
-  Object.assign(p, { name: "Testpatient", age: "52", sex: "m", cm: "180", kg: "85", vk: "40", tief: "25", unfall: u, created: now - 80 * MIN, mech: ["flamme"], lok: ["gesicht", "zirk"], f: { inhal: true, intub: true, g3: true, zvk: true, picco: true, raum: true }, pre: "1500", preBis: now - 85 * MIN, ueb: { tubus: "8,0 · 23 cm · präklinisch", esch: "nötig", tet: "gegeben", notiz: "Wohnungsbrand, bewusstlos aufgefunden. Sufentanil/Midazolam im Schockraum. CT ohne Begleitverletzung." } });
-  p.done = { rg_raum: now - 70 * MIN, rg_russ: now - 70 * MIN, rg_bew: now - 70 * MIN, s_dk: now - 75 * MIN, s_aw: now - 75 * MIN };
+  Object.assign(p, { name: "Testpatient", age: "52", sex: "m", cm: "180", kg: "85", vk: "40", tief: "25", unfall: u, created: now - 80 * MIN, aufn: now - 80 * MIN, mech: ["flamme"], lok: ["gesicht", "zirk"], f: { inhal: true, intub: true, g3: true, zvk: true, picco: true, raum: true }, pre: "1500", preBis: now - 85 * MIN, ueb: { tubus: "8,0 · 23 cm · präklinisch", esch: "nötig", tet: "gegeben", notiz: "Wohnungsbrand, bewusstlos aufgefunden. Sufentanil/Midazolam im Schockraum. CT ohne Begleitverletzung." } });
+  p.done = { s_dk: now - 75 * MIN, s_aw: now - 75 * MIN };
+  [["rg_raum", "j"], ["rg_bew", "j"], ["rg_russ", "j"], ["rg_strid", "n"], ["rg_haar", "j"], ["rg_cohb", "j"], ["rg_spo2", "n"], ["rg_cosy", "n"], ["rg_kreis", "n"], ["rg_lak", "j"], ["rg_svo2", "n"]].forEach(([k, v]) => { p.scr[k] = v; if (v === "j") p.done[k] = now - 70 * MIN; });
   [{ t: now - 80 * MIN, k: "rate", v: 600 }, { t: now - 75 * MIN, k: "lab", n: "Laktat", v: 11.2 }, { t: now - 75 * MIN, k: "lab", n: "COHb", v: 14 }, { t: now - 20 * MIN, k: "diu", v: 20, a: now - 80 * MIN }, { t: now - 20 * MIN, k: "map", v: 72 }].forEach((e) => addEv(p, e));
   S.pats[p.id] = p; S.sel = p.id; S.tab = "jetzt";
   save();
@@ -1437,6 +1569,10 @@ function act(a, el) {
     case "lsg": if (p) { p.lsg = d.v; addEv(p, { t: Date.now(), k: "lsg", v: d.v }); save(); toast("Lösung: " + lsgName(p)); } break;
     case "evdel": if (p && confirm("Diesen Eintrag löschen?")) { p.ev = p.ev.filter((e) => e.id !== d.k); save(); } break;
     case "algo": if (p) { UI.algo = null; UI.dlg = "algo"; } break;
+    case "scropen": if (p) UI.dlg = "scr"; break;
+    case "scr": if (p) { scrCommit(p); scrSet(p, d.k, scrAns(p, d.k) === d.v ? null : d.v); save(); } break;
+    case "scrdone": if (p) { scrCommit(p); save(); UI.dlg = null; } break;
+    case "ihtset": if (p) { p.f.inhal = true; save(); const c2 = calc(p); toast("V. a. Inhalationstrauma übernommen" + (c2.rot != null ? ` — Rule of 10 jetzt ${r0(c2.rot)} ml/h` : "")); } break;
     case "algo_z": if (UI.algo) UI.algo.z[d.k] = d.v; break;
     case "algo_a": if (UI.algo) { UI.algo.a[d.k] = d.v; if (d.k !== "dys") ALGO_ORDER.slice(ALGO_ORDER.indexOf(d.k) + 1).forEach((k) => { delete UI.algo.a[k]; }); } break;
     case "algo_done": algoFinish(d.res, d.to); break;
@@ -1451,12 +1587,13 @@ function act(a, el) {
 function render() {
   const p = cur();
   const dl = document.querySelector(".dlg");
-  const sc = dl ? dl.scrollTop : 0;
+  const sc = dl && render.dlg === UI.dlg ? dl.scrollTop : 0;
+  render.dlg = UI.dlg;
   let h;
   if (!p) h = vHeader(null, null) + vEmpty();
   else {
     const c = calc(p), P = plan(p, c);
-    h = vHeader(p, c) + vTabs(p, c) + `<main>${S.tab === "vol" ? vVol(p, c, P) : S.tab === "check" ? vCheck(p, c) : vJetzt(p, c, P)}</main>` + vDialog(p, c);
+    h = vHeader(p, c) + `<div class="stick">${vBar(p, c)}${vTabs(p, c)}</div><main>${S.tab === "vol" ? vVol(p, c, P) : S.tab === "check" ? vCheck(p, c) : vJetzt(p, c, P)}</main>` + vDialog(p, c);
     const rd = reevalDue(p, c);
     document.title = (rd && c.now >= rd.over ? "⚠ Reevaluation · " : "") + "LUminate Lite";
   }
@@ -1466,6 +1603,7 @@ function render() {
   document.body.style.overflow = UI.dlg ? "hidden" : "";
   const d2 = document.querySelector(".dlg");
   if (d2 && sc) d2.scrollTop = sc;
+  tickTimers();
 }
 document.addEventListener("click", (e) => {
   const el = e.target.closest("[data-act]");
@@ -1482,7 +1620,7 @@ document.addEventListener("change", (e) => {
   onField(e.target);
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && (UI.dlg || UI.menu)) { UI.dlg = null; UI.pd = null; UI.algo = null; UI.menu = false; render(); }
+  if (e.key === "Escape" && (UI.dlg || UI.menu)) { const p0 = cur(); if (UI.dlg === "scr" && p0) { scrCommit(p0); save(); } UI.dlg = null; UI.pd = null; UI.algo = null; UI.menu = false; render(); }
   if (e.key === "Enter" && e.target.dataset && e.target.dataset.d && /^e_/.test(e.target.dataset.d)) { onField(e.target); saveEntry(); render(); }
 });
 window.addEventListener("afterprint", () => { document.getElementById("print").innerHTML = ""; });
@@ -1514,6 +1652,7 @@ setInterval(() => {
   render();
 }, 30000);
 
+setInterval(tickTimers, 1000);
 render();
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
