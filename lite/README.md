@@ -22,6 +22,14 @@ Die klinischen Inhalte sind unverändert aus LUminate 1.3.0 übernommen:
 - **Ein Patientenformular** statt Stammdaten-Fenster mit Einzelfeldern
 - **Eigenständig:** eigener Speicher (`lulite_v1`), keine Kopplung mit BurnICU oder LUminate; mehrere Patienten über die Auswahl oben
 
+## Neu in 1.2.0
+
+- **Kopfzeile in jedem Reiter:** Stunde seit Unfall · Zieldiurese · Laufrate jetzt.
+- **Rule of 10 nur noch als Startwert:** große Anzeige nur, bis eine Laufrate eingetragen ist; danach klein unter „Bilanz“. Intern bleibt sie Vergleichslinie für Defizit/Übertherapie bis zur Übernahme und für die Warnung ab 2 × Rule of 10.
+- **Checkliste zweispaltig:** links die Aufnahme mit der Abfrage Inhalation (CO, Cyanid, Inhalationstrauma), rechts die Zeitfenster h 0–8 bis Tag 5. Das aktuelle Zeitfenster ist farbig hinterlegt und mit „jetzt“ markiert; abgelaufene sind grau und eingeklappt, offene Punkte stehen als „n offen“ im Kopf. Die Aufnahme bleibt offen, solange die Abfrage oder Verdachts-Schritte offen sind.
+- **(i) an „COHb-Kontrolle“:** FiO2 senken bei COHb < 3 % und Symptomfreiheit (AWMF S2k 040-012, 2021), bei Ausgangs-COHb > 10 % frühestens nach 6 h 100 % O2 (SOP). **(i) an „HBO“:** hyperbare Oxygenierung in der Druckkammer, Indikationen und Zeitfenster (Beginn innerhalb von 6 h).
+- (i)-Knöpfe jetzt auch unter „Jetzt fällig“ und im Ergebnis der Abfrage.
+
 ## Neu in 1.1.0
 
 - **Leiste, immer sichtbar:** Zeit seit Unfall, seit Aufnahme V1 (neues Feld beim Patienten) und seit der letzten Reevaluation. Die Reevaluation blinkt gelb ab 1 h (fällig) und rot ab 2 h (überfällig); Antippen öffnet den Algorithmus. Daneben der Status **CO · Cyanid · IHT** (offen / kein Hinweis / Verdacht).
