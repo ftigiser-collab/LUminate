@@ -4,6 +4,10 @@ Adresse: https://ftigiser-collab.github.io/LUminate/
 
 Eigene App (eigenes Symbol, eigener Offline-Speicher, eigenes Update) für die ersten fünf Tage eines großen Verbrennungspatienten auf der V1. Primär für den PC, druckbar auf A4. Arbeitsdokument, keine Patientenakte — Aliasnamen verwenden.
 
+## LUminate Lite
+
+Einfache Fassung mit denselben Inhalten in drei Reitern, eigenständig (nicht mit BurnICU gekoppelt), für Smartphone und Desktop: https://ftigiser-collab.github.io/LUminate/lite/ — siehe `lite/README.md`.
+
 ## Neu in 1.3.0 — Algorithmus-Ergebnis gilt, „Gilt jetzt“, Protokoll, Druck/PDF
 
 - **Algorithmus-Ergebnis wird respektiert:** Nach Dobutamin, Noradrenalin, „keine Volumenindikation“ oder „ohne Änderung“ zeigt die Jetzt-Karte bis zur nächsten Reevaluation genau dieses Ergebnis („Laufrate halten“) — kein +20 %/−10 % und keine Aufholrate mehr dazwischen. Die SOP-Spalte der Stundentabelle und das gedruckte Volumenprotokoll zeigen in der Stunde das Algorithmus-Ergebnis.
