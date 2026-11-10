@@ -198,6 +198,15 @@ button.tmr{cursor:pointer}
 .sq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
 .sq.j .lb{color:var(--err);font-weight:650}
 .sq .seg{flex-wrap:nowrap}
+.tgs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:3px}
+.tg{display:inline-flex;align-items:center;gap:4px;padding:1px 7px 1px 5px;border-radius:6px;font-size:11.5px;font-weight:700;letter-spacing:.2px;color:#fff;line-height:1.5;white-space:nowrap;vertical-align:1px}
+.tg svg{width:13px;height:13px;flex:none}
+.tg.m{background:#6a46a3}.tg.d{background:#1d5fa8}.tg.l{background:#0f6f66}
+.opt{display:inline-block;padding:0 7px;border-radius:6px;border:1.5px dashed #7b8794;color:#44515d;background:#fff;font-size:11.5px;font-weight:700;letter-spacing:.2px;line-height:1.5;white-space:nowrap;vertical-align:1px}
+.it.st-opt .cb{border-style:dashed}
+.it.st-done .tg,.it.st-na .tg{opacity:.55}
+.tlg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:13px;color:var(--mut);margin:0 0 10px}
+.tlg .e{display:inline-flex;gap:6px;align-items:center}
 .steps{margin-top:6px}
 .stp{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid rgba(0,0,0,.09);font-size:14.5px}
 .stp:first-child{border-top:0}
@@ -260,6 +269,7 @@ button.tmr{cursor:pointer}
   #print li{padding:1.5pt 0;break-inside:avoid}
   #print .sub{font-size:9pt}
   #print .flag,#print .ib{display:none}
+  #print .ptg{font-weight:700;font-size:8.5pt}
   #print table{width:100%;border-collapse:collapse;font-size:9.5pt}
   #print td,#print th{border:.5pt solid #777;padding:2pt 4pt;text-align:left}
   #print .lgd{font-size:8pt;margin-top:10pt;border-top:.5pt solid #777;padding-top:4pt}
@@ -277,7 +287,7 @@ button.tmr{cursor:pointer}
    Gleiche Inhalte (Checkliste, Daueranweisungen, Volumentherapie nach SOP, Algorithmus), einfachere Oberfläche.
    Eigenständig: eigener Speicher (lulite_v1), keine Kopplung mit BurnICU. Eine Datei, kein Build.
    ===================================================================== */
-const APP_VERSION = "1.3.1";
+const APP_VERSION = "1.4.0";
 const SKEY = "lulite_v1";
 const H = 36e5, MIN = 6e4;
 
@@ -600,14 +610,21 @@ function plan(p, c) {
   if (out.ev && out.ev.mapLow) add("e", `MAP ${fN(out.ev.map, 0)} < 65 mmHg: Fluid Challenge (SOP); persistierend Dobutamin bei kardialer Dysfunktion, Noradrenalin > 0,25 µg/kg/min → Argipressin 0,01 IE/min erwägen.`);
   const albNow = valAt(albHist(p), now);
   const albRate = albNow ? albNow.v : 0;
-  if (c.h < 6) add("i", `Albumin frühestens ab h 6 (${fT(atMs(c, 6))}) — vorher verlässt es mit dem Kapillarleck das Gefäß.`);
-  else if (c.h < 8) add("i", "h 6–8: Albumin 20 % nur erwägen; FFP nur nach Gerinnungssituation (nicht mandatorisch).");
-  else if (!albRate && rate) add("w", `Ab h 8 Albumin 20 % nach SOP: 100 ml je 1000 ml Volumen ≈ ${r0(rate / 10)} ml/h (Ziel-Albumin 2,2–2,7 g/dl); FFP nur nach Gerinnungssituation.`, { k: "alb", v: Math.round(rate / 10) });
   const alb = last(lab(p, "Albumin"));
-  if (alb && c.h >= 8) {
-    if (alb.v > 2.7 && albRate) add("i", `Albumin ${fN(alb.v, 1)} g/dl über Ziel (2,2–2,7) — Perfusor reduzieren bzw. pausieren.`);
-    if (alb.v < 2.2) add("w", `Albumin ${fN(alb.v, 1)} g/dl unter Ziel (2,2–2,7 g/dl).`);
+  const mkNow = v && c.kg && c.vk ? (c.h >= 24 ? vol(p, c, c.u + 24 * H) : v).ges / (c.kg * c.vk) : null;
+  const albC = [];
+  if (alb && alb.v < 2.2) albC.push(`Serum-Albumin ${fN(alb.v, 1)} g/dl < 2,2`);
+  if (rate && c.rot && rate > 2 * c.rot) albC.push("Laufrate > 2 × Rule of 10");
+  if (mkNow != null && mkNow > 6) albC.push(`${fN(mkNow, 1)} ml/kg/% VKOF > 6`);
+  const albBed = "Bedingungen: Serum-Albumin < 2,2 g/dl oder Kristalloidbedarf > 2 × Rule of 10 bzw. > 6 ml/kg/% VKOF";
+  const ffp = c.h >= 6 ? " FFP nur nach Gerinnungssituation (nicht mandatorisch)." : "";
+  if (c.h < 6) add("i", `${OPT_CHIP} Albumin frühestens ab h 6 (${fT(atMs(c, 6))}) — vorher verlässt es mit dem Kapillarleck das Gefäß.`);
+  else if (albRate) {
+    if (alb && alb.v > 2.7) add("i", `Albumin ${fN(alb.v, 1)} g/dl über Ziel (2,2–2,7) — Perfusor reduzieren bzw. pausieren.`);
+    else if (alb && alb.v < 2.2) add("i", `Albumin ${fN(alb.v, 1)} g/dl unter Ziel (2,2–2,7 g/dl) — Albumin-Perfusor läuft mit ${r0(albRate)} ml/h.`);
   }
+  else if (albC.length && rate) add("w", `${OPT_CHIP} Albumin 20 % erwägen — Bedingung erfüllt: ${albC.join(", ")}. ${c.h < 8 ? "h 6–8 nur erwägen, nach SOP ab h 8. " : ""}100 ml je 1000 ml Volumen ≈ ${r0(rate / 10)} ml/h, Ziel-Albumin 2,2–2,7 g/dl.${ffp}`, { k: "alb", v: Math.round(rate / 10) });
+  else add("i", `${OPT_CHIP} Albumin 20 % — derzeit keine Bedingung erfüllt${alb ? "" : " (Serum-Albumin fehlt)"}. ${albBed}.${ffp}`);
   const na = lastIn(lab(p, "Na"), now, 12 * H);
   if (na && na.v > 139 && p.lsg !== "delta") add("w", `Natrium ${fN(na.v, 0)} > 139 mmol/l → Ringer-Azetat auf Eindrittelelektrolytlösung (Deltajonin BG (1/3), Na 45/K 25) umstellen (Ziel 135–139).`, { k: "lsg", v: "delta" });
   if (na && na.v < 135 && p.lsg === "delta") add("w", `Natrium ${fN(na.v, 0)} < 135 mmol/l unter Deltajonin BG (1/3) — zurück auf Ringer-Azetat? (Ziel 135–139)`, { k: "lsg", v: "ra" });
@@ -617,7 +634,7 @@ function plan(p, c) {
     if (pr > 100) add("e", `Ivy-Index überschritten: ${tsd(v24.ges)} ml in ${c.h >= 24 ? "h 0–24" : fN(c.h, 0) + " h"} (> 250 ml/kg) — hohes Risiko für ein abdominelles Kompartmentsyndrom: IAP messen, Zufuhr drosseln.`);
     else if (pr >= 80 && c.h < 24) add("w", `${fN(pr, 0)} % des Ivy-Index (250 ml/kg in 24 h) erreicht.`);
     const mk = v24.ges / (c.kg * c.vk);
-    if (mk > 6 && pr <= 100) add("w", `Über 6 ml/kg/% VKOF (${fN(mk, 1)}) — Kolloid-Rescue (Albumin) erwägen statt weiter Kristalloid.`);
+    if (mk > 6 && pr <= 100 && (!rate || albRate)) add("w", albRate ? `Über 6 ml/kg/% VKOF (${fN(mk, 1)}) trotz Albumin — Zufuhr kritisch prüfen (Fluid Creep).` : `Über 6 ml/kg/% VKOF (${fN(mk, 1)}) — Kolloid-Rescue (Albumin) erwägen statt weiter Kristalloid.`);
   }
   const iap = last(ser(p, "iap"));
   if (iap) {
@@ -688,12 +705,12 @@ const ITEMS = [
       "ESPEN-Leitlinie Verbrennung (Rousseau, Clin Nutr 2013): Beginn innerhalb von 12 h. Mosier et al. (J Burn Care Res 2011): frühe enterale Ernährung mit weniger Infektionen assoziiert.", "Ernährung: so früh wie möglich, spätestens 24 h; Tag 1 20 ml/h.") },
   { k: "o_vkof", ph: "h0", at: 4, t: () => "VKOF neu bestimmen (Lund-Browder; Grad 1 zählt nicht) — ändert die Rule of 10", inp: [{ f: "vkof", l: "VKOF", u: "%" }, { f: "tief", l: "2b/3", u: "%" }],
     info: I("Grad 1 (Erythem) hat kein relevantes Kapillarleck. Präklinische Schätzungen weichen oft ab — kleine Flächen werden eher überschätzt, bei Adipositas ist die Schätzung besonders unsicher; jede Überschätzung bedeutet Überinfusion.") },
-  { k: "o_alb", ph: "h0", at: 6, t: () => "Ab h 6: Gerinnung prüfen — FFP nur nach Gerinnungssituation · Albumin 20 % nur erwägen (ab h 8 nach SOP)",
+  { k: "o_alb", ph: "h0", at: 6, t: () => "Ab h 6: Gerinnung prüfen — FFP nur nach Gerinnungssituation, nicht mandatorisch · Albumin ist optional, frühestens ab h 6 (Bedingungen siehe h 8–24)",
     info: I("In den ersten 6–8 h ist das Leck so groß, dass Albumin mit ins Interstitium wandert und dort Wasser bindet; danach bleibt es zunehmend intravasal.",
       "Navickis et al. (J Burn Care Res 2016, Meta-Analyse): Albumin senkte die Gesamtletalität nicht signifikant; nach Ausschluss zweier Studien mit hohem Bias-Risiko geringere Letalität und weniger Kompartmentsyndrome — Evidenz begrenzt. ABA 2024 (bedingte Empfehlung): Albumin in den ersten 24 h erwägen, v. a. bei großen Verbrennungen bzw. steigendem Bedarf; FFP nur im Rahmen von Studien.",
       "Volumentherapie: ab h 6 Albumin 100 ml je 1000 ml und FFP 1 je 1000 ml — auf der V1: h 6–8 Albumin nur erwägen, FFP nur nach Gerinnung.") },
   /* ---- h 8–24 ---- */
-  { k: "y_alb", ph: "h8", at: 8, t: (x) => { const r = valAt(rateHist(x.p), x.c.now); return `Albumin-20-%-Perfusor starten${r ? ` ≈ <b>${r0(numDE(r.v) / 10)} ml/h</b>` : ""} (100 ml je 1000 ml Volumen)`; },
+  { k: "y_alb", ph: "h8", at: 8, opt: true, t: (x) => { const r = valAt(rateHist(x.p), x.c.now); return `Albumin 20 % per Perfusor — nur bei erfüllter Bedingung: Serum-Albumin < 2,2 g/dl oder Kristalloidbedarf > 2 × Rule of 10 bzw. > 6 ml/kg/% VKOF. Dann 100 ml je 1000 ml Volumen${r ? ` ≈ <b>${r0(numDE(r.v) / 10)} ml/h</b>` : ""}, Ziel-Albumin 2,2–2,7 g/dl`; },
     run: (x) => { const a = valAt(albHist(x.p), x.c.now); return a && numDE(a.v) ? `läuft ${r0(numDE(a.v))} ml/h` : ""; }, inp: [{ lab: "Albumin", u: "g/dl" }],
     info: I("Hypoalbuminämie senkt den onkotischen Druck und verstärkt das Ödem auch in nicht verbrannter Haut; nach Abklingen des Lecks hält Albumin Volumen im Gefäß und spart Kristalloid.", "Navickis 2016 (Meta-Analyse): Gesamtletalität nicht signifikant gesenkt, nach Ausschluss von Studien mit hohem Bias-Risiko weniger Letalität und Kompartmentsyndrome — Evidenz begrenzt. ABA 2024: Albumin in den ersten 24 h erwägen (bedingte Empfehlung).", "Volumentherapie: Albumin 20 % Perfusor 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl (Labor in g/dl).") },
   { k: "y_auge", ph: "h8", at: 8, cond: (x) => x.c.gesicht, t: () => "Gesichtsbeteiligung: Augen untersuchen (Fluoreszein, Lidschluss), Augenkonsil",
@@ -778,7 +795,7 @@ const STAND = [
   { k: "z_bedarf", from: 48, to: 120, t: () => "Volumen bedarfsorientiert — Rückresorption der Ödeme: Hypervolämie und Lungenwasser (ELWI) beachten, Bilanz täglich",
     info: I("Ab Tag 2–3 strömt das Ödem zurück ins Gefäß (Rückresorption): Gefahr von Hypervolämie und Lungenödem (ELWI), zugleich hohe Verdunstungsverluste über die Wunde → Hypernatriämie.") },
   { k: "z_picco", from: 48, to: 120, cond: (x) => piccoAktiv(x.p), t: () => "PiCCO 1 × pro Schicht, ELWI beachten" },
-  { k: "z_alb", from: 8, to: 120, t: (x) => x.c.h != null && x.c.h < 48 ? "Albumin 20 %: 100 ml je 1000 ml Volumen — Ziel-Albumin <b>2,2–2,7 g/dl</b>" : "Ziel-Albumin <b>2,2–2,7 g/dl</b>",
+  { k: "z_alb", from: 8, to: 120, t: (x) => x.c.h != null && x.c.h < 48 ? "Albumin 20 % ist optional — wenn gegeben: 100 ml je 1000 ml Volumen, Ziel-Albumin <b>2,2–2,7 g/dl</b>" : "Ziel-Albumin <b>2,2–2,7 g/dl</b>",
     info: I("Hypoalbuminämie senkt den onkotischen Druck und verstärkt das Ödem auch in nicht verbrannter Haut; nach Abklingen des Lecks hält Albumin Volumen im Gefäß und spart Kristalloid.", "Navickis 2016 (Meta-Analyse): Gesamtletalität nicht signifikant gesenkt, nach Ausschluss von Studien mit hohem Bias-Risiko weniger Letalität und Kompartmentsyndrome — Evidenz begrenzt. ABA 2024: Albumin in den ersten 24 h erwägen (bedingte Empfehlung).", "Volumentherapie: Albumin 20 % Perfusor 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl (Labor in g/dl).") },
   { k: "z_na", from: 0, to: 120, t: () => "Ziel-Natrium <b>135–139 mmol/l</b> — > 139 → Deltajonin BG (1/3) statt Ringer-Azetat",
     info: I("Verdunstung über die Wundfläche (freies Wasser) und Natriumlast der Lösungen treiben das Natrium hoch; Hypernatriämie ist bei Verbrannten mit höherer Letalität assoziiert.", null, "Volumentherapie/Natriumstörungen (Dok-ID 1620146): bei Na⁺ > 139 Eindrittelelektrolytlösung — Deltajonin BG (1/3) (Na 45/K 25), nicht Deltajonin 140/4; im Haus laktatfreie Lösungen.") },
@@ -827,6 +844,34 @@ const NICHT = [
 ];
 const LEGENDE = [["2b/3", "Verbrennungsgrad 2b bzw. 3 (tief)"], ["4-DMAP", "4-Dimethylaminophenol"], ["ABA", "American Burn Association"], ["ABSI", "Abbreviated Burn Severity Index"], ["ADH", "antidiuretisches Hormon"], ["AF", "Atemfrequenz"], ["AIS", "Abbreviated Injury Score (Bronchoskopie)"], ["Anti-Xa", "Anti-Faktor-Xa-Aktivität"], ["ANV", "akutes Nierenversagen"], ["ARDS", "akutes Lungenversagen"], ["avDO2", "arteriovenöse O2-Differenz"], ["AWMF", "Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften"], ["BB", "Blutbild"], ["BG", "Berufsgenossenschaft"], ["BGA", "Blutgasanalyse"], ["BZ", "Blutzucker"], ["Ca²⁺", "ionisiertes Kalzium"], ["CK", "Kreatinkinase"], ["CO", "Kohlenmonoxid"], ["CO2", "Kohlendioxid"], ["COHb", "Carboxyhämoglobin"], ["CT", "Computertomografie"], ["DAV", "Deutschsprachige Arbeitsgemeinschaft für Verbrennungsbehandlung"], ["Deltajonin", "BG (1/3) Eindrittelelektrolytlösung"], ["DGIIN", "Deutsche Gesellschaft für Internistische Intensivmedizin und Notfallmedizin"], ["DGINA", "Deutsche Gesellschaft Interdisziplinäre Notfall- und Akutmedizin"], ["DGV", "Deutsche Gesellschaft für Verbrennungsmedizin"], ["DK", "Dauerkatheter"], ["Dobu", "Dobutamin"], ["E", "Einheiten"], ["Echo", "Echokardiografie"], ["EK", "Erythrozytenkonzentrat"], ["EKG", "Elektrokardiogramm"], ["ELWI", "extravaskulärer Lungenwasserindex"], ["ESPEN", "Europäische Gesellschaft für klinische Ernährung"], ["EtCO2", "endtidales CO2"], ["FFP", "Fresh Frozen Plasma"], ["FiO2", "inspiratorische O2-Fraktion"], ["GI", "gastrointestinal"], ["h", "Stunde ab Unfall"], ["Hb", "Hämoglobin"], ["HBO", "hyperbare Oxygenierung (100 % O2 unter Überdruck in der Druckkammer)"], ["HES", "Hydroxyethylstärke"], ["HF", "Herzfrequenz"], ["HFNC", "High-Flow-Sauerstoff über Nasenkanüle"], ["HI", "Herzindex (l/min/m²)"], ["Hk", "Hämatokrit"], ["i.v.", "intravenös"], ["IAP", "intraabdomineller Druck (mmHg)"], ["IE", "Internationale Einheiten"], ["IHT", "Inhalationstrauma"], ["IL-6", "Interleukin 6"], ["ITBVI", "intrathorakaler Blutvolumenindex"], ["J", "Jahre"], ["KOF", "Körperoberfläche"], ["Lite", "vereinfachte Fassung von LUminate"], ["MAP", "mittlerer arterieller Druck"], ["MCP", "Metoclopramid"], ["NA", "Noradrenalin"], ["Na", "Natrium"], ["Na/K", "Natrium/Kalium"], ["NW", "Nebenwirkung"], ["O2", "Sauerstoff"], ["OP", "Operation"], ["p.i.", "per inhalationem"], ["paO2", "arterieller Sauerstoffpartialdruck"], ["PEEP", "positiver endexspiratorischer Druck"], ["PiCCO", "Pulse Contour Cardiac Output"], ["PLR", "Passive Leg Raise"], ["PPI", "Protonenpumpenhemmer"], ["PPV", "Pulse Pressure Variation"], ["PRIS", "Propofol-Infusionssyndrom"], ["RAAS", "Renin-Angiotensin-Aldosteron-System"], ["RAP", "rechtsatrialer Druck"], ["Rekap", "Rekapillarisierungszeit"], ["RR", "Blutdruck"], ["RV", "rechtsventrikulär"], ["S2k", "konsensbasierte Leitlinie (AWMF-Stufe)"], ["ScvO2", "zentralvenöse O2-Sättigung"], ["SIRS", "systemisches Entzündungssyndrom"], ["SOP", "Standardvorgehen der V1"], ["SpO2", "pulsoxymetrische Sättigung"], ["SR", "Schockraum"], ["SV", "Schlagvolumen"], ["SVV", "Schlagvolumenvariation"], ["TNF-α", "Tumornekrosefaktor α"], ["Tox", "Toxikologie"], ["TXA", "Tranexamsäure"], ["V1", "Verbrennungs-Intensivstation"], ["VCI", "Vena cava inferior"], ["VEL", "Vollelektrolytlösung"], ["VKOF", "verbrannte Körperoberfläche"], ["VT", "Tidalvolumen"], ["ZVD", "zentraler Venendruck"], ["ZVK", "zentraler Venenkatheter"]];
 
+/* ---------- Zeichen: ärztliche Maßnahme am Patienten · Medikament · Labor · optional ---------- */
+const TAG_DEF = {
+  m: ["Maßnahme", "ärztliche Maßnahme am Patienten", '<svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>'],
+  d: ["Medikament", "Medikament anordnen oder geben", '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="4" transform="rotate(-45 12 12)"/><path d="M9.2 9.2l5.6 5.6"/></svg>'],
+  l: ["Labor", "Labor abnehmen oder kontrollieren", '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3M7.5 15h9"/></svg>']
+};
+const TAGS = {
+  s_rot: "d", s_picco: "m", s_aw: (x) => x.c.intub ? "" : "m", s_esch: "m", s_lab: "l", s_strom: "m", a_ppi: "d",
+  o_analgo: "d", o_bronch: "m", o_wund: "m", o_alb: "l", y_alb: "d", y_auge: "m", y_lab: "l", y_enox: "dl",
+  g_mb: "d", g_zug: "m", t3_axa: "ld", t4_prop: "d", t4_ern: "d", t4_tra: "m", t5_dev: "m", t5_supp: "dl",
+  rh_o2: "d", rh_cobga: "l", rh_ekg: "l", rh_blut: "l", rh_hydroxo: "d", rh_cnlak: "l", rh_hep: "d",
+  z_ck: "l", z_alb: "d", z_na: "l", z_elyt: "l", z_bz: "d", z_hb: "l", ck: "l", co: "l"
+};
+const OPT_KEYS = { y_alb: 1, z_alb: 1 };
+const tagOf = (k, x) => { const t = TAGS[k]; return (typeof t === "function" ? t(x) : t) || ""; };
+const tagChip = (c) => `<span class="tg ${c}" title="${TAG_DEF[c][1]}">${TAG_DEF[c][2]}${TAG_DEF[c][0]}</span>`;
+const OPT_CHIP = '<span class="opt" title="nur bei erfüllter Bedingung">optional</span>';
+/* Zeichen als Zeile über dem Text (row) oder vor dem Text (inline) */
+function tagH(k, x, inline) {
+  const h = tagOf(k, x).split("").map(tagChip).join(inline ? " " : "") + (OPT_KEYS[k] ? (inline ? " " : "") + OPT_CHIP : "");
+  return !h ? "" : inline ? h + " " : `<div class="tgs">${h}</div>`;
+}
+const tagP = (k, x) => { const a = tagOf(k, x).split("").map((c) => TAG_DEF[c][0]); if (OPT_KEYS[k]) a.push("optional"); return a.length ? `<span class="ptg">[${a.join(" · ")}]</span> ` : ""; };
+const vTagLegend = () => `<div class="tlg"><span>Zeichen:</span>${Object.keys(TAG_DEF).map((c) => `<span class="e">${tagChip(c)}${TAG_DEF[c][1]}</span>`).join("")}<span class="e">${OPT_CHIP}nur bei erfüllter Bedingung</span></div>`;
+/* Albumin ist optional: Bedingungen für die Gabe */
+const ALB_HOW = "<b>Albumin ist optional.</b> Bedingungen für die Gabe: 1. frühestens ab h 6, nach SOP ab h 8 — vorher geht es mit dem Kapillarleck ins Interstitium · 2. Serum-Albumin < 2,2 g/dl <i>oder</i> davonlaufender Kristalloidbedarf (Laufrate > 2 × Rule of 10 bzw. > 6 ml/kg/% VKOF, Annäherung an den Ivy-Index). Dosis: Albumin 20 % 100 ml je 1000 ml Volumen; Ziel-Albumin 2,2–2,7 g/dl, darüber reduzieren bzw. pausieren.";
+[IT_BY.y_alb, IT_BY.o_alb, STAND.find((x) => x.k === "z_alb")].forEach((o) => { if (o && o.info) o.info = { ...o.info, how: (o.info.how ? o.info.how + " " : "") + ALB_HOW }; });
+
 /* ---------- Checkliste: Status ---------- */
 function itemWin(c, it) {
   const ph = PH_BY[it.ph];
@@ -839,6 +884,7 @@ function itemState(p, c, it) {
   if (p.done[it.k]) return "done";
   if (p.na[it.k]) return "na";
   const w = itemWin(c, it);
+  if (it.opt) return c.h != null && c.h >= w.at ? "opt" : "wait";
   if (c.h == null) return it.ph === "auf" ? "due" : "wait";
   if (c.h < w.at) return "wait";
   if (c.h <= w.to) return "due";
@@ -1024,7 +1070,7 @@ function algoFlow(A) {
 }
 const ALGO_INFO = I("Ziele nach jeder therapeutischen Intervention erneut prüfen. Verfehlte Ziele heißen nicht automatisch „mehr Volumen“: Erst Vorlast und Volumenreagibilität klären — sonst droht Fluid Creep mit Ödem, abdominellem Kompartmentsyndrom und Lungenversagen. Bleibt die Perfusion trotz Volumen schlecht, liegt die Ursache oft im Herzen (Myokarddepression) oder im Gefäßtonus (Sepsis).",
   "Algorithmus der SOP, modifiziert nach Ziegler et al. (DAV 2022), Soussi et al. (Anesthesiology 2018: frühe hämodynamische Steuerung Schwerbrandverletzter) und dem Positionspapier der DGV „Therapie des Verbrennungsschocks“ (2023).",
-  "Volumentherapie (Dok-ID 1620273), Abbildung 1. Adjunkte: Blasendruck alle 4 h; bei niedriger Diurese Harnabflussstörung ausschließen (DK spülen, Sonografie). Ab h 6 Albumin 20 % 100 ml je 1000 ml VEL (Ziel 2,2–2,7 g/dl); Ziel-Natrium 135–139 mmol/l, > 139 → Eindrittelelektrolytlösung.",
+  "Volumentherapie (Dok-ID 1620273), Abbildung 1. Adjunkte: Blasendruck alle 4 h; bei niedriger Diurese Harnabflussstörung ausschließen (DK spülen, Sonografie). Ab h 6 Albumin 20 % 100 ml je 1000 ml VEL (Ziel 2,2–2,7 g/dl) — auf der V1 optional; Ziel-Natrium 135–139 mmol/l, > 139 → Eindrittelelektrolytlösung.",
   "Das Ergebnis ist ein Vorschlag. Abweichen geht jederzeit: eigene Rate eintragen, ohne Änderung abschließen oder abbrechen. Jede Laufratenänderung zählt als Reevaluation; die nächste ist nach 1 h fällig und spätestens nach 2 h überfällig.");
 const ALGO_FN = I(null, null, "¹ Fluid Challenge: positiv bei Anstieg im Passive Leg Raise (Blutdruck > 20 mmHg, Schlagvolumen > 10 %, EtCO2 > 5 %) bzw. bei SVV oder PPV > 20 % unter kontrollierter Beatmung. ² Entwickelt der Patient ein ARDS: Iloprost bzw. Bauchlagerung erwägen (Horovitz-Quotient < 150 mmHg).");
 function algoInit(p, c) {
@@ -1146,7 +1192,7 @@ function vTabs(p, c) {
   const over = due.some((x) => x.st === "over") || tasks.some((x) => x.st === "o");
   const rd = reevalDue(p, c);
   const rst = rd ? (c.now >= rd.over ? "o" : c.now >= rd.due - 5 * MIN ? "d" : "") : "";
-  const open = ITEMS.filter((it) => (!it.cond || it.cond({ p, c })) && !p.done[it.k] && !p.na[it.k]).length;
+  const open = ITEMS.filter((it) => !it.opt && (!it.cond || it.cond({ p, c })) && !p.done[it.k] && !p.na[it.k]).length;
   const tab = (k, t, b) => `<button data-act="tab" data-v="${k}" class="${S.tab === k ? "on" : ""}">${t}${b || ""}</button>`;
   return `<nav class="tabs">${tab("jetzt", "Jetzt", n ? `<span class="bdg${over ? " o" : ""}">${n}</span>` : "")}${tab("vol", "Volumen", rst ? `<span class="bdg${rst === "o" ? " o" : ""}">!</span>` : "")}${tab("check", "Checkliste", `<span class="bdg" style="background:var(--soft);color:var(--mut)">${open}</span>`)}</nav>`;
 }
@@ -1209,7 +1255,7 @@ function vDue(p, c) {
   if (scO.open) h += `<div class="it st-due"><span class="x" style="color:#9d174d">?</span><div class="itx">Abfrage Inhalation: CO, Cyanid, Inhalationstrauma<div class="fr">bei Aufnahme · ${scO.open} von ${scO.total} Fragen offen</div></div><button class="btn sm" data-act="scropen">Abfrage</button></div>`;
   else if (!tasks.length && !due.length) return h + `<p class="mut">Im Moment ist nichts fällig.</p></div>`;
   tasks.forEach((x) => {
-    h += `<div class="it ${x.st === "o" ? "st-over" : x.st === "d" ? "st-due" : "st-wait"}"><span class="x" style="color:var(--mut)">↻</span><div class="itx">${x.t}<div class="fr">${x.st === "o" ? "überfällig" : x.st === "d" ? "fällig" : "nächste " + fRel(x.due)} · ${x.info}</div></div><button class="btn sm" data-act="${x.go === "algo" ? "algo" : "tab"}" data-v="vol">${x.gt}</button></div>`;
+    h += `<div class="it ${x.st === "o" ? "st-over" : x.st === "d" ? "st-due" : "st-wait"}"><span class="x" style="color:var(--mut)">↻</span><div class="itx">${tagH(x.k, { p, c })}${x.t}<div class="fr">${x.st === "o" ? "überfällig" : x.st === "d" ? "fällig" : "nächste " + fRel(x.due)} · ${x.info}</div></div><button class="btn sm" data-act="${x.go === "algo" ? "algo" : "tab"}" data-v="vol">${x.gt}</button></div>`;
   });
   /* höchstens 6 Checklistenpunkte: überfällige und Intoxikation zuerst, dann nach Frist */
   const prio = (x) => x.st === "over" ? 0 : x.it.ph === "iv" ? 1 : 2;
@@ -1218,7 +1264,7 @@ function vDue(p, c) {
   show.forEach(({ it, st }) => {
     const w = it.ph === "iv" ? null : itemWin(c, it);
     const si = STEP_INFO[it.k], ik = si ? "si_" + it.k : it.info ? "it_" + it.k : null;
-    h += `<div class="it st-${st}"><button class="cb" data-act="tick" data-k="${it.k}" aria-label="erledigt"></button><div class="itx">${it.t({ p, c })}<div class="fr">${it.ph === "iv" ? "Inhalations-Intoxikation · sofort" : st === "over" ? "überfällig" + (c.u != null ? " seit " + fRel(atMs(c, w.to)) : "") : c.u != null ? "bis " + fRel(atMs(c, w.to)) : "bei Aufnahme"}</div></div>${ik ? iBtn(ik) : "<span></span>"}</div>${ik ? vInfo(ik, si || it.info) : ""}`;
+    h += `<div class="it st-${st}"><button class="cb" data-act="tick" data-k="${it.k}" aria-label="erledigt"></button><div class="itx">${tagH(it.k, { p, c })}${it.t({ p, c })}<div class="fr">${it.ph === "iv" ? "Inhalations-Intoxikation · sofort" : st === "over" ? "überfällig" + (c.u != null ? " seit " + fRel(atMs(c, w.to)) : "") : c.u != null ? "bis " + fRel(atMs(c, w.to)) : "bei Aufnahme"}</div></div>${ik ? iBtn(ik) : "<span></span>"}</div>${ik ? vInfo(ik, si || it.info) : ""}`;
   });
   if (sorted.length > 6) h += `<button class="btn lnk" data-act="dueall">${UI.dueAll ? "weniger anzeigen" : `${sorted.length - 6} weitere anzeigen`}</button>`;
   return h + `</div>`;
@@ -1228,7 +1274,7 @@ function vStand(p, c) {
   let h = `<div class="card s-std"><h2>Gilt jetzt<span class="r">Ziele und Daueranweisungen</span></h2>`;
   L.forEach((s) => {
     const x = { p, c }, key = "st_" + s.k, run = s.run ? s.run(x) : "";
-    h += `<div class="it"><span class="x" style="color:var(--acc)">•</span><div class="itx">${s.t(x)}${run ? ` <span class="mut small">(${run})</span>` : ""}</div>${s.info ? iBtn(key) : "<span></span>"}</div>${s.info ? vInfo(key, s.info) : ""}`;
+    h += `<div class="it"><span class="x" style="color:var(--acc)">•</span><div class="itx">${tagH(s.k, x)}${s.t(x)}${run ? ` <span class="mut small">(${run})</span>` : ""}</div>${s.info ? iBtn(key) : "<span></span>"}</div>${s.info ? vInfo(key, s.info) : ""}`;
   });
   return h + `</div>`;
 }
@@ -1261,7 +1307,7 @@ function vEntry(p, c) {
   h += fin("e_diu", "Diurese (ml)", "ml", "numeric");
   h += `<label class="f"><span>Diurese seit${Ld ? " (leer = " + fT(Ld.t) + ")" : " (leer = 1 h)"}</span><input type="time" data-d="e_dius" value="${dv("e_dius")}"></label>`;
   h += fin("e_rate", "Laufrate neu (ml/h)", "ml/h", "numeric");
-  if (albOn) h += fin("e_alb", "Albumin 20 % (ml/h)", "ml/h", "numeric");
+  if (albOn) h += fin("e_alb", "Albumin 20 % (ml/h) · optional", "ml/h", "numeric");
   h += fin("e_lak", "Laktat (mmol/l)", "");
   if (c.hiAvail) h += fin("e_hi", "HI (l/min/m²)", "");
   if (c.scvAvail) h += fin("e_scv", "ScvO2 (%)", "");
@@ -1294,7 +1340,7 @@ function vBilanz(p, c) {
   let h = `<div class="card s-bil"><h2>Bilanz ${iBtn("v_vol")}</h2>${vInfo("v_vol", I("Referenz = Rule of 10 × Stunden ab Unfall ist nur eine Linie zum Vergleich: Die tatsächliche Rate wird stündlich titriert. Präklinik und Schockraum zählen mit — das Kapillarleck beginnt mit dem Unfall.", "Pruitt (J Trauma 2000) und Saffle (J Burn Care Res 2007) zum Fluid Creep: über 6 ml/kg/% VKOF in 24 h häufiger Kompartmentsyndrome und ARDS. Ivy et al. (J Trauma 2000): > 250 ml/kg in den ersten 24 h → hohes Risiko für ein abdominelles Kompartmentsyndrom.", "Volumentherapie: Ivy-Index > 250 ml/kg → hohes Risiko.", "Gezählt wird nur, was hier erfasst ist: Präklinik/Schockraum, Laufraten, Albumin-Perfusor, Zusatzgaben (FFP ≈ 250 ml, EK ≈ 300 ml je Einheit). Erhaltungsinfusionen, Perfusoren und Ernährung zählen nicht mit."))}
     <div class="facts">
     <span>${lsgName(p)}<b>${rr ? r0(rr.v) + " ml/h" : "—"}</b></span>
-    <span>Albumin 20 %<b>${ar && ar.v ? r0(ar.v) + " ml/h" : "—"}</b></span>
+    <span>Albumin 20 % (optional)<b>${ar && ar.v ? r0(ar.v) + " ml/h" : "—"}</b></span>
     <span>Präklinik + Schockraum<b>${v && v.g != null ? tsd(v.g) + " ml" : "fehlt"}</b></span>
     <span>seit Unfall gesamt<b>${v ? tsd(v.ges) + " ml" : "—"}</b></span>
     <span class="${mk > 6 ? "bad" : ""}">${c.h >= 24 ? "h 0–24: " : ""}ml/kg/% VKOF<b>${mk != null ? fN(mk, 1) : "—"}</b></span>
@@ -1348,17 +1394,17 @@ function vVol(p, c, P) {
 function vItem(p, c, it) {
   const st = itemState(p, c, it), x = { p, c }, w = itemWin(c, it), key = "it_" + it.k;
   const run = it.run ? it.run(x) : "";
-  const fr = st === "done" ? "erledigt " + fRel(p.done[it.k]) : st === "na" ? "entfällt" : c.u == null ? "" : st === "over" ? "überfällig seit " + fRel(atMs(c, w.to)) : st === "due" ? "fällig bis " + fRel(atMs(c, w.to)) : "ab " + fRel(atMs(c, w.at));
-  return `<div class="it st-${st}"><button class="cb" data-act="tick" data-k="${it.k}" aria-label="${st === "done" ? "erledigt — zurücknehmen" : "als erledigt markieren"}">${st === "done" ? "✓" : st === "na" ? "–" : ""}</button><div class="itx">${it.t(x)}<div class="fr">${fr}${run ? " · " + run : ""}</div></div>${iBtn(key)}</div>${vInfo(key, it.info, `<div><button class="btn sm" data-act="na" data-k="${it.k}">${p.na[it.k] ? "entfällt doch nicht" : "entfällt bei diesem Patienten"}</button></div>`)}`;
+  const fr = st === "done" ? "erledigt " + fRel(p.done[it.k]) : st === "na" ? "entfällt" : c.u == null ? "" : st === "over" ? "überfällig seit " + fRel(atMs(c, w.to)) : st === "due" ? "fällig bis " + fRel(atMs(c, w.to)) : st === "opt" ? "optional — nur bei erfüllter Bedingung, wird nicht fällig" : (it.opt ? "optional · " : "") + "ab " + fRel(atMs(c, w.at));
+  return `<div class="it st-${st}"><button class="cb" data-act="tick" data-k="${it.k}" aria-label="${st === "done" ? "erledigt — zurücknehmen" : "als erledigt markieren"}">${st === "done" ? "✓" : st === "na" ? "–" : ""}</button><div class="itx">${tagH(it.k, x)}${it.t(x)}<div class="fr">${fr}${run ? " · " + run : ""}</div></div>${iBtn(key)}</div>${vInfo(key, it.info, `<div><button class="btn sm" data-act="na" data-k="${it.k}">${p.na[it.k] ? "entfällt doch nicht" : "entfällt bei diesem Patienten"}</button></div>`)}`;
 }
 function vPhase(p, c, ph) {
   const items = visItems(p, c, ph.k);
   if (!items.length) return "";
   const auf = ph.k === "auf";
-  const sts = items.map((it) => itemState(p, c, it));
+  const sts = items.filter((it) => !it.opt).map((it) => itemState(p, c, it));
   const sc = auf ? scrState(p) : null;
   const ivOpen = auf ? intoxItems(p).filter(([k]) => !p.done[k] && !p.na[k]).length : 0;
-  const total = items.length + (auf ? 1 : 0);
+  const total = sts.length + (auf ? 1 : 0);
   const done = sts.filter((s) => s === "done" || s === "na").length + (auf && !sc.open ? 1 : 0);
   const offen = total - done;
   const to = auf ? Math.max(ph.to, c.aufH + 2) : ph.to;
@@ -1377,7 +1423,7 @@ function vScrBlock(p) {
   const row = ([k, t], info, obj) => {
     const on = !!p.done[k];
     if (STEP_INFO[k]) { info = "si_" + k; obj = STEP_INFO[k]; }
-    return `<div class="it ${on ? "st-done" : "st-due"}"><button class="cb" data-act="tick" data-k="${k}" aria-label="erledigt">${on ? "✓" : ""}</button><div class="itx">${t}${on ? `<div class="fr">erledigt ${fRel(p.done[k])}</div>` : ""}</div>${info ? iBtn(info) : "<span></span>"}</div>${info ? vInfo(info, obj) : ""}`;
+    return `<div class="it ${on ? "st-done" : "st-due"}"><button class="cb" data-act="tick" data-k="${k}" aria-label="erledigt">${on ? "✓" : ""}</button><div class="itx">${tagH(k, { p })}${t}${on ? `<div class="fr">erledigt ${fRel(p.done[k])}</div>` : ""}</div>${info ? iBtn(info) : "<span></span>"}</div>${info ? vInfo(info, obj) : ""}`;
   };
   let h = `<div class="scr"><div class="scr-h"><div><b>Abfrage Inhalation</b><div class="small mut">${s.open ? `${s.open} von ${s.total} Fragen offen` : "alle Fragen beantwortet"}</div></div><button class="btn sm${s.open ? " pri" : ""}" data-act="scropen">${!s.open ? "Abfrage ändern" : s.open < s.total ? "Abfrage fortsetzen" : "Abfrage starten"}</button></div><div class="scs">${chip("CO", s.co)}${chip("Cyanid", s.cn)}${chip("Inhalationstrauma", s.iht)}</div>`;
   if (co) h += `<div class="grp">CO-Verdacht — handeln</div>` + C48_CO_RH.map((x, i) => row(x, i === 0 ? "iv_co" : null, INFO_CO)).join("");
@@ -1393,7 +1439,7 @@ function vNicht() {
 }
 function vCheck(p, c) {
   /* links die Aufnahme (mit Abfrage Inhalation), rechts die Zeitfenster h 0–8 bis Tag 5 */
-  return `<div class="cols"><div class="col">${vPhase(p, c, PH_BY.auf)}<div class="only-d">${vNicht()}</div></div><div class="col">${PHASES.filter((ph) => ph.k !== "auf").map((ph) => vPhase(p, c, ph)).join("")}<div class="only-m">${vNicht()}</div></div></div>` + vFoot();
+  return vTagLegend() + `<div class="cols"><div class="col">${vPhase(p, c, PH_BY.auf)}<div class="only-d">${vNicht()}</div></div><div class="col">${PHASES.filter((ph) => ph.k !== "auf").map((ph) => vPhase(p, c, ph)).join("")}<div class="only-m">${vNicht()}</div></div></div>` + vFoot();
 }
 
 /* ----- Dialoge ----- */
@@ -1471,7 +1517,7 @@ function vScr(p) {
     if (g === "Cyanid") h += `<label class="f" style="max-width:240px;margin-top:6px"><span>Laktat (mmol/l) — ${lv("Laktat")}</span><input data-d="s_lak" inputmode="decimal" value="${dv("s_lak")}" autocomplete="off"></label>`;
   });
   h += `<h3>Ergebnis${s.open ? ` — noch ${s.open} Frage${s.open > 1 ? "n" : ""} offen` : ""}</h3><div class="scs" style="margin:0 0 6px">${chip("CO", s.co)}${chip("Cyanid", s.cn)}${chip("Inhalationstrauma", s.iht)}</div>`;
-  const steps = (L) => `<div class="steps">${L.map(([k, t]) => `<div class="stp"><span>${t}</span>${STEP_INFO[k] ? iBtn("si_" + k) : ""}</div>${STEP_INFO[k] ? vInfo("si_" + k, STEP_INFO[k]) : ""}`).join("")}</div>`;
+  const steps = (L) => `<div class="steps">${L.map(([k, t]) => `<div class="stp"><span>${tagH(k, { p }, true)}${t}</span>${STEP_INFO[k] ? iBtn("si_" + k) : ""}</div>${STEP_INFO[k] ? vInfo("si_" + k, STEP_INFO[k]) : ""}`).join("")}</div>`;
   if (s.co === "v") h += box("e", "CO-Verdacht", steps(C48_CO_RH));
   if (s.cn === "v") h += box("e", "Cyanid-Verdacht", steps(C48_CN_RH));
   if (ihtVerdacht(p)) h += box("w", "Verdacht auf Inhalationstrauma", steps(C48_IHT), p.f.inhal ? "" : `<button class="btn pri" data-act="ihtset">V. a. Inhalationstrauma übernehmen (Rule of 10 + 100 ml/h)</button>`);
@@ -1479,7 +1525,7 @@ function vScr(p) {
   return h + `<div class="df"><button class="btn pri" data-act="scrdone">Fertig</button></div></div></div>`;
 }
 function vAbk() {
-  return `<div class="dlgbg"><div class="dlg" role="dialog" aria-label="Abkürzungen"><div class="dh"><h2>Abkürzungen</h2><button class="btn sm" data-act="close">Schließen</button></div><div class="leg">${LEGENDE.map(([a, t]) => `<div><b>${a}</b> ${t}</div>`).join("")}</div></div></div>`;
+  return `<div class="dlgbg"><div class="dlg" role="dialog" aria-label="Abkürzungen"><div class="dh"><h2>Abkürzungen</h2><button class="btn sm" data-act="close">Schließen</button></div><div class="leg">${LEGENDE.map(([a, t]) => `<div><b>${a}</b> ${t}</div>`).join("")}</div><h3>Zeichen</h3>${vTagLegend()}</div></div>`;
 }
 function vAbout() {
   return `<div class="dlgbg"><div class="dlg" role="dialog" aria-label="Über die App"><div class="dh"><h2>LUminate Lite ${APP_VERSION}</h2><button class="btn sm" data-act="close">Schließen</button></div>
@@ -1521,11 +1567,11 @@ function buildPrint(p, c) {
   PHASES.forEach((ph) => {
     const items = visItems(p, c, ph.k);
     if (!items.length) return;
-    h += `<h3>${ph.t}${c.u != null ? ` (${fRel(atMs(c, ph.at))} – ${fRel(atMs(c, ph.to))})` : ""}</h3><ul>${items.map((it) => `<li>${p.done[it.k] ? "☑" : p.na[it.k] ? "☒" : "☐"} ${strip(it.t(x))}${p.done[it.k] ? ` <i>(${fRel(p.done[it.k])})</i>` : p.na[it.k] ? " <i>(entfällt)</i>" : ""}</li>`).join("")}</ul>`;
+    h += `<h3>${ph.t}${c.u != null ? ` (${fRel(atMs(c, ph.at))} – ${fRel(atMs(c, ph.to))})` : ""}</h3><ul>${items.map((it) => `<li>${p.done[it.k] ? "☑" : p.na[it.k] ? "☒" : "☐"} ${tagP(it.k, x)}${strip(it.t(x))}${p.done[it.k] ? ` <i>(${fRel(p.done[it.k])})</i>` : p.na[it.k] ? " <i>(entfällt)</i>" : ""}</li>`).join("")}</ul>`;
   });
   const ix = intoxItems(p);
-  if (ix.length) h += `<h3>Inhalations-Intoxikation${coVerdacht(p) ? " · CO-Verdacht" : ""}${cyanVerdacht(p) ? " · Cyanid-Verdacht" : ""}</h3><ul>${ix.map(([k, t]) => `<li>${p.done[k] ? "☑" : "☐"} ${t}</li>`).join("")}</ul>`;
-  h += `<h2>Gilt jetzt</h2><ul>${standNow(p, c).map((s) => `<li>• ${strip(s.t(x))}</li>`).join("")}</ul>`;
+  if (ix.length) h += `<h3>Inhalations-Intoxikation${coVerdacht(p) ? " · CO-Verdacht" : ""}${cyanVerdacht(p) ? " · Cyanid-Verdacht" : ""}</h3><ul>${ix.map(([k, t]) => `<li>${p.done[k] ? "☑" : "☐"} ${tagP(k, x)}${t}</li>`).join("")}</ul>`;
+  h += `<h2>Gilt jetzt</h2><ul>${standNow(p, c).map((s) => `<li>• ${tagP(s.k, x)}${strip(s.t(x))}</li>`).join("")}</ul>`;
   h += `<h2>Nicht tun</h2><ul>${NICHT.map(([t]) => `<li>✕ ${t}</li>`).join("")}</ul>`;
   const ev = p.ev.slice().sort(byT);
   if (ev.length) h += `<h2>Volumen und Werte — Verlauf</h2><table><tr><th style="width:22mm">Zeit</th><th style="width:16mm">h ab Unfall</th><th>Eintrag</th></tr>${ev.map((e) => `<tr><td>${fD(e.t)} ${fT(e.t)}</td><td>${c.u != null ? fN((e.t - c.u) / H, 1) : ""}</td><td>${evTxt(p, c, e)}</td></tr>`).join("")}</table>`;
@@ -1533,7 +1579,7 @@ function buildPrint(p, c) {
     const v = vol(p, c, c.now);
     h += `<div class="pm" style="margin-top:6pt">Seit Unfall gesamt ${tsd(v.ges)} ml (Kristalloid ${tsd(v.kris)} ml, Kolloid/Blut ${tsd(v.kol)} ml)${c.kg && c.vk ? " · " + fN(v.ges / (c.kg * c.vk), 1) + " ml/kg/% VKOF" : ""}${c.ivy ? " · " + fN(v.ges / c.ivy * 100, 0) + " % des Ivy-Index" : ""}</div>`;
   }
-  h += `<div class="lgd"><b>Abkürzungen:</b> ${LEGENDE.map(([a, t]) => `${a} ${t}`).join(" · ")}<br>Arbeitshilfe, keine Patientenakte. Bei Widerspruch zwischen Literatur und SOP gilt die SOP der V1.</div>`;
+  h += `<div class="lgd"><b>Zeichen:</b> [Maßnahme] ärztliche Maßnahme am Patienten · [Medikament] anordnen oder geben · [Labor] abnehmen oder kontrollieren · [optional] nur bei erfüllter Bedingung<br><b>Abkürzungen:</b> ${LEGENDE.map(([a, t]) => `${a} ${t}`).join(" · ")}<br>Arbeitshilfe, keine Patientenakte. Bei Widerspruch zwischen Literatur und SOP gilt die SOP der V1.</div>`;
   return h;
 }
 

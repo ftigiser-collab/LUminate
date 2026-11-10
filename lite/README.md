@@ -22,6 +22,12 @@ Die klinischen Inhalte sind unverändert aus LUminate 1.3.0 übernommen:
 - **Ein Patientenformular** statt Stammdaten-Fenster mit Einzelfeldern
 - **Eigenständig:** eigener Speicher (`lulite_v1`), keine Kopplung mit BurnICU oder LUminate; mehrere Patienten über die Auswahl oben
 
+## Neu in 1.4.0
+
+- **Albumin ist optional:** Der Punkt in h 8–24 ist als „optional“ markiert (gestricheltes Kästchen), wird nie fällig oder überfällig und zählt nicht in die Zähler. Bedingungen stehen im Text und im (i): frühestens ab h 6 (nach SOP ab h 8) und Serum-Albumin < 2,2 g/dl oder Kristalloidbedarf > 2 × Rule of 10 bzw. > 6 ml/kg/% VKOF; Dosis 100 ml je 1000 ml Volumen, Ziel 2,2–2,7 g/dl. Der Hinweis im Reiter „Jetzt“ schlägt die Rate nur vor, wenn eine Bedingung erfüllt ist — sonst steht dort „derzeit keine Bedingung erfüllt“.
+- **Zeichen an den Punkten:** violett „Maßnahme“ (ärztliche Maßnahme am Patienten, z. B. ZVK/PiCCO, Bronchoskopie, Escharotomie), blau „Medikament“, grün „Labor“ — in Checkliste, „Jetzt fällig“, „Gilt jetzt“, Abfrage Inhalation und im Ausdruck (dort als Text in eckigen Klammern). Erklärung über der Checkliste und unter Menü → Abkürzungen.
+- Ohne Zeichen bleiben u. a. Blasenkatheter/Magensonde, enterale Ernährung, VKOF neu bestimmen, OP-Plan, Lagerung und Gespräche.
+
 ## Neu in 1.3.1
 
 - **Pfeil an „Laufrate jetzt“:** zeigt die letzte Änderung der Laufrate — orange ↑ für STEP UP, grün ↓ für STEP DOWN, darunter „STEP UP/DOWN von … ml/h“. Kein Pfeil bei der ersten Laufrate oder unveränderter Rate.
