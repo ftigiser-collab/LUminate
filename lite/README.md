@@ -22,6 +22,11 @@ Die klinischen Inhalte sind unverändert aus LUminate 1.3.0 übernommen:
 - **Ein Patientenformular** statt Stammdaten-Fenster mit Einzelfeldern
 - **Eigenständig:** eigener Speicher (`lulite_v1`), keine Kopplung mit BurnICU oder LUminate; mehrere Patienten über die Auswahl oben
 
+## Neu in 1.3.0
+
+- **Aus der Checkliste gestrichen:** Stuhlgang (Aufnahme, Tag 3, Tag 5), Arbeits-/Wegeunfall → BG-Verfahren (Aufnahme), MRE-Screening (Aufnahme). Unverändert: Tag 5 „Sozialdienst, psychologische Betreuung, BG-/Reha-Verfahren einleiten“.
+- **Dobutamin klickbar:** Führt der Algorithmus zu Dobutamin (auch als Zusatz bei STEP DOWN oder im Noradrenalin-Zweig), öffnet „Dobutamin: Dosierung“ die Empfehlung — gewichtsadaptiert 2,5 / 5 / 7,5 / 10 µg/kg/min mit ml/h für den Perfusor 250 mg/50 ml (5 mg/ml), Vorgehen, Voraussetzungen und Cave nach Fachinformation. Derselbe Knopf steht an der Jetzt-Anweisung, solange das Ergebnis gilt.
+
 ## Neu in 1.2.0
 
 - **Kopfzeile in jedem Reiter:** Stunde seit Unfall · Zieldiurese · Laufrate jetzt.

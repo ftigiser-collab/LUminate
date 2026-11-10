@@ -201,6 +201,9 @@ button.tmr{cursor:pointer}
 .steps{margin-top:6px}
 .stp{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid rgba(0,0,0,.09);font-size:14.5px}
 .stp:first-child{border-top:0}
+.info.dobu{margin-top:8px;border-color:#b9c7d6}
+.info.dobu table.tb td,.info.dobu table.tb th{text-align:left;white-space:normal;vertical-align:top}
+.info.dobu .sub{display:block;font-size:12.5px;color:var(--mut)}
 .tiles.n3{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .tiles.n3 .tile{padding:8px}
 .tiles.n3 .tile .l{font-size:11px;letter-spacing:.2px}
@@ -269,7 +272,7 @@ button.tmr{cursor:pointer}
    Gleiche Inhalte (Checkliste, Daueranweisungen, Volumentherapie nach SOP, Algorithmus), einfachere Oberfläche.
    Eigenständig: eigener Speicher (lulite_v1), keine Kopplung mit BurnICU. Eine Datei, kein Build.
    ===================================================================== */
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.3.0";
 const SKEY = "lulite_v1";
 const H = 36e5, MIN = 6e4;
 
@@ -668,11 +671,6 @@ const ITEMS = [
     info: I("Die Stundendiurese ist in der Schockphase der einzige kontinuierlich verfügbare Endorganparameter; die Temperatursonde im DK misst Kerntemperatur ohne zusätzlichen Zugang. Magensonde: Gastroparese in der Schockphase, frühe enterale Ernährung.") },
   { k: "a_ppi", ph: "auf", to: 8, t: () => "Stressulkusprophylaxe: Pantoprazol 20 mg 1-0-0",
     info: I("Curling-Ulkus: Schleimhautischämie im Verbrennungsschock plus Stressreaktion; frühe enterale Ernährung schützt zusätzlich.", "REVISE (Cook, NEJM 2024): Pantoprazol bei invasiv Beatmeten senkt klinisch relevante obere GI-Blutungen (1,0 vs. 3,5 %), Letalität unverändert. Burn-Protokolle: Prophylaxe ab > 20 % VKOF.") },
-  { k: "a_screen", ph: "auf", to: 24, t: () => "MRE-Screening-Abstriche bei Aufnahme (Hausstandard)",
-    info: I("Brandwunden werden binnen Tagen besiedelt — zuerst grampositiv, ab etwa Tag 5 zunehmend gramnegativ einschließlich Pseudomonas. Die Aufnahmeflora ist die Referenz für spätere kalkulierte Therapien.") },
-  { k: "a_stuhl", ph: "auf", to: 24, t: () => "Stuhlgang bei Aufnahme dokumentieren (danach spätestens alle 3 Tage)", info: I(null, null, "Ernährung und Abführen (Dok-ID 1620057).") },
-  { k: "a_bg", ph: "auf", to: 24, t: () => "Arbeits- oder Wegeunfall? → BG-Verfahren (D-Arzt-Bericht) einleiten",
-    info: I("Berufsgenossenschaftliches Heilverfahren früh melden — relevant für Reha, Kompressionsversorgung und Kostenübernahme.") },
   /* ---- h 0–8 ---- */
   { k: "o_analgo", ph: "h0", at: 1, t: (x) => x.c.intub ? "Analgosedierung nach SOP: Aufnahmetag Sufentanil + Midazolam; Beatmung > 48 h absehbar → Sufentanil + Propofol (max. 5 Tage)" : "Analgesie nach SOP: Basis (Metamizol 4 g/24 h) + Opioid retardiert und bei Bedarf",
     info: I("Verbrennungsschmerz ist nozizeptiv und neuropathisch mit primärer und sekundärer Hyperalgesie; Opioidbedarf und Toleranz steigen schnell, Verbandswechsel sind Spitzen.", null, "Analgesie, Sedierung, Delir (Dok-ID 1620165).") },
@@ -718,14 +716,12 @@ const ITEMS = [
   { k: "t3_exz", ph: "t3", at: 48, to: 72, t: () => "Erste Exzision bis h 72 erfolgt oder terminiert (Gerinnung: pH ≥ 7,2, Temp ≥ 36 °C, Ca²⁺ ≥ 1,1, Fibrinogen ≥ 1,5–2 g/l)",
     info: I(null, "Ong et al. 2006: Frühexzision senkt Letalität und Liegedauer.", "Ernährung/metabolisches Bündel: Exzision Beginn ≤ 72 h, komplett ≤ 7 Tage; Transfusionsregime: Gerinnungsvoraussetzungen.") },
   { k: "t3_axa", ph: "t3", at: 48, t: () => "Anti-Xa nach der 3. Enoxaparin-Gabe kontrolliert, Dosis angepasst", inp: [{ lab: "Anti-Xa", u: "IE/ml" }] },
-  { k: "t3_stuhl", ph: "t3", at: 60, to: 72, t: () => "Stuhlgang? Spätestens alle 3 Tage abführen (Macrogol, Laxoberal; Lactulose nur bei strenger Indikation)", info: I(null, null, "Ernährung und Abführen: unter Opioiden Macrogol 1–3 Btl./d, ggf. Naloxon p.o.; Lactulose nur streng indiziert.") },
   /* ---- Tag 4 ---- */
   { k: "t4_prop", ph: "t4", at: 72, to: 120, cond: (x) => x.c.intub, t: () => "Propofol? Maximal 5 Tage (PRIS) — Umstellung bis Tag 5 planen (z. B. inhalative Sedierung mit Isofluran)",
     info: I("Propofol-Infusionssyndrom: gestörte mitochondriale Fettsäureoxidation → Laktatazidose, Rhabdomyolyse, Hypertriglyzeridämie, Herzversagen; Risiko steigt mit Dosis und Dauer.", null, "Analgesie, Sedierung, Delir: Propofol max. 5 Tage.") },
   { k: "t4_ern", ph: "t4", at: 72, t: () => "Kalorienziel erreicht? Unter 80 % → Cernevit + Addel Trace, parenteral ergänzen" },
   { k: "t4_tra", ph: "t4", at: 72, cond: (x) => x.c.intub, t: () => "Langzeitbeatmung absehbar? Tracheotomie besprechen" },
   /* ---- Tag 5 ---- */
-  { k: "t5_stuhl", ph: "t5", at: 96, t: () => "Stuhlgang erneut prüfen (alle 3 Tage)" },
   { k: "t5_dev", ph: "t5", at: 96, t: () => "Katheter und Zugänge: Liegedauer und Lage in verbrannter Haut prüfen — Evaluation spätestens nach 7 Tagen" },
   { k: "t5_supp", ph: "t5", at: 96, t: () => "Supplemente prüfen: Selen 14 Tage (Pause bei Sepsis), Zinkspiegel, Propranolol (HF-Ziel)" },
   { k: "t5_kompr", ph: "t5", at: 96, t: () => "Narbenmanagement vorbereiten: Kompressionsversorgung anmelden (Vorlauf), Physio/Ergo" },
@@ -824,7 +820,7 @@ const NICHT = [
   ["Kein Hochdosis-Vitamin C", I("Wurde wegen weniger Kapillarleck und weniger Volumen eingesetzt (Tanaka, Arch Surg 2000).", "VICTORY (Stoppe, JAMA 2026; ≥ 20 % VKOF, 50 mg/kg alle 6 h über 96 h): wegen Schaden abgebrochen, 28-Tage-Letalität 15,0 vs. 7,6 %. Physiologische Substitution bleibt unberührt.")],
   ["Keine Nitrite, kein 4-DMAP bei Rauchgasvergiftung", INFO_CN]
 ];
-const LEGENDE = [["2b/3", "Verbrennungsgrad 2b bzw. 3 (tief)"], ["4-DMAP", "4-Dimethylaminophenol"], ["ABA", "American Burn Association"], ["ABSI", "Abbreviated Burn Severity Index"], ["ADH", "antidiuretisches Hormon"], ["AF", "Atemfrequenz"], ["AIS", "Abbreviated Injury Score (Bronchoskopie)"], ["Anti-Xa", "Anti-Faktor-Xa-Aktivität"], ["ANV", "akutes Nierenversagen"], ["ARDS", "akutes Lungenversagen"], ["avDO2", "arteriovenöse O2-Differenz"], ["AWMF", "Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften"], ["BB", "Blutbild"], ["BG", "Berufsgenossenschaft"], ["BGA", "Blutgasanalyse"], ["BZ", "Blutzucker"], ["Ca²⁺", "ionisiertes Kalzium"], ["CK", "Kreatinkinase"], ["CO", "Kohlenmonoxid"], ["CO2", "Kohlendioxid"], ["COHb", "Carboxyhämoglobin"], ["CT", "Computertomografie"], ["D-Arzt", "Durchgangsarzt"], ["DAV", "Deutschsprachige Arbeitsgemeinschaft für Verbrennungsbehandlung"], ["Deltajonin", "BG (1/3) Eindrittelelektrolytlösung"], ["DGIIN", "Deutsche Gesellschaft für Internistische Intensivmedizin und Notfallmedizin"], ["DGINA", "Deutsche Gesellschaft Interdisziplinäre Notfall- und Akutmedizin"], ["DGV", "Deutsche Gesellschaft für Verbrennungsmedizin"], ["DK", "Dauerkatheter"], ["Dobu", "Dobutamin"], ["E", "Einheiten"], ["Echo", "Echokardiografie"], ["EK", "Erythrozytenkonzentrat"], ["EKG", "Elektrokardiogramm"], ["ELWI", "extravaskulärer Lungenwasserindex"], ["ESPEN", "Europäische Gesellschaft für klinische Ernährung"], ["EtCO2", "endtidales CO2"], ["FFP", "Fresh Frozen Plasma"], ["FiO2", "inspiratorische O2-Fraktion"], ["GI", "gastrointestinal"], ["h", "Stunde ab Unfall"], ["Hb", "Hämoglobin"], ["HBO", "hyperbare Oxygenierung (100 % O2 unter Überdruck in der Druckkammer)"], ["HES", "Hydroxyethylstärke"], ["HF", "Herzfrequenz"], ["HFNC", "High-Flow-Sauerstoff über Nasenkanüle"], ["HI", "Herzindex (l/min/m²)"], ["Hk", "Hämatokrit"], ["i.v.", "intravenös"], ["IAP", "intraabdomineller Druck (mmHg)"], ["IE", "Internationale Einheiten"], ["IHT", "Inhalationstrauma"], ["IL-6", "Interleukin 6"], ["ITBVI", "intrathorakaler Blutvolumenindex"], ["J", "Jahre"], ["KOF", "Körperoberfläche"], ["Lite", "vereinfachte Fassung von LUminate"], ["MAP", "mittlerer arterieller Druck"], ["MCP", "Metoclopramid"], ["MRE", "multiresistente Erreger"], ["NA", "Noradrenalin"], ["Na", "Natrium"], ["Na/K", "Natrium/Kalium"], ["NW", "Nebenwirkung"], ["O2", "Sauerstoff"], ["OP", "Operation"], ["p.i.", "per inhalationem"], ["paO2", "arterieller Sauerstoffpartialdruck"], ["PEEP", "positiver endexspiratorischer Druck"], ["PiCCO", "Pulse Contour Cardiac Output"], ["PLR", "Passive Leg Raise"], ["PPI", "Protonenpumpenhemmer"], ["PPV", "Pulse Pressure Variation"], ["PRIS", "Propofol-Infusionssyndrom"], ["RAAS", "Renin-Angiotensin-Aldosteron-System"], ["RAP", "rechtsatrialer Druck"], ["Rekap", "Rekapillarisierungszeit"], ["RR", "Blutdruck"], ["RV", "rechtsventrikulär"], ["S2k", "konsensbasierte Leitlinie (AWMF-Stufe)"], ["ScvO2", "zentralvenöse O2-Sättigung"], ["SIRS", "systemisches Entzündungssyndrom"], ["SOP", "Standardvorgehen der V1"], ["SpO2", "pulsoxymetrische Sättigung"], ["SR", "Schockraum"], ["SV", "Schlagvolumen"], ["SVV", "Schlagvolumenvariation"], ["TNF-α", "Tumornekrosefaktor α"], ["Tox", "Toxikologie"], ["TXA", "Tranexamsäure"], ["V1", "Verbrennungs-Intensivstation"], ["VCI", "Vena cava inferior"], ["VEL", "Vollelektrolytlösung"], ["VKOF", "verbrannte Körperoberfläche"], ["VT", "Tidalvolumen"], ["ZVD", "zentraler Venendruck"], ["ZVK", "zentraler Venenkatheter"]];
+const LEGENDE = [["2b/3", "Verbrennungsgrad 2b bzw. 3 (tief)"], ["4-DMAP", "4-Dimethylaminophenol"], ["ABA", "American Burn Association"], ["ABSI", "Abbreviated Burn Severity Index"], ["ADH", "antidiuretisches Hormon"], ["AF", "Atemfrequenz"], ["AIS", "Abbreviated Injury Score (Bronchoskopie)"], ["Anti-Xa", "Anti-Faktor-Xa-Aktivität"], ["ANV", "akutes Nierenversagen"], ["ARDS", "akutes Lungenversagen"], ["avDO2", "arteriovenöse O2-Differenz"], ["AWMF", "Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften"], ["BB", "Blutbild"], ["BG", "Berufsgenossenschaft"], ["BGA", "Blutgasanalyse"], ["BZ", "Blutzucker"], ["Ca²⁺", "ionisiertes Kalzium"], ["CK", "Kreatinkinase"], ["CO", "Kohlenmonoxid"], ["CO2", "Kohlendioxid"], ["COHb", "Carboxyhämoglobin"], ["CT", "Computertomografie"], ["DAV", "Deutschsprachige Arbeitsgemeinschaft für Verbrennungsbehandlung"], ["Deltajonin", "BG (1/3) Eindrittelelektrolytlösung"], ["DGIIN", "Deutsche Gesellschaft für Internistische Intensivmedizin und Notfallmedizin"], ["DGINA", "Deutsche Gesellschaft Interdisziplinäre Notfall- und Akutmedizin"], ["DGV", "Deutsche Gesellschaft für Verbrennungsmedizin"], ["DK", "Dauerkatheter"], ["Dobu", "Dobutamin"], ["E", "Einheiten"], ["Echo", "Echokardiografie"], ["EK", "Erythrozytenkonzentrat"], ["EKG", "Elektrokardiogramm"], ["ELWI", "extravaskulärer Lungenwasserindex"], ["ESPEN", "Europäische Gesellschaft für klinische Ernährung"], ["EtCO2", "endtidales CO2"], ["FFP", "Fresh Frozen Plasma"], ["FiO2", "inspiratorische O2-Fraktion"], ["GI", "gastrointestinal"], ["h", "Stunde ab Unfall"], ["Hb", "Hämoglobin"], ["HBO", "hyperbare Oxygenierung (100 % O2 unter Überdruck in der Druckkammer)"], ["HES", "Hydroxyethylstärke"], ["HF", "Herzfrequenz"], ["HFNC", "High-Flow-Sauerstoff über Nasenkanüle"], ["HI", "Herzindex (l/min/m²)"], ["Hk", "Hämatokrit"], ["i.v.", "intravenös"], ["IAP", "intraabdomineller Druck (mmHg)"], ["IE", "Internationale Einheiten"], ["IHT", "Inhalationstrauma"], ["IL-6", "Interleukin 6"], ["ITBVI", "intrathorakaler Blutvolumenindex"], ["J", "Jahre"], ["KOF", "Körperoberfläche"], ["Lite", "vereinfachte Fassung von LUminate"], ["MAP", "mittlerer arterieller Druck"], ["MCP", "Metoclopramid"], ["NA", "Noradrenalin"], ["Na", "Natrium"], ["Na/K", "Natrium/Kalium"], ["NW", "Nebenwirkung"], ["O2", "Sauerstoff"], ["OP", "Operation"], ["p.i.", "per inhalationem"], ["paO2", "arterieller Sauerstoffpartialdruck"], ["PEEP", "positiver endexspiratorischer Druck"], ["PiCCO", "Pulse Contour Cardiac Output"], ["PLR", "Passive Leg Raise"], ["PPI", "Protonenpumpenhemmer"], ["PPV", "Pulse Pressure Variation"], ["PRIS", "Propofol-Infusionssyndrom"], ["RAAS", "Renin-Angiotensin-Aldosteron-System"], ["RAP", "rechtsatrialer Druck"], ["Rekap", "Rekapillarisierungszeit"], ["RR", "Blutdruck"], ["RV", "rechtsventrikulär"], ["S2k", "konsensbasierte Leitlinie (AWMF-Stufe)"], ["ScvO2", "zentralvenöse O2-Sättigung"], ["SIRS", "systemisches Entzündungssyndrom"], ["SOP", "Standardvorgehen der V1"], ["SpO2", "pulsoxymetrische Sättigung"], ["SR", "Schockraum"], ["SV", "Schlagvolumen"], ["SVV", "Schlagvolumenvariation"], ["TNF-α", "Tumornekrosefaktor α"], ["Tox", "Toxikologie"], ["TXA", "Tranexamsäure"], ["V1", "Verbrennungs-Intensivstation"], ["VCI", "Vena cava inferior"], ["VEL", "Vollelektrolytlösung"], ["VKOF", "verbrannte Körperoberfläche"], ["VT", "Tidalvolumen"], ["ZVD", "zentraler Venendruck"], ["ZVK", "zentraler Venenkatheter"]];
 
 /* ---------- Checkliste: Status ---------- */
 function itemWin(c, it) {
@@ -1071,6 +1067,20 @@ function vInfo(key, info, extra) {
   }
   return h || extra ? `<div class="info">${h}${extra || ""}</div>` : "";
 }
+/* Dobutamin: Dosierung nach Fachinformation, gewichtsadaptiert; ml/h für Perfusor 250 mg/50 ml (5 mg/ml) */
+const DOBU_MGML = 5;
+const hasDobu = (...t) => /Dobutamin/.test(t.join(" "));
+const dobuBtn = () => `<button class="btn${UI.open.dobu ? " pri" : ""}" data-act="info" data-k="dobu" aria-expanded="${!!UI.open.dobu}">Dobutamin: Dosierung</button>`;
+function vDobu(c) {
+  if (!UI.open.dobu) return "";
+  const kg = c.kg;
+  const row = (d, l) => `<tr><td><b>${fN(d, 1)} µg/kg/min</b>${l ? `<span class="sub">${l}</span>` : ""}</td><td><b>${kg ? "(" + fN(d * kg * 60 / 1000 / DOBU_MGML, 1) + " ml/h)" : "Gewicht fehlt"}</b>${kg ? `<span class="sub">${fN(d * kg * 60 / 1000, 1)} mg/h</span>` : ""}</td></tr>`;
+  return `<div class="info dobu"><div><b>Dobutamin — Dosierung${kg ? " für " + fN(kg, 0) + " kg" : ""}</b></div>
+    <table class="tb"><tr><th>Dosis</th><th>Perfusor 250 mg/50 ml (5 mg/ml)</th></tr>${row(2.5, "Start")}${row(5, "üblich")}${row(7.5, "")}${row(10, "obere übliche Dosis")}</table>
+    <div><b>Vorgehen</b> — Mit 2,5 µg/kg/min beginnen und nach Wirkung in Schritten von 2,5 µg/kg/min steigern; die meisten Patienten sprechen auf 2,5–10 µg/kg/min an, im Einzelfall bis 40 µg/kg/min (Fachinformation). Ziele wie im Algorithmus: HI > 2,2, ScvO2 > 70 %, Laktat fällt, Rekap < 3 s.</div>
+    <div><b>Vorher</b> — Kardiale Dysfunktion echokardiografisch sichern; Hypovolämie muss ausgeglichen sein (Kontraindikation).</div>
+    <div><b>Cave</b> — Tachykardie und Arrhythmien (dosisabhängig), Blutdruckabfall durch Vasodilatation → Noradrenalin anpassen; Kalium kontrollieren; myokardialer O2-Verbrauch steigt. Zum Beenden schrittweise reduzieren; nach > 72 h Dauerinfusion Toleranz möglich.</div></div>`;
+}
 const box = (lv, h, t, extra, cls) => `<div class="box ${lv}${cls ? " " + cls : ""}"><div class="bh">${h}</div>${t ? `<div class="bt">${t}</div>` : ""}${extra ? `<div class="ba">${extra}</div>` : ""}</div>`;
 const tile = (l, v, s) => `<div class="tile"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s || ""}</div></div>`;
 function patSum(p, c) {
@@ -1169,7 +1179,7 @@ function vVolNow(p, c, P) {
   h += vReevalRow(p, c);
   if (c.schock) {
     const m = P.main;
-    if (m) h += box(m.lv, m.h, m.t, (m.neu != null ? `<button class="btn pri" data-act="setrate" data-v="${m.neu}">${r0(m.neu)} ml/h übernehmen</button>` : "") + (m.algo ? `<button class="btn" data-act="algo">Algorithmus durchgehen</button>` : "") + (m.go ? `<button class="btn" data-act="tab" data-v="vol">Werte eintragen</button>` : ""), "main");
+    if (m) h += box(m.lv, m.h, m.t, (m.neu != null ? `<button class="btn pri" data-act="setrate" data-v="${m.neu}">${r0(m.neu)} ml/h übernehmen</button>` : "") + (m.algo ? `<button class="btn" data-act="algo">Algorithmus durchgehen</button>` : "") + (m.go ? `<button class="btn" data-act="tab" data-v="vol">Werte eintragen</button>` : "") + (hasDobu(m.h, m.t) ? dobuBtn() : ""), "main") + (hasDobu(m.h, m.t) ? vDobu(c) : "");
     const v = P.vol;
     if (v && !v.quiet) h += box(v.lv, v.h, v.t, v.miss ? vPre() : v.neu ? `<button class="btn ${v.aufhol ? "" : "pri"}" data-act="setrate" data-v="${v.neu}">${v.aufhol ? "Aufholrate " : ""}${r0(v.neu)} ml/h übernehmen</button>` : "");
     else if (v) h += `<div class="small mut" style="margin:4px 0">${v.h}.</div>`;
@@ -1179,7 +1189,8 @@ function vVolNow(p, c, P) {
     h += box("i", c.h < ALGO_H ? `Tag ${c.tag}: Schockphase beendet — Algorithmus bleibt Grundlage bis h 72` : `Tag ${c.tag}: Volumen bedarfsorientiert`, "Rückresorption der Ödeme: Hypervolämie und Lungenwasser (ELWI) beachten, Bilanz täglich. Zieldiurese " + zielTxt(c) + ".");
     h += `<div class="facts"><span>Diurese 6 h<b>${s6.cov ? r0(s6.s) + " ml" : "—"}</b></span><span>Diurese 24 h<b>${s24.cov ? tsd(s24.s) + " ml" : "—"}</b></span><span>Natrium<b>${na ? fN(na.v, 0) : "—"}</b></span><span>Albumin<b>${alb ? fN(alb.v, 1) + " g/dl" : "—"}</b></span></div>`;
   }
-  if (P.hints.length) h += `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin BG (1/3) umstellen" : "auf Ringer-Azetat umstellen"}</button>` : ""}</li>`).join("")}</ul>`;
+  if (P.hints.length) h += `<ul class="hl">${P.hints.map((x) => `<li class="${x.lv}">${x.t}${x.act && x.act.k === "alb" ? ` <button class="btn sm" data-act="albset" data-v="${x.act.v}">Albumin ${x.act.v} ml/h übernehmen</button>` : ""}${x.act && x.act.k === "lsg" ? ` <button class="btn sm" data-act="lsg" data-v="${x.act.v}">${x.act.v === "delta" ? "auf Deltajonin BG (1/3) umstellen" : "auf Ringer-Azetat umstellen"}</button>` : ""}${hasDobu(x.t) && !(P.main && hasDobu(P.main.h, P.main.t)) ? ` <button class="btn sm" data-act="info" data-k="dobu">Dobutamin: Dosierung</button>` : ""}</li>`).join("")}</ul>`;
+  if (P.hints.some((x) => hasDobu(x.t)) && !(P.main && hasDobu(P.main.h, P.main.t))) h += vDobu(c);
   return h + `</div>`;
 }
 function vDue(p, c) {
@@ -1431,7 +1442,7 @@ function vAlgo(p, c) {
       dobu: { cls: "w", h: "Kardiale Dysfunktion: Dobutamin erwägen", t: "Keine Volumenüberladung, nicht volumenreagibel — Laufrate halten, Inotropie statt Volumen.", to: null },
       hold: { cls: "i", h: "Keine Volumenindikation: Laufrate halten", t: "Nicht volumenreagibel, keine Dysfunktion, keine Überladung — Ursachen prüfen: Blutung, abdominelles Kompartmentsyndrom, Sepsis, Katheterlage; Ziele nach 1 h erneut prüfen.", to: null }
     }[F.res];
-    h += `<div class="arr">↓</div>` + box(R.cls, R.h, R.t, (R.to ? `<button class="btn pri" data-act="algo_done" data-res="${F.res}" data-to="${R.to}">${r0(R.to)} ml/h übernehmen</button>` : "") + `<button class="btn" data-act="algo_done" data-res="${F.res}" data-to="">ohne Ratenänderung abschließen</button>`, "main");
+    h += `<div class="arr">↓</div>` + box(R.cls, R.h, R.t, (R.to ? `<button class="btn pri" data-act="algo_done" data-res="${F.res}" data-to="${R.to}">${r0(R.to)} ml/h übernehmen</button>` : "") + (hasDobu(R.h, R.t) ? dobuBtn() : "") + `<button class="btn" data-act="algo_done" data-res="${F.res}" data-to="">ohne Ratenänderung abschließen</button>`, "main") + (hasDobu(R.h, R.t) ? vDobu(c) : "");
   }
   h += `<div class="an alt"><div class="mut small">Abweichend entscheiden</div><div class="row"><input data-d="al_rate" inputmode="numeric" placeholder="${rate != null ? r0(rate) : "ml/h"}" value="${dv("al_rate")}" aria-label="Laufrate ml/h"> ml/h <button class="btn sm" data-act="algo_manual">übernehmen</button><button class="btn sm" data-act="algo_done" data-res="manuell" data-to="">ohne Änderung abschließen</button></div></div>`;
   return h + `</div></div>`;

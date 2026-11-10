@@ -1,7 +1,7 @@
 /* LUminate Lite — Service Worker (offline) für https://ftigiser-collab.github.io/LUminate/lite/.
    Eigener Cache-Präfix "lulite-" (nicht "luminate-": den räumt der Service Worker von LUminate auf).
    Update: VERSION hochzählen und APP_VERSION in index.html anpassen. */
-const VERSION = 'lulite-v1.2.0';
+const VERSION = 'lulite-v1.3.0';
 const PREFIX = 'lulite-';
 const CORE = [
   './',
