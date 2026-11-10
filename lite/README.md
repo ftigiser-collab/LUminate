@@ -22,6 +22,10 @@ Die klinischen Inhalte sind unverändert aus LUminate 1.3.0 übernommen:
 - **Ein Patientenformular** statt Stammdaten-Fenster mit Einzelfeldern
 - **Eigenständig:** eigener Speicher (`lulite_v1`), keine Kopplung mit BurnICU oder LUminate; mehrere Patienten über die Auswahl oben
 
+## Neu in 1.3.1
+
+- **Pfeil an „Laufrate jetzt“:** zeigt die letzte Änderung der Laufrate — orange ↑ für STEP UP, grün ↓ für STEP DOWN, darunter „STEP UP/DOWN von … ml/h“. Kein Pfeil bei der ersten Laufrate oder unveränderter Rate.
+
 ## Neu in 1.3.0
 
 - **Aus der Checkliste gestrichen:** Stuhlgang (Aufnahme, Tag 3, Tag 5), Arbeits-/Wegeunfall → BG-Verfahren (Aufnahme), MRE-Screening (Aufnahme). Unverändert: Tag 5 „Sozialdienst, psychologische Betreuung, BG-/Reha-Verfahren einleiten“.

@@ -172,7 +172,7 @@ table.tb td:first-child,table.tb th:first-child{text-align:left}
 .bar{max-width:1100px;margin:0 auto;padding:6px 12px 7px}
 .tms{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:6px}
 .tmr{display:block;border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:4px 6px 5px;text-align:center;min-width:0;min-height:0;color:var(--ink)}
-.tmr span{display:block;font-size:11.5px;line-height:1.25;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmr span{display:block;font-size:10.5px;letter-spacing:-.15px;line-height:1.25;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tmr b{display:block;font-size:19px;line-height:1.2;font-weight:700;font-variant-numeric:tabular-nums}
 button.tmr{cursor:pointer}
 .tmr.due{border-color:#d08a00;animation:bl-due 1s steps(1) infinite}
@@ -204,7 +204,12 @@ button.tmr{cursor:pointer}
 .info.dobu{margin-top:8px;border-color:#b9c7d6}
 .info.dobu table.tb td,.info.dobu table.tb th{text-align:left;white-space:normal;vertical-align:top}
 .info.dobu .sub{display:block;font-size:12.5px;color:var(--mut)}
-.tiles.n3{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tiles.n3{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.25fr);gap:6px}
+.nw{white-space:nowrap}
+.ar{display:inline-grid;place-items:center;width:1.25em;height:1.25em;margin-left:.3em;border-radius:50%;color:#fff;font-size:.9em;font-weight:800;line-height:1;vertical-align:.08em}
+.ar.up{background:#c2570a}.ar.down{background:#17703f}
+.ard{display:block;font-weight:700}
+.ard.up{color:#a34a08}.ard.down{color:#17703f}
 .tiles.n3 .tile{padding:8px}
 .tiles.n3 .tile .l{font-size:11px;letter-spacing:.2px}
 .tiles.n3 .tile .v{font-size:17px}
@@ -227,7 +232,7 @@ button.tmr{cursor:pointer}
   .bar{display:flex;gap:16px;align-items:center;justify-content:space-between}
   .tms{grid-template-columns:150px 170px 210px;gap:8px}
   .scs{margin-top:0}
-  .tmr.due span,.tmr.over span{font-size:11.5px;letter-spacing:0}
+  .tmr span,.tmr.due span,.tmr.over span{font-size:11.5px;letter-spacing:0}
   .sc{font-size:13.5px;padding:4px 11px}
   nav.tabs{position:static;border-top:1px solid var(--line);justify-content:center;padding:0}
   nav.tabs button{flex:0 0 190px;border-top:0;border-bottom:3px solid transparent;padding:11px 4px 9px;font-size:15.5px}
@@ -272,7 +277,7 @@ button.tmr{cursor:pointer}
    Gleiche Inhalte (Checkliste, Daueranweisungen, Volumentherapie nach SOP, Algorithmus), einfachere Oberfläche.
    Eigenständig: eigener Speicher (lulite_v1), keine Kopplung mit BurnICU. Eine Datei, kein Build.
    ===================================================================== */
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.3.1";
 const SKEY = "lulite_v1";
 const H = 36e5, MIN = 6e4;
 
@@ -1158,7 +1163,11 @@ function vTiles(p, c) {
   /* Rule of 10 ist nur die Startrate: große Anzeige nur, bis eine Laufrate eingetragen ist */
   if (!rr) t.push(tile("Rule of 10 · Startrate", c.rotNA ? "gilt nicht" : c.rot != null ? r0(c.rot) + " ml/h" : "—", c.rotNA ? "unter 40 kg: Kinderschema" : c.rot != null ? rotTxt(c) : "Gewicht und VKOF fehlen"));
   t.push(tile("Zieldiurese", c.myo && c.uoLo >= 1.5 ? "200–300 ml/h" : c.kg ? `> ${r0(c.uoLo * c.kg)} ml/h` : `> ${fN(c.uoLo, 1)} ml/kg/h`, (c.myo && c.uoLo >= 1.5 ? "1,5–2 ml/kg/h" : fN(c.uoLo, 1) + " ml/kg/h") + " · " + c.uoMode));
-  t.push(tile("Laufrate jetzt", rr ? r0(rr.v) + " ml/h" : "—", rr ? `${lsgName(p)} seit ${fRel(rr.t)}` : "noch nicht eingetragen"));
+  /* Pfeil: letzte Änderung der Laufrate — STEP UP (orange, ↑) oder STEP DOWN (grün, ↓) */
+  const rh = rateHist(p).filter((x) => x.t <= c.now), prev = rh.length > 1 ? rh[rh.length - 2] : null;
+  const dir = rr && prev ? (rr.v > prev.v ? "up" : rr.v < prev.v ? "down" : "") : "";
+  const ar = dir ? `<span class="ar ${dir}" role="img" aria-label="${dir === "up" ? "STEP UP" : "STEP DOWN"}" title="${dir === "up" ? "STEP UP" : "STEP DOWN"}">${dir === "up" ? "↑" : "↓"}</span>` : "";
+  t.push(tile("Laufrate jetzt", rr ? `<span class="nw">${r0(rr.v)} ml/h${ar}</span>` : "—", rr ? `${dir ? `<span class="ard ${dir}">${dir === "up" ? "STEP UP" : "STEP DOWN"} von ${r0(prev.v)} ml/h</span>` : ""}${lsgName(p)} seit ${fRel(rr.t)}` : "noch nicht eingetragen"));
   if (c.vk > 40 && c.absi) t.push(tile("ABSI", c.absi, "Überleben " + c.absiTxt));
   return `<div class="tiles n${t.length}">${t.join("")}</div>`;
 }
